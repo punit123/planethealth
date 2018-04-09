@@ -310,14 +310,14 @@ class ControllerUserUser extends Controller {
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('text_home'),
-			'href' => $this->url->link('common/dashboard', 'user_token=' . $this->session->data['user_token'])
+			'href' => $this->url->link('common/dashboard', 'user_token=' . $this->session->data['user_token'],true)
 		);
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('user/user', 'user_token=' . $this->session->data['user_token'] . $url)
+			'href' => $this->url->link('user/user', 'user_token=' . $this->session->data['user_token'] . $url,true)
 		);
-
+        $data['user_token'] =  $this->session->data['user_token'];
 		if (!isset($this->request->get['user_id'])) {
 			$data['action'] = $this->url->link('user/user/add', 'user_token=' . $this->session->data['user_token'] . $url);
 		} else {
@@ -344,6 +344,27 @@ class ControllerUserUser extends Controller {
 			$data['user_group_id'] = $user_info['user_group_id'];
 		} else {
 			$data['user_group_id'] = '';
+		}
+
+		if (isset($this->request->post['user_store'])) {
+			$stores = $this->request->post['user_store'];
+		} elseif (isset($this->request->get['user_id'])) {
+			$stores = $this->model_user_user->getUserStore($this->request->get['user_id']);
+		} else {
+			$stores = array();
+		}		
+		
+		$data['user_stores'] = array();
+		$this->load->model('localisation/location');
+		foreach ($stores as $store_id) {
+			$related_info = $this->model_localisation_location->getLocation($store_id);
+
+			if ($related_info) {
+				$data['user_stores'][] = array(
+					'location_id' => $related_info['location_id'],
+					'name'       => $related_info['name']
+				);
+			}
 		}
 
 		$this->load->model('user/user_group');
@@ -492,4 +513,39 @@ class ControllerUserUser extends Controller {
 
 		return !$this->error;
 	}
+	public function autocompletestore() {
+		$json = array();
+
+		if (isset($this->request->get['filter_name'])) {
+			$this->load->model('localisation/location');
+
+			$filter_data = array(
+				'filter_name' => $this->request->get['filter_name'],
+				'sort'        => 'name',
+				'order'       => 'ASC',
+				'start'       => 0,
+				'limit'       => 5
+			);
+
+			$results = $this->model_localisation_location->getLocations($filter_data);
+
+			foreach ($results as $result) {
+				$json[] = array(
+					'location_id' => $result['location_id'],
+					'name'        => strip_tags(html_entity_decode($result['name'], ENT_QUOTES, 'UTF-8'))
+				);
+			}
+		}
+
+		$sort_order = array();
+
+		foreach ($json as $key => $value) {
+			$sort_order[$key] = $value['name'];
+		}
+
+		array_multisort($sort_order, SORT_ASC, $json);
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}	
 }

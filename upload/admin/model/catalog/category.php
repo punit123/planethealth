@@ -37,9 +37,19 @@ class ModelCatalogCategory extends Model {
 				$this->db->query("INSERT INTO " . DB_PREFIX . "category_to_store SET category_id = '" . (int)$category_id . "', store_id = '" . (int)$store_id . "'");
 			}
 		}
-
+		
+		if (isset($data['category_related'])) {
+			foreach ($data['category_related'] as $related_id) {
+				$this->db->query("DELETE FROM " . DB_PREFIX . "category_to_category WHERE category_id = '" . (int)$category_id . "' AND related_category_id = '" . (int)$related_id . "'");
+				$this->db->query("INSERT INTO " . DB_PREFIX . "category_to_category SET category_id = '" . (int)$category_id . "', related_category_id = '" . (int)$related_id . "'");
+				$this->db->query("DELETE FROM " . DB_PREFIX . "category_to_category WHERE category_id = '" . (int)$related_id . "' AND related_category_id = '" . (int)$category_id . "'");
+				$this->db->query("INSERT INTO " . DB_PREFIX . "category_to_category SET category_id = '" . (int)$related_id . "', related_category_id = '" . (int)$category_id . "'");
+			}
+		}
+		
 		$path = $this->getPath($category_id);
 
+		
 		foreach ($data['category_seo_url'] as $store_id => $language) {
 			foreach ($language as $language_id => $keyword) {
 				if ($keyword) {
@@ -48,6 +58,7 @@ class ModelCatalogCategory extends Model {
 			}
 		}
 
+		
 		// Set which layout to use with this category
 		if (isset($data['category_layout'])) {
 			foreach ($data['category_layout'] as $store_id => $layout_id) {
@@ -72,7 +83,17 @@ class ModelCatalogCategory extends Model {
 		foreach ($data['category_description'] as $language_id => $value) {
 			$this->db->query("INSERT INTO " . DB_PREFIX . "category_description SET category_id = '" . (int)$category_id . "', language_id = '" . (int)$language_id . "', name = '" . $this->db->escape($value['name']) . "', description = '" . $this->db->escape($value['description']) . "', meta_title = '" . $this->db->escape($value['meta_title']) . "', meta_description = '" . $this->db->escape($value['meta_description']) . "', meta_keyword = '" . $this->db->escape($value['meta_keyword']) . "'");
 		}
-
+		$this->db->query("DELETE FROM " . DB_PREFIX . "category_to_category WHERE category_id = '" . (int)$category_id . "'");
+		$this->db->query("DELETE FROM " . DB_PREFIX . "category_to_category WHERE related_category_id = '" . (int)$category_id . "'");
+		if (isset($data['category_related'])) {
+			foreach ($data['category_related'] as $related_id) {
+				$this->db->query("DELETE FROM " . DB_PREFIX . "category_to_category WHERE category_id = '" . (int)$category_id . "' AND related_category_id = '" . (int)$related_id . "'");
+				$this->db->query("INSERT INTO " . DB_PREFIX . "category_to_category SET category_id = '" . (int)$category_id . "', related_category_id = '" . (int)$related_id . "'");
+				$this->db->query("DELETE FROM " . DB_PREFIX . "category_to_category WHERE category_id = '" . (int)$related_id . "' AND related_category_id = '" . (int)$category_id . "'");
+				$this->db->query("INSERT INTO " . DB_PREFIX . "category_to_category SET category_id = '" . (int)$related_id . "', related_category_id = '" . (int)$category_id . "'");
+			}
+		}		
+		
 		// Old path
 		$path_old = $this->getPath($category_id);
 
@@ -270,7 +291,19 @@ class ModelCatalogCategory extends Model {
 
 		return $query->rows;
 	}
+	
+	public function getCategoryRelated($category_id) {
+		$category_related_data = array();
 
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "category_to_category WHERE category_id = '" . (int)$category_id . "'");
+
+		foreach ($query->rows as $result) {
+			$category_related_data[] = $result['related_category_id'];
+		}
+
+		return $category_related_data;
+	}
+	
 	public function getCategoryDescriptions($category_id) {
 		$category_description_data = array();
 

@@ -390,7 +390,28 @@ class ControllerCatalogCategory extends Controller {
 		} else {
 			$data['parent_id'] = 0;
 		}
+		
+		if (isset($this->request->post['category_related'])) {
+			$categories = $this->request->post['category_related'];
+		} elseif (isset($this->request->get['category_id'])) {
+			$categories = $this->model_catalog_category->getCategoryRelated($this->request->get['category_id']);
+		} else {
+			$categories = array();
+		}		
+		
+		$data['category_relateds'] = array();
 
+		foreach ($categories as $category_id) {
+			$related_info = $this->model_catalog_category->getCategory($category_id);
+
+			if ($related_info) {
+				$data['category_relateds'][] = array(
+					'category_id' => $related_info['category_id'],
+					'name'       => $related_info['name']
+				);
+			}
+		}
+		
 		$this->load->model('catalog/filter');
 
 		if (isset($this->request->post['category_filter'])) {
@@ -626,4 +647,39 @@ class ControllerCatalogCategory extends Controller {
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
+	public function autocompleterelated() {
+		$json = array();
+
+		if (isset($this->request->get['filter_name'])) {
+			$this->load->model('catalog/category');
+
+			$filter_data = array(
+				'filter_name' => $this->request->get['filter_name'],
+				'sort'        => 'name',
+				'order'       => 'ASC',
+				'start'       => 0,
+				'limit'       => 5
+			);
+
+			$results = $this->model_catalog_category->getCategories($filter_data);
+
+			foreach ($results as $result) {
+				$json[] = array(
+					'category_id' => $result['category_id'],
+					'name'        => strip_tags(html_entity_decode($result['name'], ENT_QUOTES, 'UTF-8'))
+				);
+			}
+		}
+
+		$sort_order = array();
+
+		foreach ($json as $key => $value) {
+			$sort_order[$key] = $value['name'];
+		}
+
+		array_multisort($sort_order, SORT_ASC, $json);
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}	
 }

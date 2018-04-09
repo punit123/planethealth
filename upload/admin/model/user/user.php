@@ -3,6 +3,12 @@ class ModelUserUser extends Model {
 	public function addUser($data) {
 		$this->db->query("INSERT INTO `" . DB_PREFIX . "user` SET username = '" . $this->db->escape((string)$data['username']) . "', user_group_id = '" . (int)$data['user_group_id'] . "', salt = '', password = '" . $this->db->escape(password_hash($data['password'], PASSWORD_DEFAULT)) . "', firstname = '" . $this->db->escape((string)$data['firstname']) . "', lastname = '" . $this->db->escape((string)$data['lastname']) . "', email = '" . $this->db->escape((string)$data['email']) . "', image = '" . $this->db->escape((string)$data['image']) . "', status = '" . (int)$data['status'] . "', date_added = NOW()");
 	
+		$user_id = $this->db->getLastId();
+		if (isset($data['user_store'])) {
+			foreach ($data['user_store'] as $store_id) {
+				$this->db->query("INSERT INTO " . DB_PREFIX . "user_store SET user_id = '" . (int)$user_id . "', store_id = '" . (int)$store_id . "'");
+			}
+		}		
 		return $this->db->getLastId();
 	}
 
@@ -12,6 +18,12 @@ class ModelUserUser extends Model {
 		if ($data['password']) {
 			$this->db->query("UPDATE `" . DB_PREFIX . "user` SET salt = '', password = '" . $this->db->escape(password_hash($data['password'], PASSWORD_DEFAULT)) . "' WHERE user_id = '" . (int)$user_id . "'");
 		}
+		if (isset($data['user_store'])) {
+			$this->db->query("DELETE FROM " . DB_PREFIX . "user_store WHERE user_id = '" . (int)$user_id . "'");
+			foreach ($data['user_store'] as $store_id) {				
+				$this->db->query("INSERT INTO " . DB_PREFIX . "user_store SET user_id = '" . (int)$user_id . "', store_id = '" . (int)$store_id . "'");
+			}
+		}		
 	}
 
 	public function editPassword($user_id, $password) {
@@ -105,4 +117,16 @@ class ModelUserUser extends Model {
 
 		return $query->row['total'];
 	}
+	public function getUserStore($user_id) {
+		$user_store_date = array();
+
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "user_store WHERE user_id = '" . (int)$user_id . "'");
+
+		foreach ($query->rows as $result) {
+			$user_store_date[] = $result['store_id'];
+		}
+
+		return $user_store_date;
+	}	
+	
 }

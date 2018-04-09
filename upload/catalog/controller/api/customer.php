@@ -7,7 +7,6 @@ class ControllerApiCustomer extends Controller {
 		unset($this->session->data['customer']);
 
 		$json = array();
-
 		if (!isset($this->session->data['api_id'])) {
 			$json['error']['warning'] = $this->language->get('error_permission');
 		} else {
