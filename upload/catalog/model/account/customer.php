@@ -29,7 +29,14 @@ class ModelAccountCustomer extends Model {
 	public function editPassword($email, $password) {
 		$this->db->query("UPDATE " . DB_PREFIX . "customer SET salt = '', password = '" . $this->db->escape(password_hash($password, PASSWORD_DEFAULT)) . "', code = '' WHERE LOWER(email) = '" . $this->db->escape(utf8_strtolower($email)) . "'");
 	}
-
+	
+	/*
+	public function addAddressId($customer_id , $address_id) {
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "customer WHERE customer_id = '" . (int)$customer_id . "' and address_id = '". (int)$address_id ."'");
+		return $query->row;
+	}
+	*/
+	
 	public function editAddressId($customer_id, $address_id) {
 		$this->db->query("UPDATE " . DB_PREFIX . "customer SET address_id = '" . (int)$address_id . "' WHERE customer_id = '" . (int)$customer_id . "'");
 	}

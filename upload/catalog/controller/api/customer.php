@@ -93,7 +93,6 @@ class ControllerApiCustomer extends Controller {
 		$this->response->setOutput(json_encode($json));
 	}
 	public function register(){
-		//echo '<pre>';print_r($this->session->data['api_id']);die;
 		$this->load->language('api/customer');
 		$this->load->model('account/customer');
 		$json = array();
@@ -203,9 +202,59 @@ class ControllerApiCustomer extends Controller {
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));		
 	}
+	
 	public function add_address(){
 		$this->load->language('api/customer');
 		$this->load->model('account/customer');
+		$this->load->model('account/address');
+		$json = array();
+		
+		$customer_id = $this->session->data['customer_id'];
+		
+		if (!isset($this->session->data['api_id'])) {
+			$json['error']['warning'] = $this->language->get('error_permission');
+		}
+		else{
+			if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
+				$data = $this->request->post;
+				//echo '<pre>';print_r($data['address_id']);die;
+				
+				if($data['address_id']){
+					$address_id = $data['address_id'];
+				}
+				else{
+					$address_id = 0;
+				}
+				
+				//list customer for match address_id
+				$customer_address_details = $this->model_account_address->getAddressByCustomerId($customer_id);
+				
+				//address_id from address table
+				$customerAddressId = $customer_address_details['address_id'];
+				
+				//customer_id from address table
+				$customerId = $customer_address_details['customer_id'];
+				
+				if($customerId = $customer_id && $address_id != 0){
+					$editedAddress = $this->model_account_address->editAddress($address_id, $data);
+					$json['success'] = $this->language->get('text_success');
+					$json['data'] = array('token'=>$editedAddress);
+				}
+				else{
+					$addedAddress = $this->model_account_address->addAddress($customer_id, $data);
+					$json['success'] = $this->language->get('text_success');
+					$json['data'] = array('token'=>$addedAddress);
+				}
+			}	
+		}
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+	
+	public function list_address(){
+		$this->load->language('api/customer');
+		$this->load->model('account/customer');
+		$this->load->model('account/address');
 		$json = array();
 		
 		if (!isset($this->session->data['api_id'])) {
@@ -213,8 +262,17 @@ class ControllerApiCustomer extends Controller {
 		}
 		else{
 			if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
+				$customer_id = $this->request->post['customer_id'];
 				
-			}				
+				$customer_address_details = $this->model_account_address->getAddressByCustomerId($customer_id);
+				if(count($customer_address_details)>0){
+					$json['success'] = $this->language->get('text_success');
+					$json['data'] = array('token'=>$customer_address_details);
+				}
+				else{
+					$json['error'] = $this->language->get('no_records_found');
+				}
+			}
 		}
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));		
