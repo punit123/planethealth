@@ -89,8 +89,134 @@ class ControllerApiCustomer extends Controller {
 				$json['success'] = $this->language->get('text_success');
 			}
 		}
-
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
+	public function register(){
+		//echo '<pre>';print_r($this->session->data['api_id']);die;
+		$this->load->language('api/customer');
+		$this->load->model('account/customer');
+		$json = array();
+		
+		if (!isset($this->session->data['api_id'])) {
+			$json['error']['warning'] = $this->language->get('error_permission');
+		}
+		else{
+			if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
+				$_POST['lastname'] = '';
+				$name = $_POST['firstname'];
+				$lastname = $_POST['lastname'];
+				$email = $_POST['email'];
+				$phone = $_POST['telephone'];
+				$password = $_POST['password'];
+				$confirmpassword = $_POST['confirmpassword'];
+				if($password == $confirmpassword){
+					$customer_email = $this->model_account_customer->getCustomerByEmail($email);
+					if ($email == $customer_email['email']){
+						$json['error'] = $this->language->get('error_email');
+					}
+					else{
+					$customer_id = $this->model_account_customer->addCustomer($_POST);
+					$json['data'] = $this->model_account_customer->getCustomer($customer_id);					
+					$json['success'] = $this->language->get('text_success');
+					}
+				}
+				else{
+					$json['error'] = $this->language->get('error_password');
+				}
+			}
+			else{
+				$json['error'] = $this->language->get('problem_with_signup');
+			}
+		}
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));		
+	}
+	public function login(){
+		$this->load->language('api/customer');
+		$this->load->model('account/customer');
+		$json = array();
+		
+		if (!isset($this->session->data['api_id'])) {
+			$json['error']['warning'] = $this->language->get('error_permission');
+		}
+		else{
+			if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
+				// Check how many login attempts have been made.
+				$login_info = $this->model_account_customer->getLoginAttempts($this->request->post['email']);
+
+				if ($login_info && ($login_info['total'] >= $this->config->get('config_login_attempts')) && strtotime('-1 hour') < strtotime($login_info['date_modified'])) {
+					$json['error'] = $this->language->get('error_attempts');
+				}
+
+				// Check if customer has been approved.
+				$customer_info = $this->model_account_customer->getCustomerByEmail($this->request->post['email']);
+
+				if ($customer_info && !$customer_info['status']) {
+					$json['error'] = $this->language->get('error_approved');
+				}
+
+				if (!$this->error) {
+					if (!$this->customer->login($this->request->post['email'], $this->request->post['password'])) {
+						$json['error'] = $this->language->get('error_login');
+						$this->model_account_customer->addLoginAttempt($this->request->post['email']);
+					} else {						
+						$this->model_account_customer->deleteLoginAttempts($this->request->post['email']);
+						$json['success'] = $this->language->get('text_success');
+						$json['data'] = $customer_info;
+					}
+				}
+			}
+			else{
+				$json['error'] = $this->language->get('problem_with_login');
+			}
+		}
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));		
+	}
+	public function forgot(){
+		$this->load->language('api/customer');
+		$this->load->model('account/customer');
+		$json = array();
+		
+		if (!isset($this->session->data['api_id'])) {
+			$json['error']['warning'] = $this->language->get('error_permission');
+		}
+		else{
+			if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
+				// Check if customer has been approved.
+				$customer_info = $this->model_account_customer->getCustomerByEmail($this->request->post['email']);
+
+				if (!empty($customer_info)) {
+					$token = token(40);
+					$this->model_account_customer->editCode($this->request->post['email'], $token);
+					$json['success'] = $this->language->get('text_success');
+					$json['data'] = array('token'=>$token);
+				}else{
+					$json['error'] = $this->language->get('no_records_found');
+				}
+			}
+			else{
+				$json['error'] = $this->language->get('problem_with_login');
+			}
+		}
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));		
+	}
+	public function add_address(){
+		$this->load->language('api/customer');
+		$this->load->model('account/customer');
+		$json = array();
+		
+		if (!isset($this->session->data['api_id'])) {
+			$json['error']['warning'] = $this->language->get('error_permission');
+		}
+		else{
+			if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
+				
+			}				
+		}
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));		
+	}	
 }

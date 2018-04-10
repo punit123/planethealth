@@ -16,7 +16,7 @@ class ControllerApiBanner extends Controller {
 			$banner_info = $this->model_design_banner->getBanner(7);
 
 			if ($banner_info) {
-				$this->session->data['banner'] = $this->request->post['banner'];
+				$this->session->data['banner'] = 7;
 				$json['data'] = $banner_info;
 				$json['success'] = $this->language->get('text_success');
 			} else {
