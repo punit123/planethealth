@@ -1,6 +1,8 @@
 <?php
 // Text
 $_['text_success']       = 'You have successfully modified customers';
+$_['text_deactivate']    = 'You have successfully deactivate customer';
+$_['already_deactivated']= 'You have already deactivated customer';
 
 // Error
 $_['error_permission']   = 'Warning: You do not have permission to access the API!';

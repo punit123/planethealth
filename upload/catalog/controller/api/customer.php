@@ -280,5 +280,73 @@ class ControllerApiCustomer extends Controller {
 		}
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));		
-	}	
+	}
+	
+	public function deleteAddress(){
+		$this->load->language('account/address');
+		$this->load->model('account/address');
+		
+		if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
+			$customer_id = $this->request->post['customer_id'];
+			$address_id = $this->request->post['address_id'];
+			
+			$deleteAddress = $this->model_account_address->deleteAddress($address_id);
+			if($deleteAddress == 1){
+				$json['success'] = $this->language->get('text_delete');
+			}
+			else{
+				$json['error'] = $this->language->get('text_no_results');
+			}
+		}
+		else{
+			$json['error'] = $this->language->get('text_no_results');
+		}
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+	
+	public function deactivateCustomer(){
+		$this->load->language('api/customer');
+		$this->load->model('account/customer');
+		
+		if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
+			$customer_id = $this->request->post['customer_id'];
+			$status = $this->request->post['status'];
+			$deactivateCustomer = $this->model_account_customer->deactivateCustomer($customer_id , $status);
+			if($deactivateCustomer == 1){
+				$json['success'] = $this->language->get('text_deactivate');
+			}
+			else{
+				$json['error'] = $this->language->get('already_deactivated');
+			}
+		}
+		else{
+			$json['error'] = $this->language->get('error_customer');
+		}
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+	
+	public function setDefaultAddress(){
+		$this->load->language('api/customer');
+		$this->load->model('account/customer');
+		
+		if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
+			$address_id = $this->request->post['address_id'];
+			$customer_id = $this->request->post['customer_id'];
+			
+			$defaultAddress = $this->model_account_customer->editAddressId($customer_id, $address_id);
+			if($defaultAddress == 1){
+				$json['success'] = $this->language->get('text_success');
+			}
+			else{
+				$json['error'] = $this->language->get('Address already set as default!');
+			}
+		}
+		else{
+			$json['error'] = $this->language->get('error_customer');
+		}
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
 }
