@@ -285,6 +285,7 @@ class ControllerApiCustomer extends Controller {
 	public function deleteAddress(){
 		$this->load->language('account/address');
 		$this->load->model('account/address');
+		$json = array();
 		
 		if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
 			$customer_id = $this->request->post['customer_id'];
@@ -308,6 +309,7 @@ class ControllerApiCustomer extends Controller {
 	public function deactivateCustomer(){
 		$this->load->language('api/customer');
 		$this->load->model('account/customer');
+		$json = array();
 		
 		if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
 			$customer_id = $this->request->post['customer_id'];
@@ -330,6 +332,7 @@ class ControllerApiCustomer extends Controller {
 	public function setDefaultAddress(){
 		$this->load->language('api/customer');
 		$this->load->model('account/customer');
+		$json = array();
 		
 		if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
 			$address_id = $this->request->post['address_id'];
@@ -345,6 +348,36 @@ class ControllerApiCustomer extends Controller {
 		}
 		else{
 			$json['error'] = $this->language->get('error_customer');
+		}
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+	
+	public function updateProfile(){
+		if ($this->request->post['customer_id']) {
+			$this->load->language('api/customer');
+			$this->load->model('account/customer');
+			$json = array();
+			
+			$customer_id 	= $this->request->post['customer_id'];
+			$data = array(
+				'firstname' => $this->request->post['firstname'],
+				'telephone' => $this->request->post['telephone'],
+				'email' 	=> $this->request->post['email']
+			);
+			$customer_info = $this->model_account_customer->editCustomer($customer_id, $data);
+			if($customer_info){
+				$json['success'] = 'success';
+				$json['message']=$this->language->get('text_success');
+			}
+			else{
+				$json['error'] = 'error';
+				$json['message'] = $this->language->get('customer already updated');
+			}
+		}
+		else{
+			$json['error'] = 'error';
+			$json['message'] = $this->language->get('Invalid customer!');
 		}
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
