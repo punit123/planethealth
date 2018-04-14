@@ -7,23 +7,19 @@ class ControllerApiBanner extends Controller {
 		unset($this->session->data['banner']);
 
 		$json = array();
-
-		if (!isset($this->session->data['api_id'])) {
-			$json['error'] = $this->language->get('error_permission');
-		} else {
 			$this->load->model('design/banner');
 
 			$banner_info = $this->model_design_banner->getBanner(7);
 
 			if ($banner_info) {
 				$this->session->data['banner'] = 7;
+				$json['status'] = 'success';
 				$json['data'] = $banner_info;
-				$json['success'] = $this->language->get('text_success');
+				$json['message'] = $this->language->get('text_success');
 			} else {
-				$json['error'] = $this->language->get('error_voucher');
+				$json['status'] = 'error';
+				$json['message'] = $this->language->get('error_voucher');
 			}
-		}
-
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}

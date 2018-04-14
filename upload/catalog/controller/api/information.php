@@ -4,8 +4,8 @@ class ControllerApiInformation extends Controller {
 	public function getAllCmsInformation(){
 		$this->load->model('catalog/information');
 		$cmsInformation = $this->model_catalog_information->getInformations();
-		
-		$json['success'] = $this->language->get('success');
+		$json['status'] = 'success';
+		$json['message'] = $this->language->get('success');
 		$json['data'] = $cmsInformation;
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
@@ -18,16 +18,17 @@ class ControllerApiInformation extends Controller {
 			
 			$cmsInfoById = $this->model_catalog_information->getInformation($cmsInformationById);
 			if(count($cmsInfoById)>0 && $cmsInfoById != ''){
-				$json['success'] = $this->language->get('success');
+				$json['status'] = 'success';
+                                $json['message'] = 'success';
 				$json['data'] = $cmsInfoById;
 			}
 			else{
-				$json['error'] = $this->language->get('error');
+				$json['status'] = 'error';
 				$json['message'] = $this->language->get('Invalid Information!');
 			}
 		}
 		else{
-			$json['error'] = $this->language->get('error');
+			$json['status'] = 'error';
 			$json['message'] = $this->language->get('Invalid Information!');
 		}
 		$this->response->addHeader('Content-Type: application/json');
