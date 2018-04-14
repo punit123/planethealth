@@ -54,21 +54,21 @@ class ControllerCommonColumnLeft extends Controller {
 				);
 			}
 
-			if ($this->user->hasPermission('access', 'catalog/recurring')) {
-				$catalog[] = array(
-					'name'	   => $this->language->get('text_recurring'),
-					'href'     => $this->url->link('catalog/recurring', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()		
-				);
-			}
+			// if ($this->user->hasPermission('access', 'catalog/recurring')) {
+				// $catalog[] = array(
+					// 'name'	   => $this->language->get('text_recurring'),
+					// 'href'     => $this->url->link('catalog/recurring', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()		
+				// );
+			// }
 			
-			if ($this->user->hasPermission('access', 'catalog/filter')) {
-				$catalog[] = array(
-					'name'	   => $this->language->get('text_filter'),
-					'href'     => $this->url->link('catalog/filter', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()		
-				);
-			}
+			// if ($this->user->hasPermission('access', 'catalog/filter')) {
+				// $catalog[] = array(
+					// 'name'	   => $this->language->get('text_filter'),
+					// 'href'     => $this->url->link('catalog/filter', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()		
+				// );
+			// }
 			
 			// Attributes
 			$attribute = array();
@@ -113,29 +113,21 @@ class ControllerCommonColumnLeft extends Controller {
 				);
 			}
 			
-			if ($this->user->hasPermission('access', 'catalog/download')) {
-				$catalog[] = array(
-					'name'	   => $this->language->get('text_download'),
-					'href'     => $this->url->link('catalog/download', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()		
-				);
-			}
+			// if ($this->user->hasPermission('access', 'catalog/download')) {
+				// $catalog[] = array(
+					// 'name'	   => $this->language->get('text_download'),
+					// 'href'     => $this->url->link('catalog/download', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()		
+				// );
+			// }
 			
-			if ($this->user->hasPermission('access', 'catalog/review')) {		
-				$catalog[] = array(
-					'name'	   => $this->language->get('text_review'),
-					'href'     => $this->url->link('catalog/review', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()		
-				);		
-			}
-			
-			if ($this->user->hasPermission('access', 'catalog/information')) {		
-				$catalog[] = array(
-					'name'	   => $this->language->get('text_information'),
-					'href'     => $this->url->link('catalog/information', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()		
-				);					
-			}
+			// if ($this->user->hasPermission('access', 'catalog/review')) {		
+				// $catalog[] = array(
+					// 'name'	   => $this->language->get('text_review'),
+					// 'href'     => $this->url->link('catalog/review', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()		
+				// );		
+			// }		
 			
 			if ($catalog) {
 				$data['menus'][] = array(
@@ -148,92 +140,92 @@ class ControllerCommonColumnLeft extends Controller {
 			}
 			
 			// Extension
-			$marketplace = array();
+			// $marketplace = array();
 			
-			if ($this->user->hasPermission('access', 'marketplace/marketplace')) {		
-				$marketplace[] = array(
-					'name'	   => $this->language->get('text_marketplace'),
-					'href'     => $this->url->link('marketplace/marketplace', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()		
-				);					
-			}
+			// if ($this->user->hasPermission('access', 'marketplace/marketplace')) {		
+				// $marketplace[] = array(
+					// 'name'	   => $this->language->get('text_marketplace'),
+					// 'href'     => $this->url->link('marketplace/marketplace', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()		
+				// );					
+			// }
 			
-			if ($this->user->hasPermission('access', 'marketplace/installer')) {		
-				$marketplace[] = array(
-					'name'	   => $this->language->get('text_installer'),
-					'href'     => $this->url->link('marketplace/installer', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()		
-				);					
-			}	
+			// if ($this->user->hasPermission('access', 'marketplace/installer')) {		
+				// $marketplace[] = array(
+					// 'name'	   => $this->language->get('text_installer'),
+					// 'href'     => $this->url->link('marketplace/installer', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()		
+				// );					
+			// }	
 			
-			if ($this->user->hasPermission('access', 'marketplace/extension')) {		
-				$marketplace[] = array(
-					'name'	   => $this->language->get('text_extension'),
-					'href'     => $this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()
-				);
-			}
+			// if ($this->user->hasPermission('access', 'marketplace/extension')) {		
+				// $marketplace[] = array(
+					// 'name'	   => $this->language->get('text_extension'),
+					// 'href'     => $this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()
+				// );
+			// }
 								
-			if ($this->user->hasPermission('access', 'marketplace/modification')) {
-				$marketplace[] = array(
-					'name'	   => $this->language->get('text_modification'),
-					'href'     => $this->url->link('marketplace/modification', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()		
-				);
-			}
+			// if ($this->user->hasPermission('access', 'marketplace/modification')) {
+				// $marketplace[] = array(
+					// 'name'	   => $this->language->get('text_modification'),
+					// 'href'     => $this->url->link('marketplace/modification', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()		
+				// );
+			// }
 			
-			if ($this->user->hasPermission('access', 'marketplace/event')) {
-				$marketplace[] = array(
-					'name'	   => $this->language->get('text_event'),
-					'href'     => $this->url->link('marketplace/event', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()		
-				);
-			}
+			// if ($this->user->hasPermission('access', 'marketplace/event')) {
+				// $marketplace[] = array(
+					// 'name'	   => $this->language->get('text_event'),
+					// 'href'     => $this->url->link('marketplace/event', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()		
+				// );
+			// }
 
-			if ($this->user->hasPermission('access', 'marketplace/cron')) {
-				$marketplace[] = array(
-					'name'	   => $this->language->get('text_cron'),
-					'href'     => $this->url->link('marketplace/cron', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()
-				);
-			}
+			// if ($this->user->hasPermission('access', 'marketplace/cron')) {
+				// $marketplace[] = array(
+					// 'name'	   => $this->language->get('text_cron'),
+					// 'href'     => $this->url->link('marketplace/cron', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()
+				// );
+			// }
 
-			if ($marketplace) {					
-				$data['menus'][] = array(
-					'id'       => 'menu-extension',
-					'icon'	   => 'fa-puzzle-piece', 
-					'name'	   => $this->language->get('text_extension'),
-					'href'     => '',
-					'children' => $marketplace
-				);		
-			}
+			// if ($marketplace) {					
+				// $data['menus'][] = array(
+					// 'id'       => 'menu-extension',
+					// 'icon'	   => 'fa-puzzle-piece', 
+					// 'name'	   => $this->language->get('text_extension'),
+					// 'href'     => '',
+					// 'children' => $marketplace
+				// );		
+			// }
 			
 			// Design
 			$design = array();
 			
-			if ($this->user->hasPermission('access', 'design/layout')) {
-				$design[] = array(
-					'name'	   => $this->language->get('text_layout'),
-					'href'     => $this->url->link('design/layout', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()
-				);	
-			}
+			// if ($this->user->hasPermission('access', 'design/layout')) {
+				// $design[] = array(
+					// 'name'	   => $this->language->get('text_layout'),
+					// 'href'     => $this->url->link('design/layout', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()
+				// );	
+			// }
 			
-			if ($this->user->hasPermission('access', 'design/theme')) {	
-				$design[] = array(
-					'name'	   => $this->language->get('text_theme'),
-					'href'     => $this->url->link('design/theme', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()		
-				);	
-			}
+			// if ($this->user->hasPermission('access', 'design/theme')) {	
+				// $design[] = array(
+					// 'name'	   => $this->language->get('text_theme'),
+					// 'href'     => $this->url->link('design/theme', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()		
+				// );	
+			// }
 			
-			if ($this->user->hasPermission('access', 'design/translation')) {
-				$design[] = array(
-					'name'	   => $this->language->get('text_language_editor'),
-					'href'     => $this->url->link('design/translation', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()		
-				);	
-			}
+			// if ($this->user->hasPermission('access', 'design/translation')) {
+				// $design[] = array(
+					// 'name'	   => $this->language->get('text_language_editor'),
+					// 'href'     => $this->url->link('design/translation', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()		
+				// );	
+			// }
 						
 			if ($this->user->hasPermission('access', 'design/banner')) {
 				$design[] = array(
@@ -242,32 +234,40 @@ class ControllerCommonColumnLeft extends Controller {
 					'children' => array()		
 				);
 			}
-
-			$seo = array();
-
-			if ($this->user->hasPermission('access', 'design/seo_regex')) {
-				$seo[] = array(
-					'name'	   => $this->language->get('text_seo_regex'),
-					'href'     => $this->url->link('design/seo_regex', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()
-				);
-			}
-
-			if ($this->user->hasPermission('access', 'design/seo_url')) {
-				$seo[] = array(
-					'name'	   => $this->language->get('text_seo_url'),
-					'href'     => $this->url->link('design/seo_url', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()		
-				);
-			}
-
-			if ($seo) {
+			
+			if ($this->user->hasPermission('access', 'catalog/information')) {		
 				$design[] = array(
-					'name'	   => $this->language->get('text_seo'),
-					'href'     => '',
-					'children' => $seo
-				);
+					'name'	   => $this->language->get('text_information'),
+					'href'     => $this->url->link('catalog/information', 'user_token=' . $this->session->data['user_token']),
+					'children' => array()		
+				);					
 			}
+			
+			// $seo = array();
+
+			// if ($this->user->hasPermission('access', 'design/seo_regex')) {
+				// $seo[] = array(
+					// 'name'	   => $this->language->get('text_seo_regex'),
+					// 'href'     => $this->url->link('design/seo_regex', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()
+				// );
+			// }
+
+			// if ($this->user->hasPermission('access', 'design/seo_url')) {
+				// $seo[] = array(
+					// 'name'	   => $this->language->get('text_seo_url'),
+					// 'href'     => $this->url->link('design/seo_url', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()		
+				// );
+			// }
+
+			// if ($seo) {
+				// $design[] = array(
+					// 'name'	   => $this->language->get('text_seo'),
+					// 'href'     => '',
+					// 'children' => $seo
+				// );
+			// }
 
 			if ($design) {
 				$data['menus'][] = array(
@@ -280,68 +280,68 @@ class ControllerCommonColumnLeft extends Controller {
 			}
 			
 			// Sales
-			$sale = array();
+			// $sale = array();
 			
-			if ($this->user->hasPermission('access', 'sale/order')) {
-				$sale[] = array(
-					'name'	   => $this->language->get('text_order'),
-					'href'     => $this->url->link('sale/order', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()		
-				);	
-			}
+			// if ($this->user->hasPermission('access', 'sale/order')) {
+				// $sale[] = array(
+					// 'name'	   => $this->language->get('text_order'),
+					// 'href'     => $this->url->link('sale/order', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()		
+				// );	
+			// }
 			
-			if ($this->user->hasPermission('access', 'sale/recurring')) {	
-				$sale[] = array(
-					'name'	   => $this->language->get('text_order_recurring'),
-					'href'     => $this->url->link('sale/recurring', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()		
-				);	
-			}
+			// if ($this->user->hasPermission('access', 'sale/recurring')) {	
+				// $sale[] = array(
+					// 'name'	   => $this->language->get('text_order_recurring'),
+					// 'href'     => $this->url->link('sale/recurring', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()		
+				// );	
+			// }
 			
-			if ($this->user->hasPermission('access', 'sale/return')) {
-				$sale[] = array(
-					'name'	   => $this->language->get('text_return'),
-					'href'     => $this->url->link('sale/return', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()		
-				);	
-			}
+			// if ($this->user->hasPermission('access', 'sale/return')) {
+				// $sale[] = array(
+					// 'name'	   => $this->language->get('text_return'),
+					// 'href'     => $this->url->link('sale/return', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()		
+				// );	
+			// }
 			
-			// Voucher
-			$voucher = array();
+			// // Voucher
+			// $voucher = array();
 			
-			if ($this->user->hasPermission('access', 'sale/voucher')) {
-				$voucher[] = array(
-					'name'	   => $this->language->get('text_voucher'),
-					'href'     => $this->url->link('sale/voucher', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()		
-				);	
-			}
+			// if ($this->user->hasPermission('access', 'sale/voucher')) {
+				// $voucher[] = array(
+					// 'name'	   => $this->language->get('text_voucher'),
+					// 'href'     => $this->url->link('sale/voucher', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()		
+				// );	
+			// }
 			
-			if ($this->user->hasPermission('access', 'sale/voucher_theme')) {
-				$voucher[] = array(
-					'name'	   => $this->language->get('text_voucher_theme'),
-					'href'     => $this->url->link('sale/voucher_theme', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()		
-				);	
-			}
+			// if ($this->user->hasPermission('access', 'sale/voucher_theme')) {
+				// $voucher[] = array(
+					// 'name'	   => $this->language->get('text_voucher_theme'),
+					// 'href'     => $this->url->link('sale/voucher_theme', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()		
+				// );	
+			// }
 			
-			if ($voucher) {
-				$sale[] = array(
-					'name'	   => $this->language->get('text_voucher'),
-					'href'     => '',
-					'children' => $voucher		
-				);		
-			}
+			// if ($voucher) {
+				// $sale[] = array(
+					// 'name'	   => $this->language->get('text_voucher'),
+					// 'href'     => '',
+					// 'children' => $voucher		
+				// );		
+			// }
 			
-			if ($sale) {
-				$data['menus'][] = array(
-					'id'       => 'menu-sale',
-					'icon'	   => 'fa-shopping-cart', 
-					'name'	   => $this->language->get('text_sale'),
-					'href'     => '',
-					'children' => $sale
-				);
-			}
+			// if ($sale) {
+				// $data['menus'][] = array(
+					// 'id'       => 'menu-sale',
+					// 'icon'	   => 'fa-shopping-cart', 
+					// 'name'	   => $this->language->get('text_sale'),
+					// 'href'     => '',
+					// 'children' => $sale
+				// );
+			// }
 			
 			// Customer
 			$customer = array();
@@ -354,29 +354,29 @@ class ControllerCommonColumnLeft extends Controller {
 				);	
 			}
 			
-			if ($this->user->hasPermission('access', 'customer/customer_group')) {
-				$customer[] = array(
-					'name'	   => $this->language->get('text_customer_group'),
-					'href'     => $this->url->link('customer/customer_group', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()		
-				);
-			}
+			// if ($this->user->hasPermission('access', 'customer/customer_group')) {
+				// $customer[] = array(
+					// 'name'	   => $this->language->get('text_customer_group'),
+					// 'href'     => $this->url->link('customer/customer_group', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()		
+				// );
+			// }
 				
-			if ($this->user->hasPermission('access', 'customer/customer_approval')) {
-				$customer[] = array(
-					'name'	   => $this->language->get('text_customer_approval'),
-					'href'     => $this->url->link('customer/customer_approval', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()		
-				);
-			}
+			// if ($this->user->hasPermission('access', 'customer/customer_approval')) {
+				// $customer[] = array(
+					// 'name'	   => $this->language->get('text_customer_approval'),
+					// 'href'     => $this->url->link('customer/customer_approval', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()		
+				// );
+			// }
 						
-			if ($this->user->hasPermission('access', 'customer/custom_field')) {		
-				$customer[] = array(
-					'name'	   => $this->language->get('text_custom_field'),
-					'href'     => $this->url->link('customer/custom_field', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()		
-				);	
-			}
+			// if ($this->user->hasPermission('access', 'customer/custom_field')) {		
+				// $customer[] = array(
+					// 'name'	   => $this->language->get('text_custom_field'),
+					// 'href'     => $this->url->link('customer/custom_field', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()		
+				// );	
+			// }
 			
 			if ($customer) {
 				$data['menus'][] = array(
@@ -389,49 +389,49 @@ class ControllerCommonColumnLeft extends Controller {
 			}
 			
 			// Marketing
-			$marketing = array();
+			// $marketing = array();
 
-			if ($this->user->hasPermission('access', 'marketing/affiliate')) {
-				$marketing[] = array(
-					'name'	   => $this->language->get('text_affiliate'),
-					'href'     => $this->url->link('marketing/affiliate', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()
-				);
-			}
+			// if ($this->user->hasPermission('access', 'marketing/affiliate')) {
+				// $marketing[] = array(
+					// 'name'	   => $this->language->get('text_affiliate'),
+					// 'href'     => $this->url->link('marketing/affiliate', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()
+				// );
+			// }
 
-			if ($this->user->hasPermission('access', 'marketing/marketing')) {
-				$marketing[] = array(
-					'name'	   => $this->language->get('text_marketing'),
-					'href'     => $this->url->link('marketing/marketing', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()		
-				);	
-			}
+			// if ($this->user->hasPermission('access', 'marketing/marketing')) {
+				// $marketing[] = array(
+					// 'name'	   => $this->language->get('text_marketing'),
+					// 'href'     => $this->url->link('marketing/marketing', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()		
+				// );	
+			// }
 			
-			if ($this->user->hasPermission('access', 'marketing/coupon')) {	
-				$marketing[] = array(
-					'name'	   => $this->language->get('text_coupon'),
-					'href'     => $this->url->link('marketing/coupon', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()		
-				);	
-			}
+			// if ($this->user->hasPermission('access', 'marketing/coupon')) {	
+				// $marketing[] = array(
+					// 'name'	   => $this->language->get('text_coupon'),
+					// 'href'     => $this->url->link('marketing/coupon', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()		
+				// );	
+			// }
 			
-			if ($this->user->hasPermission('access', 'marketing/contact')) {
-				$marketing[] = array(
-					'name'	   => $this->language->get('text_contact'),
-					'href'     => $this->url->link('marketing/contact', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()		
-				);
-			}
+			// if ($this->user->hasPermission('access', 'marketing/contact')) {
+				// $marketing[] = array(
+					// 'name'	   => $this->language->get('text_contact'),
+					// 'href'     => $this->url->link('marketing/contact', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()		
+				// );
+			// }
 			
-			if ($marketing) {
-				$data['menus'][] = array(
-					'id'       => 'menu-marketing',
-					'icon'	   => 'fa-share-alt', 
-					'name'	   => $this->language->get('text_marketing'),
-					'href'     => '',
-					'children' => $marketing
-				);	
-			}
+			// if ($marketing) {
+				// $data['menus'][] = array(
+					// 'id'       => 'menu-marketing',
+					// 'icon'	   => 'fa-share-alt', 
+					// 'name'	   => $this->language->get('text_marketing'),
+					// 'href'     => '',
+					// 'children' => $marketing
+				// );	
+			// }
 			
 			// System
 			$system = array();
@@ -463,13 +463,13 @@ class ControllerCommonColumnLeft extends Controller {
 				);	
 			}
 			
-			if ($this->user->hasPermission('access', 'user/api')) {		
-				$user[] = array(
-					'name'	   => $this->language->get('text_api'),
-					'href'     => $this->url->link('user/api', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()		
-				);	
-			}
+			// if ($this->user->hasPermission('access', 'user/api')) {		
+				// $user[] = array(
+					// 'name'	   => $this->language->get('text_api'),
+					// 'href'     => $this->url->link('user/api', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()		
+				// );	
+			// }
 			
 			if ($user) {
 				$system[] = array(
@@ -490,29 +490,29 @@ class ControllerCommonColumnLeft extends Controller {
 				);	
 			}
 			
-			if ($this->user->hasPermission('access', 'localisation/language')) {
-				$localisation[] = array(
-					'name'	   => $this->language->get('text_language'),
-					'href'     => $this->url->link('localisation/language', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()		
-				);
-			}
+			// if ($this->user->hasPermission('access', 'localisation/language')) {
+				// $localisation[] = array(
+					// 'name'	   => $this->language->get('text_language'),
+					// 'href'     => $this->url->link('localisation/language', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()		
+				// );
+			// }
 			
-			if ($this->user->hasPermission('access', 'localisation/currency')) {
-				$localisation[] = array(
-					'name'	   => $this->language->get('text_currency'),
-					'href'     => $this->url->link('localisation/currency', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()		
-				);
-			}
+			// if ($this->user->hasPermission('access', 'localisation/currency')) {
+				// $localisation[] = array(
+					// 'name'	   => $this->language->get('text_currency'),
+					// 'href'     => $this->url->link('localisation/currency', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()		
+				// );
+			// }
 			
-			if ($this->user->hasPermission('access', 'localisation/stock_status')) {
-				$localisation[] = array(
-					'name'	   => $this->language->get('text_stock_status'),
-					'href'     => $this->url->link('localisation/stock_status', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()		
-				);
-			}
+			// if ($this->user->hasPermission('access', 'localisation/stock_status')) {
+				// $localisation[] = array(
+					// 'name'	   => $this->language->get('text_stock_status'),
+					// 'href'     => $this->url->link('localisation/stock_status', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()		
+				// );
+			// }
 			
 			if ($this->user->hasPermission('access', 'localisation/order_status')) {
 				$localisation[] = array(
@@ -582,31 +582,31 @@ class ControllerCommonColumnLeft extends Controller {
 			}
 			
 			// Tax		
-			$tax = array();
+			// $tax = array();
 			
-			if ($this->user->hasPermission('access', 'localisation/tax_class')) {
-				$tax[] = array(
-					'name'	   => $this->language->get('text_tax_class'),
-					'href'     => $this->url->link('localisation/tax_class', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()
-				);
-			}
+			// if ($this->user->hasPermission('access', 'localisation/tax_class')) {
+				// $tax[] = array(
+					// 'name'	   => $this->language->get('text_tax_class'),
+					// 'href'     => $this->url->link('localisation/tax_class', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()
+				// );
+			// }
 			
-			if ($this->user->hasPermission('access', 'localisation/tax_rate')) {
-				$tax[] = array(
-					'name'	   => $this->language->get('text_tax_rate'),
-					'href'     => $this->url->link('localisation/tax_rate', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()
-				);
-			}
+			// if ($this->user->hasPermission('access', 'localisation/tax_rate')) {
+				// $tax[] = array(
+					// 'name'	   => $this->language->get('text_tax_rate'),
+					// 'href'     => $this->url->link('localisation/tax_rate', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()
+				// );
+			// }
 			
-			if ($tax) {	
-				$localisation[] = array(
-					'name'	   => $this->language->get('text_tax'),
-					'href'     => '',
-					'children' => $tax		
-				);
-			}
+			// if ($tax) {	
+				// $localisation[] = array(
+					// 'name'	   => $this->language->get('text_tax'),
+					// 'href'     => '',
+					// 'children' => $tax		
+				// );
+			// }
 			
 			if ($this->user->hasPermission('access', 'localisation/length_class')) {
 				$localisation[] = array(
@@ -633,49 +633,49 @@ class ControllerCommonColumnLeft extends Controller {
 			}
 			
 			// Tools	
-			$maintenance = array();
+			// $maintenance = array();
 			
-			if ($this->user->hasPermission('access', 'tool/upgrade')) {
-				$maintenance[] = array(
-					'name'	   => $this->language->get('text_upgrade'),
-					'href'     => $this->url->link('tool/upgrade', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()		
-				);
-			}
+			// // if ($this->user->hasPermission('access', 'tool/upgrade')) {
+				// // $maintenance[] = array(
+					// // 'name'	   => $this->language->get('text_upgrade'),
+					// // 'href'     => $this->url->link('tool/upgrade', 'user_token=' . $this->session->data['user_token']),
+					// // 'children' => array()		
+				// // );
+			// // }
 						
-			if ($this->user->hasPermission('access', 'tool/backup')) {
-				$maintenance[] = array(
-					'name'	   => $this->language->get('text_backup'),
-					'href'     => $this->url->link('tool/backup', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()		
-				);
-			}
+			// if ($this->user->hasPermission('access', 'tool/backup')) {
+				// $maintenance[] = array(
+					// 'name'	   => $this->language->get('text_backup'),
+					// 'href'     => $this->url->link('tool/backup', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()		
+				// );
+			// }
 					
-			if ($this->user->hasPermission('access', 'tool/upload')) {
-				$maintenance[] = array(
-					'name'	   => $this->language->get('text_upload'),
-					'href'     => $this->url->link('tool/upload', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()		
-				);	
-			}
+			// if ($this->user->hasPermission('access', 'tool/upload')) {
+				// $maintenance[] = array(
+					// 'name'	   => $this->language->get('text_upload'),
+					// 'href'     => $this->url->link('tool/upload', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()		
+				// );	
+			// }
 						
-			if ($this->user->hasPermission('access', 'tool/log')) {
-				$maintenance[] = array(
-					'name'	   => $this->language->get('text_log'),
-					'href'     => $this->url->link('tool/log', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()		
-				);
-			}
+			// if ($this->user->hasPermission('access', 'tool/log')) {
+				// $maintenance[] = array(
+					// 'name'	   => $this->language->get('text_log'),
+					// 'href'     => $this->url->link('tool/log', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()		
+				// );
+			// }
 		
-			if ($maintenance) {
-				$system[] = array(
-					'id'       => 'menu-maintenance',
-					'icon'	   => 'fa-cog', 
-					'name'	   => $this->language->get('text_maintenance'),
-					'href'     => '',
-					'children' => $maintenance
-				);
-			}
+			// if ($maintenance) {
+				// $system[] = array(
+					// 'id'       => 'menu-maintenance',
+					// 'icon'	   => 'fa-cog', 
+					// 'name'	   => $this->language->get('text_maintenance'),
+					// 'href'     => '',
+					// 'children' => $maintenance
+				// );
+			// }
 		
 			if ($system) {
 				$data['menus'][] = array(
@@ -687,41 +687,41 @@ class ControllerCommonColumnLeft extends Controller {
 				);
 			}
 			
-			$report = array();
+			// $report = array();
 							
-			if ($this->user->hasPermission('access', 'report/report')) {
-				$report[] = array(
-					'name'	   => $this->language->get('text_reports'),
-					'href'     => $this->url->link('report/report', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()		
-				);
-			}
+			// if ($this->user->hasPermission('access', 'report/report')) {
+				// $report[] = array(
+					// 'name'	   => $this->language->get('text_reports'),
+					// 'href'     => $this->url->link('report/report', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()		
+				// );
+			// }
 					
-			if ($this->user->hasPermission('access', 'report/online')) {
-				$report[] = array(
-					'name'	   => $this->language->get('text_online'),
-					'href'     => $this->url->link('report/online', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()		
-				);
-			}
+			// if ($this->user->hasPermission('access', 'report/online')) {
+				// $report[] = array(
+					// 'name'	   => $this->language->get('text_online'),
+					// 'href'     => $this->url->link('report/online', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()		
+				// );
+			// }
 											
-			if ($this->user->hasPermission('access', 'report/statistics')) {
-				$report[] = array(
-					'name'	   => $this->language->get('text_statistics'),
-					'href'     => $this->url->link('report/statistics', 'user_token=' . $this->session->data['user_token']),
-					'children' => array()		
-				);
-			}	
+			// if ($this->user->hasPermission('access', 'report/statistics')) {
+				// $report[] = array(
+					// 'name'	   => $this->language->get('text_statistics'),
+					// 'href'     => $this->url->link('report/statistics', 'user_token=' . $this->session->data['user_token']),
+					// 'children' => array()		
+				// );
+			// }	
 			
-			if ($report) {
-				$data['menus'][] = array(
-					'id'       => 'menu-report',
-					'icon'	   => 'fa-bar-chart-o', 
-					'name'	   => $this->language->get('text_reports'),
-					'href'     => '',
-					'children' => $report
-				);
-			}	
+			// if ($report) {
+				// $data['menus'][] = array(
+					// 'id'       => 'menu-report',
+					// 'icon'	   => 'fa-bar-chart-o', 
+					// 'name'	   => $this->language->get('text_reports'),
+					// 'href'     => '',
+					// 'children' => $report
+				// );
+			// }	
 			
 			// Stats
 			$this->load->model('sale/order');
