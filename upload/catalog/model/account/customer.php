@@ -62,7 +62,7 @@ class ModelAccountCustomer extends Model {
 	public function getCustomerByEmail($email) {
 		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "customer WHERE LOWER(email) = '" . $this->db->escape(utf8_strtolower($email)) . "'");
 
-		return $query->row;
+		return $query->rows;
 	}
 
 	public function getCustomerByCode($code) {
@@ -142,5 +142,27 @@ class ModelAccountCustomer extends Model {
 	}
 	public function editCustomerPassword($customer_id, $password) {
 		$this->db->query("UPDATE " . DB_PREFIX . "customer SET salt = '', password = '" . $this->db->escape(password_hash($password, PASSWORD_DEFAULT)) . "', code = '' WHERE customer_id = '" . $customer_id . "'");
-	}	
+	}
+	
+	public function addCustomerFamilies($data){
+		$bod = date('Y-d-m',strtotime($data['date_of_birth']));
+		$this->db->query("INSERT INTO " . DB_PREFIX . "customer_families SET customer_id = '" . $data['customer_id'] . "', name = '" . $data['name'] . "', relation = '" . $data['relation'] . "', date_of_birth = '" . $bod . "', blood_group = '" . $data['blood_group'] . "', created_date = '" . $this->db->escape(date('Y-m-d H:i:s')) . "'");
+		return $this->db->countAffected();
+	}
+	
+	public function listCustomerFamilies($customer_id){
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "customer_families WHERE customer_id = '" . (int)$customer_id . "'");
+		
+		return $query->rows;
+	}
+	
+	public function editCustomerFamilies($id, $data) {
+		$this->db->query("UPDATE " . DB_PREFIX . "customer_families SET customer_id = '". $data['customer_id'] ."', name = '" . $data['name'] . "', relation = '". $data['relation'] ."', date_of_birth = '". date('Y-d-m',strtotime($data['date_of_birth'])) ."', blood_group = '". $data['blood_group'] ."' WHERE id = '" . (int)$id . "'");
+		return $this->db->countAffected();
+	}
+	
+	public function deleteCustomerFamilies($id, $customer_id){
+		$this->db->query("DELETE FROM `" . DB_PREFIX . "customer_families` WHERE customer_id = '" . $this->db->escape(utf8_strtolower($customer_id)) . "' AND id = '". $this->db->escape(utf8_strtolower($id)) ."' ");
+		return $this->db->countAffected();
+	}
 }
