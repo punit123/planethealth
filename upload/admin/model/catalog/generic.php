@@ -1,15 +1,16 @@
 <?php
 class ModelCatalogGeneric extends Model {
 	public function addGeneric($data) {
-		$this->db->query("INSERT INTO " . DB_PREFIX . "generic SET disease = '" . $this->db->escape($value['disease']) ."', 
-		how_to_use = '" . $this->db->escape($value['how_to_use']) ."',
-		dose = '" . $this->db->escape($value['dose']) ."',
-		warning = '" . $this->db->escape($value['warning']) ."',
-		indication = '" . $this->db->escape($value['indication']) ."',
-		side_effect = '" . $this->db->escape($value['side_effect']) ."',
-		about_medicine = '" . $this->db->escape($value['about_medicine']) ."',
-		disclaimer = '" . $this->db->escape($value['disclaimer']) ."',
-		generic_name = '" . $this->db->escape($value['generic_name']) ."',
+		$lang = (int)$this->config->get('config_language_id');
+		$this->db->query("INSERT INTO " . DB_PREFIX . "generic SET disease = '" . $this->db->escape($data['disease'][$lang]['disease']) ."', 
+		how_to_use = '" . $this->db->escape($data['how_to_use'][$lang]['how_to_use']) ."',
+		dose = '" . $this->db->escape($data['dose'][$lang]['dose']) ."',
+		warning = '" . $this->db->escape($data['warning'][$lang]['warning']) ."',
+		indication = '" . $this->db->escape($data['indication'][$lang]['indication']) ."',
+		side_effect = '" . $this->db->escape($data['side_effect'][$lang]['side_effect']) ."',
+		about_medicine = '" . $this->db->escape($data['about_medicine'][$lang]['about_medicine']) ."',
+		disclaimer = '" . $this->db->escape($data['disclaimer'][$lang]['disclaimer']) ."',
+		generic_name = '" . $this->db->escape($data['generic_name'][$lang]['generic_name']) ."',
 		sort_order = '" . (int)$data['sort_order'] . "'");
 
 		$generic_id = $this->db->getLastId();
@@ -17,24 +18,25 @@ class ModelCatalogGeneric extends Model {
 	}
 
 	public function editGeneric($generic_id, $data) {
-		$this->db->query("UPDATE " . DB_PREFIX . "generic SET disease = '" . $this->db->escape($data['disease']) ."',
-		how_to_use = '" . $this->db->escape($data['how_to_use']) ."',
-		dose = '" . $this->db->escape($data['dose']) ."',
-		warning = '" . $this->db->escape($data['warning']) ."',
-		indication = '" . $this->db->escape($data['indication']) ."',
-		side_effect = '" . $this->db->escape($data['side_effect']) ."',
-		about_medicine = '" . $this->db->escape($data['about_medicine']) ."',
-		disclaimer = '" . $this->db->escape($data['disclaimer']) ."',
-		generic_name = '" . $this->db->escape($data['generic_name']) ."',
+		$lang = (int)$this->config->get('config_language_id');
+		$this->db->query("UPDATE " . DB_PREFIX . "generic SET disease = '" . $this->db->escape($data['disease'][$lang]['disease']) ."', 
+		how_to_use = '" . $this->db->escape($data['how_to_use'][$lang]['how_to_use']) ."',
+		dose = '" . $this->db->escape($data['dose'][$lang]['dose']) ."',
+		warning = '" . $this->db->escape($data['warning'][$lang]['warning']) ."',
+		indication = '" . $this->db->escape($data['indication'][$lang]['indication']) ."',
+		side_effect = '" . $this->db->escape($data['side_effect'][$lang]['side_effect']) ."',
+		about_medicine = '" . $this->db->escape($data['about_medicine'][$lang]['about_medicine']) ."',
+		disclaimer = '" . $this->db->escape($data['disclaimer'][$lang]['disclaimer']) ."',
+		generic_name = '" . $this->db->escape($data['generic_name'][$lang]['generic_name']) ."',
 		sort_order = '" . (int)$data['sort_order'] . "' WHERE id = '" . (int)$generic_id . "'");
 	}
 
 	public function deleteGeneric($generic_id) {
-		$this->db->query("DELETE FROM " . DB_PREFIX . "generic WHERE generic_id = '" . (int)$generic_id . "'");
+		$this->db->query("DELETE FROM " . DB_PREFIX . "generic WHERE id = '" . (int)$generic_id . "'");
 	}
 
 	public function getGeneric($generic_id) {
-		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "generic WHERE generic_id = '" . (int)$generic_id . "'");
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "generic WHERE id = '" . (int)$generic_id . "'");
 		return $query->row;
 	}
 
@@ -42,14 +44,14 @@ class ModelCatalogGeneric extends Model {
 		$sql = "SELECT * FROM " . DB_PREFIX . "generic ag WHERE ag.language_id = '" . (int)$this->config->get('config_language_id') . "'";
        
 		$sort_data = array(
-			'ag.generic_id',
+			'ag.id',
 			'ag.sort_order'
 		);
 
 		if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
 			$sql .= " ORDER BY " . $data['sort'];
 		} else {
-			$sql .= " ORDER BY ag.generic_id";
+			$sql .= " ORDER BY ag.id";
 		}
 
 		if (isset($data['order']) && ($data['order'] == 'DESC')) {
@@ -69,7 +71,7 @@ class ModelCatalogGeneric extends Model {
 
 			$sql .= " LIMIT " . (int)$data['start'] . "," . (int)$data['limit'];
 		}
-
+         
 		$query = $this->db->query($sql);
 
 		return $query->rows;

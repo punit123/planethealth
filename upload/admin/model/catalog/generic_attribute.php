@@ -29,7 +29,7 @@ class ModelCatalogGenericAttribute extends Model {
 	}
 
 	public function getAttribute($attribute_id) {
-		$query = $this->db->query("SELECT a.*, ad.generic_name FROM " . DB_PREFIX . "generic_attribute a LEFT JOIN " . DB_PREFIX . "generic ad ON (a.generic_id = ad.id) WHERE a.id = '" . (int)$attribute_id . "' AND ad.language_id = '" . (int)$this->config->get('config_language_id') . "'");
+		$query = $this->db->query("SELECT a.*, ad.generic_name	 FROM " . DB_PREFIX . "generic_attribute a LEFT JOIN " . DB_PREFIX . "generic ad ON (a.generic_id = ad.id) WHERE a.id = '" . (int)$attribute_id . "' AND ad.language_id = '" . (int)$this->config->get('config_language_id') . "'");
 
 		return $query->row;
 	}

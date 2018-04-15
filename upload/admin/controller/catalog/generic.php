@@ -18,7 +18,7 @@ class ControllerCatalogGeneric extends Controller {
 		$this->document->setTitle($this->language->get('heading_title'));
 
 		$this->load->model('catalog/generic');
-        
+       // echo '<pre>'; print_r($this->request->post); die;
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
 			$this->model_catalog_generic->addGeneric($this->request->post);
 
@@ -50,9 +50,10 @@ class ControllerCatalogGeneric extends Controller {
 		$this->document->setTitle($this->language->get('heading_title'));
 
 		$this->load->model('catalog/generic');
-
+        //echo '<pre>'; print_r($this->request->post); die;
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
-			$this->model_catalog_generic->editGeneric($this->request->get['generic_id'], $this->request->post);
+			
+			$this->model_catalog_generic->editGeneric($this->request->get['id'], $this->request->post);
 
 			$this->session->data['success'] = $this->language->get('text_success');
 
@@ -84,6 +85,7 @@ class ControllerCatalogGeneric extends Controller {
 		$this->load->model('catalog/generic');
 
 		if (isset($this->request->post['selected']) && $this->validateDelete()) {
+			
 			foreach ($this->request->post['selected'] as $generic_id) {
 				$this->model_catalog_generic->deleteGeneric($generic_id);
 			}
@@ -114,7 +116,7 @@ class ControllerCatalogGeneric extends Controller {
 		if (isset($this->request->get['sort'])) {
 			$sort = $this->request->get['sort'];
 		} else {
-			$sort = 'agd.name';
+			$sort = 'ag.generic_name';
 		}
 
 		if (isset($this->request->get['order'])) {
@@ -170,13 +172,13 @@ class ControllerCatalogGeneric extends Controller {
 		$generic_total = $this->model_catalog_generic->getTotalGenerics();
 
 		$results = $this->model_catalog_generic->getGenerics($filter_data);
-
+		
 		foreach ($results as $result) {
 			$data['generics'][] = array(
-				'generic_id' => $result['generic_id'],
-				'name'               => $result['name'],
+				'id' => $result['id'],
+				'generic_name'               => $result['generic_name'],
 				'sort_order'         => $result['sort_order'],
-				'edit'               => $this->url->link('catalog/generic/edit', 'user_token=' . $this->session->data['user_token'] . '&generic_id=' . $result['generic_id'] . $url)
+				'edit'               => $this->url->link('catalog/generic/edit', 'user_token=' . $this->session->data['user_token'] . '&id=' . $result['id'] . $url)
 			);
 		}
 
@@ -212,7 +214,7 @@ class ControllerCatalogGeneric extends Controller {
 			$url .= '&page=' . $this->request->get['page'];
 		}
 
-		$data['sort_name'] = $this->url->link('catalog/generic', 'user_token=' . $this->session->data['user_token'] . '&sort=agd.name' . $url);
+		$data['sort_name'] = $this->url->link('catalog/generic', 'user_token=' . $this->session->data['user_token'] . '&sort=ag.generic_name' . $url);
 		$data['sort_sort_order'] = $this->url->link('catalog/generic', 'user_token=' . $this->session->data['user_token'] . '&sort=ag.sort_order' . $url);
 
 		$url = '';
@@ -241,12 +243,12 @@ class ControllerCatalogGeneric extends Controller {
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
-
+        //echo '<pre>'; print_r($data); die;
 		$this->response->setOutput($this->load->view('catalog/generic_list', $data));
 	}
 
 	protected function getForm() {
-		$data['text_form'] = !isset($this->request->get['generic_id']) ? $this->language->get('text_add') : $this->language->get('text_edit');
+		$data['text_form'] = !isset($this->request->get['id']) ? $this->language->get('text_add') : $this->language->get('text_edit');
 
 		if (isset($this->error['warning'])) {
 			$data['error_warning'] = $this->error['warning'];
@@ -254,10 +256,10 @@ class ControllerCatalogGeneric extends Controller {
 			$data['error_warning'] = '';
 		}
 
-		if (isset($this->error['name'])) {
-			$data['error_name'] = $this->error['name'];
+		if (isset($this->error['generic_name'])) {
+			$data['error_generic_name'] = $this->error['generic_name'];
 		} else {
-			$data['error_name'] = array();
+			$data['error_generic_name'] = array();
 		}
 
 		$url = '';
@@ -286,30 +288,92 @@ class ControllerCatalogGeneric extends Controller {
 			'href' => $this->url->link('catalog/generic', 'user_token=' . $this->session->data['user_token'] . $url)
 		);
 
-		if (!isset($this->request->get['generic_id'])) {
+		if (!isset($this->request->get['id'])) {
 			$data['action'] = $this->url->link('catalog/generic/add', 'user_token=' . $this->session->data['user_token'] . $url);
 		} else {
-			$data['action'] = $this->url->link('catalog/generic/edit', 'user_token=' . $this->session->data['user_token'] . '&generic_id=' . $this->request->get['generic_id'] . $url);
+			$data['action'] = $this->url->link('catalog/generic/edit', 'user_token=' . $this->session->data['user_token'] . '&id=' . $this->request->get['id'] . $url);
 		}
 
 		$data['cancel'] = $this->url->link('catalog/generic', 'user_token=' . $this->session->data['user_token'] . $url);
-
-		if (isset($this->request->get['generic_id']) && ($this->request->server['REQUEST_METHOD'] != 'POST')) {
-			$generic_info = $this->model_catalog_generic->getGeneric($this->request->get['generic_id']);
+        $generic_info = array();
+		if (isset($this->request->get['id']) && ($this->request->server['REQUEST_METHOD'] != 'POST')) {
+			$generic_info = $this->model_catalog_generic->getGeneric($this->request->get['id']);
 		}
-
+        //echo '<pre>'; print_r($generic_info); die;
 		$this->load->model('localisation/language');
 
 		$data['languages'] = $this->model_localisation_language->getLanguages();
-
+        $lang = (int)$this->config->get('config_language_id');
 		if (isset($this->request->post['generic_name'])) {
-			$data['generic_name'] = $this->request->post['generic_name'];
-		} elseif (isset($this->request->get['generic_id'])) {
-			$data['generic_name'] = $this->model_catalog_generic->getAllGenericName($this->request->get['generic_id']);
+			$data['generic_name'][$lang]['generic_name'] = $this->request->post['generic_name'];
+		} elseif (isset($this->request->get['id'])) {
+			$data['generic_name'][$lang]['generic_name'] = $generic_info['generic_name'];
 		} else {
-			$data['generic_name'] = array();
+			$data['generic_name'][$lang]['generic_name'] = array();
 		}
-
+		if (isset($this->request->post['id'])) {
+			$data['disease'][$lang]['disease'] = $this->request->post['disease'];
+		} elseif (isset($this->request->get['id'])) {
+			$data['disease'][$lang]['disease'] = $generic_info['disease'];
+		} else {
+			$data['disease'][$lang]['disease'] = array();
+		}
+		if (isset($this->request->post['id'])) {
+			$data['how_to_use'][$lang]['how_to_use'] = $this->request->post['how_to_use'];
+		} elseif (isset($this->request->get['id'])) {
+			$data['how_to_use'][$lang]['how_to_use'] = $generic_info['how_to_use'];
+		} else {
+			$data['how_to_use'][$lang]['how_to_use'] = array();
+		}
+		if (isset($this->request->post['id'])) {
+			$data['dose'][$lang]['dose'] = $this->request->post['dose'];
+		} elseif (isset($this->request->get['id'])) {
+			$data['dose'][$lang]['dose'] = $generic_info['dose'];
+		} else {
+			$data['dose'][$lang]['dose'] = array();
+		}
+		if (isset($this->request->post['id'])) {
+			$data['warning'][$lang]['warning'] = $this->request->post['warning'];
+		} elseif (isset($this->request->get['id'])) {
+			$data['warning'][$lang]['warning'] = $generic_info['warning'];
+		} else {
+			$data['warning'][$lang]['warning'] = array();
+		}
+		if (isset($this->request->post['id'])) {
+			$data['indication'][$lang]['indication'] = $this->request->post['indication'];
+		} elseif (isset($this->request->get['id'])) {
+			$data['indication'][$lang]['indication'] = $generic_info['indication'];
+		} else {
+			$data['indication'][$lang]['indication'] = array();
+		}
+		if (isset($this->request->post['id'])) {
+			$data['side_effect'][$lang]['side_effect']= $this->request->post['side_effect'];
+		} elseif (isset($this->request->get['id'])) {
+			$data['side_effect'][$lang]['side_effect'] = $generic_info['side_effect'];
+		} else {
+			$data['side_effect'][$lang]['side_effect'] = array();
+		}
+		if (isset($this->request->post['id'])) {
+			$data['about_medicine'][$lang]['about_medicine'] = $this->request->post['about_medicine'];
+		} elseif (isset($this->request->get['id'])) {
+			$data['about_medicine'][$lang]['about_medicine'] = $generic_info['about_medicine'];
+		} else {
+			$data['about_medicine'][$lang]['about_medicine'] = array();
+		}
+		if (isset($this->request->post['id'])) {
+			$data['description'][$lang]['description'] = $this->request->post['description'];
+		} elseif (isset($this->request->get['id'])) {
+			$data['description'][$lang]['description'] = $generic_info['description'];
+		} else {
+			$data['description'][$lang]['description'] = array();
+		}
+		if (isset($this->request->post['id'])) {
+			$data['disclaimer'][$lang]['disclaimer'] = $this->request->post['disclaimer'];
+		} elseif (isset($this->request->get['id'])) {
+			$data['disclaimer'][$lang]['disclaimer'] = $generic_info['disclaimer'];
+		} else {
+			$data['disclaimer'][$lang]['disclaimer'] = array();
+		}
 		if (isset($this->request->post['sort_order'])) {
 			$data['sort_order'] = $this->request->post['sort_order'];
 		} elseif (!empty($generic_info)) {
@@ -321,7 +385,7 @@ class ControllerCatalogGeneric extends Controller {
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
-
+        //echo '<pre>'; print_r($data); die;
 		$this->response->setOutput($this->load->view('catalog/generic_form', $data));
 	}
 
