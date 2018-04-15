@@ -1,39 +1,40 @@
 <?php
 class ControllerApiCustomer extends Controller {
 	public function register(){
-
 		$this->load->language('api/customer');
 		$this->load->model('account/customer');
 		$json = array();
 			if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
 				$_POST['lastname'] = '';
 				$name = $_POST['firstname'];
-				$lastname = $_POST['lastname'];
 				$email = $_POST['email'];
 				$phone = $_POST['telephone'];
 				$password = $_POST['password'];
 				$confirmpassword = $_POST['confirmpassword'];
+				$fcm_id = $_POST['fcm_id'];
+				$device_type = $_POST['device_type'];
+				
 				if($password == $confirmpassword){
-					$customer_email = $this->model_account_customer->getCustomerByEmail($email);
-					if ($email == $customer_email['email']){
-						$json['message'] = $this->language->get('error_email');
-						$json['status''] = 'error';
+					$customerByEmail = $this->model_account_customer->getCustomerByEmail($email);
+					if(empty($customerByEmail)){
+						$customer_id = $this->model_account_customer->addCustomer($_POST);
+						$json['data'] = $this->model_account_customer->getCustomer($customer_id);
+						$json['message'] = $this->language->get('text_success');
+						$json['status'] = 'success';
 					}
 					else{
-					$customer_id = $this->model_account_customer->addCustomer($_POST);
-					$json['data'] = $this->model_account_customer->getCustomer($customer_id);					
-					$json['message'] = $this->language->get('text_success');
-					$json['status''] = 'success';
+						$json['message'] = $this->language->get('Email is already exist!');
+						$json['status'] = 'error';
 					}
 				}
 				else{
-					$json['message'] = $this->language->get('error_password');
-					$json['status''] = 'error';
+					$json['message'] = $this->language->get('Password does not match!');
+					$json['status'] = 'error';
 				}
 			}
 			else{
 				$json['message'] = $this->language->get('problem_with_signup');
-				$json['status''] = 'error';
+				$json['status'] = 'error';
 			}
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));		
@@ -48,32 +49,32 @@ class ControllerApiCustomer extends Controller {
 
 				if ($login_info && ($login_info['total'] >= $this->config->get('config_login_attempts')) && strtotime('-1 hour') < strtotime($login_info['date_modified'])) {
 					$json['message'] = $this->language->get('error_attempts');
-					$json['status''] = 'error';
+					$json['status'] = 'error';
 				}
 
 				// Check if customer has been approved.
 				$customer_info = $this->model_account_customer->getCustomerByEmail($this->request->post['email']);
 
 				if ($customer_info && !$customer_info['status']) {
-					$json['status''] = 'error';
+					$json['status'] = 'error';
 					$json['message'] = $this->language->get('error_approved');
 				}
 
 				if (!$this->error) {
 					if (!$this->customer->login($this->request->post['email'], $this->request->post['password'])) {
-						$json['status''] = 'error';
+						$json['status'] = 'error';
 						$json['message'] = $this->language->get('error_login');
 						$this->model_account_customer->addLoginAttempt($this->request->post['email']);
 					} else {						
 						$this->model_account_customer->deleteLoginAttempts($this->request->post['email']);
-						$json['status''] = 'success';
+						$json['status'] = 'success';
 						$json['message'] = $this->language->get('text_success');
 						$json['data'] = $customer_info;
 					}
 				}
 			}
 			else{
-				$json['status''] = 'error';
+				$json['status'] = 'error';
 				$json['message'] = $this->language->get('problem_with_login');
 			}
 		$this->response->addHeader('Content-Type: application/json');
@@ -86,20 +87,19 @@ class ControllerApiCustomer extends Controller {
 			if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
 				// Check if customer has been approved.
 				$customer_info = $this->model_account_customer->getCustomerByEmail($this->request->post['email']);
-
 				if (!empty($customer_info)) {
 					$token = token(40);
 					$this->model_account_customer->editCode($this->request->post['email'], $token);
-					$json['status''] = 'success';
+					$json['status'] = 'success';
 					$json['message'] = $this->language->get('text_success');
 					$json['data'] = array('token'=>$token);
 				}else{
-					$json['status''] = 'error';
+					$json['status'] = 'error';
 					$json['message'] = $this->language->get('no_records_found');
 				}
 			}
 			else{
-				$json['status''] = 'error';
+				$json['status'] = 'error';
 				$json['message'] = $this->language->get('problem_with_login');
 			}
 		$this->response->addHeader('Content-Type: application/json');
@@ -112,23 +112,23 @@ class ControllerApiCustomer extends Controller {
 		$this->load->model('account/address');
 		$json = array();
 				if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
-				        $_POST['lastname'] = '';
-				        $_POST['company'] = '';
+				    $_POST['lastname'] = '';
+				    $_POST['company'] = '';
 					$customer_id = $this->request->post['customer_id'];
-					$data = $this->request->post;					
+					$data = $this->request->post;
 					if($data['address_id']){
 						$address_id = $data['address_id'];
 						$editedAddress = $this->model_account_address->editAddress($address_id, $data);
 						$json['message'] = $this->language->get('text_success');
 						$json['data'] = $editedAddress;
-						$json['status''] = 'success';						
+						$json['status'] = 'success';						
 					}
 					else{
 						$address_id = 0;
 						$addedAddress = $this->model_account_address->addAddress($customer_id, $data);
 						$json['message'] = $this->language->get('text_success');
 						$json['data'] = $addedAddress;
-						$json['status''] = 'success';						
+						$json['status'] = 'success';						
 					}
 
 				}
@@ -146,12 +146,12 @@ class ControllerApiCustomer extends Controller {
 				
 				$customer_address_details = $this->model_account_address->getAddressByCustomerId($customer_id);
 				if(count($customer_address_details)>0){
-					$json['status''] = 'success';
-					$json['status''] = $this->language->get('text_success');
+					$json['status'] = 'success';
+					$json['status'] = $this->language->get('text_success');
 					$json['data'] = array('token'=>$customer_address_details);
 				}
 				else{
-					$json['status''] = 'error';
+					$json['status'] = 'error';
 					$json['message'] = $this->language->get('no_records_found');
 				}
 			}
@@ -163,23 +163,21 @@ class ControllerApiCustomer extends Controller {
 		$this->load->language('account/address');
 		$this->load->model('account/address');
 		$json = array();
-		
 		if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
 			$customer_id = $this->request->post['customer_id'];
 			$address_id = $this->request->post['address_id'];
-			
-			$deleteAddress = $this->model_account_address->deleteAddress($address_id);
+			$deleteAddress = $this->model_account_address->deleteAddress($address_id,$customer_id);
 			if($deleteAddress == 1){
-				$json['status''] = 'success';
+				$json['status'] = 'success';
 				$json['message'] = $this->language->get('text_delete');
 			}
 			else{
-				$json['status''] = 'error';
+				$json['status'] = 'error';
 				$json['message'] = $this->language->get('text_no_results');
 			}
 		}
 		else{
-			$json['status''] = 'error';
+			$json['status'] = 'error';
 			$json['message'] = $this->language->get('text_no_results');
 		}
 		$this->response->addHeader('Content-Type: application/json');
@@ -190,17 +188,16 @@ class ControllerApiCustomer extends Controller {
 		$this->load->language('api/customer');
 		$this->load->model('account/customer');
 		$json = array();
-		
 		if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
 			$customer_id = $this->request->post['customer_id'];
 			$status = $this->request->post['status'];
 			$deactivateCustomer = $this->model_account_customer->deactivateCustomer($customer_id , $status);
 			if($deactivateCustomer == 1){
-				$json['status''] = 'success';
+				$json['status'] = 'success';
 				$json['message'] = $this->language->get('text_deactivate');
 			}
 			else{
-				$json['status''] = 'error';
+				$json['status'] = 'error';
 				$json['message'] = $this->language->get('already_deactivated');
 			}
 		}
@@ -215,35 +212,32 @@ class ControllerApiCustomer extends Controller {
 		$this->load->language('api/customer');
 		$this->load->model('account/customer');
 		$json = array();
-		
 		if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
 			$address_id = $this->request->post['address_id'];
 			$customer_id = $this->request->post['customer_id'];
-			
 			$defaultAddress = $this->model_account_customer->editAddressId($customer_id, $address_id);
 			if($defaultAddress == 1){
-			    $json['status''] = 'success';
-				$json['status''] = $this->language->get('text_success');
+			    $json['status'] = 'success';
+				$json['status'] = $this->language->get('text_success');
 			}
 			else{
-				$json['status''] = 'error';
+				$json['status'] = 'error';
 				$json['message'] = $this->language->get('Address already set as default!');
 			}
 		}
 		else{
-			$json['status''] = 'error';
+			$json['status'] = 'error';
 			$json['message'] = $this->language->get('error_customer');
 		}
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
 	
-public function updateProfile(){
+	public function updateProfile(){
 		if ($this->request->post['customer_id']) {
 			$this->load->language('api/customer');
 			$this->load->model('account/customer');
 			$json = array();
-			
 			$customer_id 	= $this->request->post['customer_id'];
 			$data = array(
 				'firstname' => $this->request->post['firstname'],
@@ -317,6 +311,7 @@ public function updateProfile(){
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
+	
 	public function get_countries(){
 			$this->load->language('api/customer');
 			$this->load->model('localisation/country');
@@ -334,6 +329,7 @@ public function updateProfile(){
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
+	
 	public function get_zone(){
 			$this->load->language('api/customer');
 			$this->load->model('localisation/zone');
@@ -349,6 +345,110 @@ public function updateProfile(){
 				$json['status'] = 'error';
 				$json['message'] = $this->language->get('customer already updated');
 			}
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+	
+	public function add_families(){
+		$this->load->language('api/customer');
+		$this->load->model('account/customer');
+		$json = array();
+		$data = array(
+			'customer_id' 	=> $this->request->post['customer_id'],
+			'name' 			=> $this->request->post['name'],
+			'relation' 		=> $this->request->post['relation'],
+			'date_of_birth' => $this->request->post['date_of_birth'],
+			'blood_group' 	=> $this->request->post['blood_group']
+		);
+		$addCustomerFamilies = $this->model_account_customer->addCustomerFamilies($data);
+		if($addCustomerFamilies == 1){
+			$json['status'] = 'success';
+			$json['message']=$this->language->get('families_success');
+		}
+		else{
+			$json['status'] = 'error';
+			$json['message'] = $this->language->get('Families not Added!');
+		}
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+	
+	public function list_families(){
+		$this->load->language('api/customer');
+		$this->load->model('account/customer');
+		$json = array();
+		if($this->request->post['customer_id']){
+			$customer_id = $this->request->post['customer_id'];
+			$listcustomerFamilies = $this->model_account_customer->listCustomerFamilies($customer_id);
+			
+			$json['status'] = 'success';
+			$json['message']=$this->language->get('text_success');
+			$json['data']=$listcustomerFamilies;
+		}
+		else{
+			$json['status'] = 'error';
+			$json['message'] = $this->language->get('Invalid Customer!');
+		}
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+	
+	public function update_families(){
+		$this->load->language('api/customer');
+		$this->load->model('account/customer');
+		$json = array();
+		if($this->request->post['id']){
+		$id = $this->request->post['id'];
+		$data = array(
+				'customer_id' 	=> $this->request->post['customer_id'],
+				'name' 			=> $this->request->post['name'],
+				'relation' 		=> $this->request->post['relation'],
+				'date_of_birth' => $this->request->post['date_of_birth'],
+				'blood_group' 	=> $this->request->post['blood_group']
+		);
+		
+		$editCustomerFamilies = $this->model_account_customer->editCustomerFamilies($id, $data);
+		if($editCustomerFamilies == 1){
+			$json['status'] = 'success';
+			$json['message']=$this->language->get('families_updated');
+		}
+		else{
+			$json['status'] = 'error';
+			$json['message'] = $this->language->get('Customer Families already updated!');
+		}
+		}
+		else{
+			$json['status'] = 'error';
+			$json['message'] = $this->language->get('Invalid Customer!');
+		}
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+	
+	public function delete_families(){
+		$this->load->language('api/customer');
+		$this->load->model('account/customer');
+		
+		$json = array();
+		
+		if($this->request->post['id'] && $this->request->post['customer_id']){
+			$id = $this->request->post['id'];
+			$customer_id = $this->request->post['customer_id'];
+			
+			$deleteCustomerFamilies = $this->model_account_customer->deleteCustomerFamilies($id, $customer_id);
+			if($deleteCustomerFamilies == 1){
+				$json['status'] = 'success';
+				$json['message']=$this->language->get('families_updated');
+			}
+			else{
+				$json['status'] = 'error';
+				$json['message'] = $this->language->get('Customer Families already deleted!');
+			}
+		}
+		else{
+			$json['status'] = 'error';
+			$json['message'] = $this->language->get('Invalid Customer!');
+		}
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
