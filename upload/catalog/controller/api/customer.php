@@ -10,21 +10,19 @@ class ControllerApiCustomer extends Controller {
 				$email = $_POST['email'];
 				$phone = $_POST['telephone'];
 				$password = $_POST['password'];
-				$confirmpassword = $_POST['confirmpassword'];
 				$fcm_id = $_POST['fcm_id'];
 				$device_type = $_POST['device_type'];
-				
-					$customerByEmail = $this->model_account_customer->getCustomerByEmail($email);
-					if(empty($customerByEmail)){
-						$customer_id = $this->model_account_customer->addCustomer($_POST);
-						$json['data'] = $this->model_account_customer->getCustomer($customer_id);
-						$json['message'] = $this->language->get('customer_success');
-						$json['status'] = 'success';
-					}
-					else{
-						$json['status'] = 'error';
-						$json['message'] = $this->language->get('Email is already exist!');
-					}
+				$customerByEmail = $this->model_account_customer->getCustomerByEmail($email);
+				if(empty($customerByEmail)){
+					$customer_id = $this->model_account_customer->addCustomer($_POST);
+					$json['status'] = 'success';
+					$json['message'] = $this->language->get('customer_success');
+					$json['data'] = $this->model_account_customer->getCustomer($customer_id);
+				}
+				else{
+					$json['status'] = 'error';
+					$json['message'] = $this->language->get('Email is already exist!');
+				}
 			}
 			else{
 				$json['status'] = 'error';
@@ -40,20 +38,16 @@ class ControllerApiCustomer extends Controller {
 			if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
 				// Check how many login attempts have been made.
 				$login_info = $this->model_account_customer->getLoginAttempts($this->request->post['email']);
-
 				if ($login_info && ($login_info['total'] >= $this->config->get('config_login_attempts')) && strtotime('-1 hour') < strtotime($login_info['date_modified'])) {
 					$json['message'] = $this->language->get('error_attempts');
 					$json['status'] = 'error';
 				}
-
 				// Check if customer has been approved.
 				$customer_info = $this->model_account_customer->getCustomerByEmail($this->request->post['email']);
-
 				if ($customer_info && !$customer_info['status']) {
 					$json['status'] = 'error';
 					$json['message'] = $this->language->get('error_approved');
 				}
-
 				if (!$this->error) {
 					if (!$this->customer->login($this->request->post['email'], $this->request->post['password'])) {
 						$json['status'] = 'error';
@@ -64,6 +58,9 @@ class ControllerApiCustomer extends Controller {
 						$json['status'] = 'success';
 						$json['message'] = $this->language->get('customer_logged_in');
 						$json['data'] = $customer_info;
+                        $postData['device_type'] = $_POST['device_type'];
+                        $postData['fcm_id'] = $_POST['fcm_id'];
+                        $this->model_account_customer->editCustomerfcm($customer_info[0]['customer_id'], $postData);
 					}
 				}
 			}
