@@ -46,20 +46,16 @@ class ControllerApiCustomer extends Controller {
 			if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
 				// Check how many login attempts have been made.
 				$login_info = $this->model_account_customer->getLoginAttempts($this->request->post['email']);
-
 				if ($login_info && ($login_info['total'] >= $this->config->get('config_login_attempts')) && strtotime('-1 hour') < strtotime($login_info['date_modified'])) {
 					$json['message'] = $this->language->get('error_attempts');
 					$json['status'] = 'error';
 				}
-
 				// Check if customer has been approved.
 				$customer_info = $this->model_account_customer->getCustomerByEmail($this->request->post['email']);
-
 				if ($customer_info && !$customer_info['status']) {
 					$json['status'] = 'error';
 					$json['message'] = $this->language->get('error_approved');
 				}
-
 				if (!$this->error) {
 					if (!$this->customer->login($this->request->post['email'], $this->request->post['password'])) {
 						$json['status'] = 'error';
@@ -70,6 +66,9 @@ class ControllerApiCustomer extends Controller {
 						$json['status'] = 'success';
 						$json['message'] = $this->language->get('customer_logged_in');
 						$json['data'] = $customer_info;
+                                                $postData['device_type'] = $_POST['device_type'];
+                                                $postData['fcm_id'] = $_POST['fcm_id'];
+                                                $this->model_account_customer->editCustomerfcm($customer_info[0]['customer_id'], $postData);
 					}
 				}
 			}
@@ -141,7 +140,6 @@ class ControllerApiCustomer extends Controller {
 						}
 												
 					}
-
 				}
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
@@ -276,7 +274,6 @@ class ControllerApiCustomer extends Controller {
 				$tempFileName = $_FILES["image"]["tmp_name"];
 				
 				$data['image'] = $fileName;
-
 				$result = move_uploaded_file($tempFileName,$fileTarget);
 				if($result){
 					$customer_info = $this->model_account_customer->editCustomer($customer_id, $data);
