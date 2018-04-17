@@ -102,36 +102,36 @@ class ControllerApiCustomer extends Controller {
 		$this->load->model('account/customer');
 		$this->load->model('account/address');
 		$json = array();
-				if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
-					$customer_id = $this->request->post['customer_id'];
-					$data = $this->request->post;
-					if(!empty($data['address_id']) && count($data['address_id']>0)){
-						$data['lastname'] = '';$data['company'] = '';$data['address_2'] = '';
-						$address_id = $data['address_id'];
-						$editedAddress = $this->model_account_address->editAddress($address_id, $data);
-						if($editedAddress == 1){
-							$json['status'] = 'success';
-							$json['message'] = $this->language->get('text_success');
-						}
-						else{
-							$json['status'] = 'error';
-							$json['message'] = $this->language->get('address_not_updated!');
-						}
-					}
-					else{
-						$address_id = 0;
-						$data['lastname'] = '';$data['company'] = '';$data['address_2'] = '';
-						$addedAddressId = $this->model_account_address->addAddress($customer_id, $data);
-						if(count($addedAddressId)>0 && !empty($addedAddressId)){
-							$json['status'] = 'success';
-							$json['message'] = $this->language->get('address added succesfully!');
-						}
-						else{
-							$json['status'] = 'error';
-							$json['message'] = $this->language->get('address is not added!');
-						}						
-					}
+		if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
+			$customer_id = $this->request->post['customer_id'];
+			$data = $this->request->post;
+			if(!empty($data['address_id']) && count($data['address_id']>0)){
+				$data['lastname'] = '';$data['company'] = '';$data['address_2'] = '';
+				$address_id = $data['address_id'];
+				$editedAddress = $this->model_account_address->editAddress($address_id, $data);
+				if($editedAddress == 1){
+					$json['status'] = 'success';
+					$json['message'] = $this->language->get('text_success');
 				}
+				else{
+					$json['status'] = 'error';
+					$json['message'] = $this->language->get('address_not_updated!');
+				}
+			}
+			else{
+				$address_id = 0;
+				$data['lastname'] = '';$data['company'] = '';$data['address_2'] = '';
+				$addedAddressId = $this->model_account_address->addAddress($customer_id, $data);
+				if(count($addedAddressId)>0 && !empty($addedAddressId)){
+					$json['status'] = 'success';
+					$json['message'] = $this->language->get('address added succesfully!');
+				}
+				else{
+					$json['status'] = 'error';
+					$json['message'] = $this->language->get('address is not added!');
+				}						
+			}
+		}
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
@@ -268,12 +268,14 @@ class ControllerApiCustomer extends Controller {
 				$allowed_extensions = array( "image/png", "image/jpg", "image/jpeg" );
 				if(in_array( $data['image']['type'], $allowed_extensions ) && $data['image']['size']<=500000){
 					$fileName = strtotime("now").$data['image']['name'];
-					
 					$target = DIR_IMAGE . 'catalog/profile_pic/';
 					$fileTarget = $target.$fileName;
 					$tempFileName = $_FILES["image"]["tmp_name"];
 					$data['image'] = $fileName;
 					$result = move_uploaded_file($tempFileName,$fileTarget);
+				}
+				else{
+					$data['image'] = '';
 				}
 			}
 			else{
