@@ -141,8 +141,13 @@ class ModelAccountAddress extends Model {
 		return $query->row['total'];
 	}
 	
-	public function getAddressByCustomerId($customer_id,$address_id) {
+	public function getAddressByCustomerId($customer_id) {
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "address WHERE customer_id = '" . (int)$customer_id . "'");
+		return $query->rows;
+	}
+	
+	public function getAddressById($customer_id, $address_id) {
 		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "address WHERE customer_id = '" . (int)$customer_id . "' AND address_id = '". $address_id ."' ");
-		return $query->row;
+		return $query->rows;
 	}
 }

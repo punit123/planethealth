@@ -14,7 +14,6 @@ class ControllerApiCustomer extends Controller {
 				$fcm_id = $_POST['fcm_id'];
 				$device_type = $_POST['device_type'];
 				
-				if($password == $confirmpassword){
 					$customerByEmail = $this->model_account_customer->getCustomerByEmail($email);
 					if(empty($customerByEmail)){
 						$customer_id = $this->model_account_customer->addCustomer($_POST);
@@ -26,11 +25,6 @@ class ControllerApiCustomer extends Controller {
 						$json['status'] = 'error';
 						$json['message'] = $this->language->get('Email is already exist!');
 					}
-				}
-				else{
-					$json['status'] = 'error';
-					$json['message'] = $this->language->get('Password does not match!');
-				}
 			}
 			else{
 				$json['status'] = 'error';
@@ -138,10 +132,8 @@ class ControllerApiCustomer extends Controller {
 						else{
 							$json['status'] = 'error';
 							$json['message'] = $this->language->get('address is not added!');
-						}
-												
+						}						
 					}
-
 				}
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
@@ -154,8 +146,7 @@ class ControllerApiCustomer extends Controller {
 		$json = array();		
 			if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
 				$customer_id = $this->request->post['customer_id'];
-				$address_id = $this->request->post['address_id'];
-				$customer_address_details = $this->model_account_address->getAddressByCustomerId($customer_id,$address_id);
+				$customer_address_details = $this->model_account_address->getAddressByCustomerId($customer_id);
 				if(count($customer_address_details)>0){
 					$json['status'] = 'success';
 					$json['data'] = $customer_address_details;
@@ -227,19 +218,27 @@ class ControllerApiCustomer extends Controller {
 	public function setDefaultAddress(){
 		$this->load->language('api/customer');
 		$this->load->model('account/customer');
+		$this->load->model('account/address');
 		$json = array();
 		if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
 			$address_id = $this->request->post['address_id'];
 			$customer_id = $this->request->post['customer_id'];
 			if($customer_id != '' && $address_id !=''){
-				$defaultAddress = $this->model_account_customer->editAddressId($customer_id, $address_id);
-				if($defaultAddress == 1){
-				    $json['status'] = 'success';
-					$json['status'] = $this->language->get('address has been set as default!');
+				$fetchAllAddressId = $this->model_account_address->getAddressByCustomerId($customer_id);
+				if($fetchAllAddressId != '' && count($fetchAllAddressId)>0){
+					$defaultAddress = $this->model_account_customer->editAddressId($customer_id, $address_id);
+					if($defaultAddress == 1){
+					    $json['status'] = 'success';
+						$json['message'] = $this->language->get('address has been set as default!');
+					}
+					else{
+						$json['status'] = 'error';
+						$json['message'] = $this->language->get('Address already set as default!');
+					}
 				}
 				else{
 					$json['status'] = 'error';
-					$json['message'] = $this->language->get('Address already set as default!');
+					$json['message'] = $this->language->get('No Address found!');
 				}
 			}
 			else{
@@ -267,37 +266,31 @@ class ControllerApiCustomer extends Controller {
 				'email' 	=> $this->request->post['email'],
 				'lastname'	=> ''
 			);
-			$data['image'] = $this->request->files['image'];
-			$allowed_extensions = array( "image/png", "image/jpg", "image/jpeg" );
-			if(in_array( $data['image']['type'], $allowed_extensions ) && $data['image']['size']<=500000){
-				$fileName = strtotime("now").$data['image']['name'];
-				$target = DIR_IMAGE . 'catalog/profile_pic/';
-				$fileTarget = $target.$fileName;
-				$tempFileName = $_FILES["image"]["tmp_name"];
-				
-				$data['image'] = $fileName;
-
-				$result = move_uploaded_file($tempFileName,$fileTarget);
-				if($result){
-					$customer_info = $this->model_account_customer->editCustomer($customer_id, $data);
-					if($customer_info == 1){
-						$json['status'] = 'success';
-						$json['message']= $this->language->get('text_success');
-						$json['data']= $data;
-					}
-					else{
-						$json['status'] = 'error';
-						$json['message'] = $this->language->get('customer already updated');
-					}
-				}
-				else{
-					$json['status'] = 'error';
-					$json['message'] = $this->language->get('Image not uploaded!');
+			if($this->request->files['image']!=''){
+				$data['image'] = $this->request->files['image'];
+				$allowed_extensions = array( "image/png", "image/jpg", "image/jpeg" );
+				if(in_array( $data['image']['type'], $allowed_extensions ) && $data['image']['size']<=500000){
+					$fileName = strtotime("now").$data['image']['name'];
+					
+					$target = DIR_IMAGE . 'catalog/profile_pic/';
+					$fileTarget = $target.$fileName;
+					$tempFileName = $_FILES["image"]["tmp_name"];
+					$data['image'] = $fileName;
+					$result = move_uploaded_file($tempFileName,$fileTarget);
 				}
 			}
 			else{
+				$data['image'] = '';
+			}
+			$customer_info = $this->model_account_customer->editCustomer($customer_id, $data);
+			if($customer_info == 1){
+				$json['status'] = 'success';
+				$json['message']= $this->language->get('text_success');
+				$json['data']= $data;
+			}
+			else{
 				$json['status'] = 'error';
-				$json['message'] = $this->language->get('Image is not valid!');
+				$json['message'] = $this->language->get('customer already updated');
 			}
 		}
 		else{
@@ -438,17 +431,23 @@ class ControllerApiCustomer extends Controller {
 				'date_of_birth' => $this->request->post['date_of_birth'],
 				'blood_group' 	=> $this->request->post['blood_group']
 		);
-		
-		$editCustomerFamilies = $this->model_account_customer->editCustomerFamilies($id, $data);
-			if($editCustomerFamilies == 1){
-				$json['status'] = 'success';
-				$json['message']=$this->language->get('families_updated');
-				$customerFamiliesData = $this->model_account_customer->listCustomerFamiliesById($id);
-				$json['data'] = $customerFamiliesData;
+		$listAllCustomerFamilies = $this->model_account_customer->listAllCustomerFamilies($id, $data['customer_id']);
+		if(!empty($listAllCustomerFamilies) && count($listAllCustomerFamilies)>0){
+				$editCustomerFamilies = $this->model_account_customer->editCustomerFamilies($id, $data);
+				if($editCustomerFamilies == 1){
+					$json['status'] = 'success';
+					$json['message']=$this->language->get('families_updated');
+					$customerFamiliesData = $this->model_account_customer->listCustomerFamiliesById($id);
+					$json['data'] = $customerFamiliesData;
+				}
+				else{
+					$json['status'] = 'error';
+					$json['message'] = $this->language->get('Customer Families already updated!');
+				}
 			}
 			else{
 				$json['status'] = 'error';
-				$json['message'] = $this->language->get('Customer Families already updated!');
+				$json['message'] = $this->language->get('No Record found!');
 			}
 		}
 		else{

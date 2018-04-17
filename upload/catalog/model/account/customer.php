@@ -157,13 +157,19 @@ class ModelAccountCustomer extends Model {
 	}
 	
 	public function editCustomerFamilies($id, $data) {
-		$this->db->query("UPDATE " . DB_PREFIX . "customer_families SET customer_id = '". $data['customer_id'] ."', name = '" . $data['name'] . "', relation = '". $data['relation'] ."', date_of_birth = '". date('Y-d-m',strtotime($data['date_of_birth'])) ."', blood_group = '". $data['blood_group'] ."' WHERE id = '" . (int)$id . "'");
+		$date1 = strtr($data['date_of_birth'], '/', '-');
+		$this->db->query("UPDATE " . DB_PREFIX . "customer_families SET customer_id = '". $data['customer_id'] ."', name = '" . $data['name'] . "', relation = '". $data['relation'] ."', date_of_birth = '". date('Y-m-d', strtotime($date1)) ."', blood_group = '". $data['blood_group'] ."' , updated_date = '" . $this->db->escape(date('Y-m-d H:i:s')) . "' WHERE id = '" . (int)$id . "'");
 		return $this->db->countAffected();
 	}
 	
 	public function deleteCustomerFamilies($id, $customer_id){
 		$this->db->query("DELETE FROM `" . DB_PREFIX . "customer_families` WHERE customer_id = '" . $this->db->escape(utf8_strtolower($customer_id)) . "' AND id = '". $this->db->escape(utf8_strtolower($id)) ."' ");
 		return $this->db->countAffected();
+	}
+	
+	public function listAllCustomerFamilies($id, $customer_id){
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "customer_families WHERE id = '" . (int)$id . "' AND customer_id = '". $customer_id ."' ");
+		return $query->rows;
 	}
 	
 	public function listCustomerFamiliesById($id){
