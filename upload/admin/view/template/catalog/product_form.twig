@@ -95,6 +95,15 @@
               <input type="hidden" name="model" value="0"/>
 			  <input type="hidden" name="upc" value="0"/>
 			  <input type="hidden" name="ean" value="0"/>
+			  <input type="hidden" name="jan" value="0"/>
+			  <input type="hidden" name="isbn" value="0"/>
+			  <input type="hidden" name="mpn" value="0"/>			  
+              <input type="hidden" name="location" value="0"/>
+              <input type="hidden" name="tax_class_id" value="0">
+			  <input type="hidden" name="quantity" value="0"/>
+              <input type="hidden" name="minimum" value="0"/>
+			  <input type="hidden" name="subtract" value="0"/>			  
+			  <input type="hidden" name="stock_status_id" value="0"/>			  			  			  
               <div class="form-group row">
                 <label class="col-sm-2 col-form-label" for="input-sku">{{ entry_sku }}</label>
                 <div class="col-sm-10">
@@ -102,94 +111,11 @@
                   <small class="form-text text-muted">{{ help_sku }}</small>
                 </div>
               </div>
-              <div class="form-group row">
-                <label class="col-sm-2 col-form-label" for="input-jan">{{ entry_jan }}</label>
-                <div class="col-sm-10">
-                  <input type="text" name="jan" value="{{ jan }}" placeholder="{{ entry_jan }}" id="input-jan" class="form-control"/>
-                  <small class="form-text text-muted">{{ help_jan }}</small>
-                </div>
-              </div>
-              <div class="form-group row">
-                <label class="col-sm-2 col-form-label" for="input-isbn">{{ entry_isbn }}</label>
-                <div class="col-sm-10">
-                  <input type="text" name="isbn" value="{{ isbn }}" placeholder="{{ entry_isbn }}" id="input-isbn" class="form-control"/>
-                  <small class="form-text text-muted">{{ help_isbn }}</small>
-                </div>
-              </div>
-              <div class="form-group row">
-                <label class="col-sm-2 col-form-label" for="input-mpn">{{ entry_mpn }}</label>
-                <div class="col-sm-10">
-                  <input type="text" name="mpn" value="{{ mpn }}" placeholder="{{ entry_mpn }}" id="input-mpn" class="form-control"/>
-                  <small class="form-text text-muted">{{ help_mpn }}</small>
-                </div>
-              </div>
-              <div class="form-group row">
-                <label class="col-sm-2 col-form-label" for="input-location">{{ entry_location }}</label>
-                <div class="col-sm-10">
-                  <input type="text" name="location" value="{{ location }}" placeholder="{{ entry_location }}" id="input-location" class="form-control"/>
-                </div>
-              </div>
+
               <div class="form-group row">
                 <label class="col-sm-2 col-form-label" for="input-price">{{ entry_price }}</label>
                 <div class="col-sm-10">
                   <input type="text" name="price" value="{{ price }}" placeholder="{{ entry_price }}" id="input-price" class="form-control"/>
-                </div>
-              </div>
-              <div class="form-group row">
-                <label class="col-sm-2 col-form-label" for="input-tax-class">{{ entry_tax_class }}</label>
-                <div class="col-sm-10">
-                  <select name="tax_class_id" id="input-tax-class" class="form-control">
-                    <option value="0">{{ text_none }}</option>
-                    {% for tax_class in tax_classes %}
-                      {% if tax_class.tax_class_id == tax_class_id %}
-                        <option value="{{ tax_class.tax_class_id }}" selected="selected">{{ tax_class.title }}</option>
-                      {% else %}
-                        <option value="{{ tax_class.tax_class_id }}">{{ tax_class.title }}</option>
-                      {% endif %}
-                    {% endfor %}
-                  </select>
-                </div>
-              </div>
-              <div class="form-group row">
-                <label class="col-sm-2 col-form-label" for="input-quantity">{{ entry_quantity }}</label>
-                <div class="col-sm-10">
-                  <input type="text" name="quantity" value="{{ quantity }}" placeholder="{{ entry_quantity }}" id="input-quantity" class="form-control"/>
-                </div>
-              </div>
-              <div class="form-group row">
-                <label class="col-sm-2 col-form-label" for="input-minimum">{{ entry_minimum }}</label>
-                <div class="col-sm-10">
-                  <input type="text" name="minimum" value="{{ minimum }}" placeholder="{{ entry_minimum }}" id="input-minimum" class="form-control"/>
-                  <small class="form-text text-muted">{{ help_minimum }}</small>
-                </div>
-              </div>
-              <div class="form-group row">
-                <label class="col-sm-2 col-form-label" for="input-subtract">{{ entry_subtract }}</label>
-                <div class="col-sm-10">
-                  <select name="subtract" id="input-subtract" class="form-control">
-                    {% if subtract %}
-                      <option value="1" selected="selected">{{ text_yes }}</option>
-                      <option value="0">{{ text_no }}</option>
-                    {% else %}
-                      <option value="1">{{ text_yes }}</option>
-                      <option value="0" selected="selected">{{ text_no }}</option>
-                    {% endif %}
-                  </select>
-                </div>
-              </div>
-              <div class="form-group row">
-                <label class="col-sm-2 col-form-label" for="input-stock-status">{{ entry_stock_status }}</label>
-                <div class="col-sm-10">
-                  <select name="stock_status_id" id="input-stock-status" class="form-control">
-                    {% for stock_status in stock_statuses %}
-                      {% if stock_status.stock_status_id == stock_status_id %}
-                        <option value="{{ stock_status.stock_status_id }}" selected="selected">{{ stock_status.name }}</option>
-                      {% else %}
-                        <option value="{{ stock_status.stock_status_id }}">{{ stock_status.name }}</option>
-                      {% endif %}
-                    {% endfor %}
-                  </select>
-                  <small class="form-text text-muted">{{ help_stock_status }}</small>
                 </div>
               </div>
               <div class="form-group row">
@@ -315,51 +241,9 @@
                   <small class="form-text text-muted">{{ help_category }}</small>
                 </div>
               </div>
-              <div class="form-group row">
-                <label class="col-sm-2 col-form-label" for="input-filter">{{ entry_filter }}</label>
-                <div class="col-sm-10">
-                  <input type="text" name="filter" value="" placeholder="{{ entry_filter }}" id="input-filter" class="form-control"/>
-                  <div id="product-filter" class="form-control" style="height: 150px; overflow: auto;">
-                    {% for product_filter in product_filters %}
-                      <div id="product-filter{{ product_filter.filter_id }}"><i class="fa fa-minus-circle"></i> {{ product_filter.name }}
-                        <input type="hidden" name="product_filter[]" value="{{ product_filter.filter_id }}"/>
-                      </div>
-                    {% endfor %}
-                  </div>
-                  <small class="form-text text-muted">{{ help_filter }}</small>
-                </div>
-              </div>
-              <div class="form-group row">
-                <label class="col-sm-2 col-form-label">{{ entry_store }}</label>
-                <div class="col-sm-10">
-                  <div class="form-control" style="height: 150px; overflow: auto;">
-                    {% for store in stores %}
-                      <div class="checkbox">
-                        <label> {% if store.store_id in product_store %}
-                            <input type="checkbox" name="product_store[]" value="{{ store.store_id }}" checked="checked"/>
-                            {{ store.name }}
-                          {% else %}
-                            <input type="checkbox" name="product_store[]" value="{{ store.store_id }}"/>
-                            {{ store.name }}
-                          {% endif %}</label>
-                      </div>
-                    {% endfor %}</div>
-                </div>
-              </div>
-              <div class="form-group row">
-                <label class="col-sm-2 col-form-label" for="input-download">{{ entry_download }}</label>
-                <div class="col-sm-10">
-                  <input type="text" name="download" value="" placeholder="{{ entry_download }}" id="input-download" class="form-control"/>
-                  <div id="product-download" class="form-control" style="height: 150px; overflow: auto;">
-                    {% for product_download in product_downloads %}
-                      <div id="product-download{{ product_download.download_id }}"><i class="fa fa-minus-circle"></i> {{ product_download.name }}
-                        <input type="hidden" name="product_download[]" value="{{ product_download.download_id }}"/>
-                      </div>
-                    {% endfor %}
-                  </div>
-                  <small class="form-text text-muted">{{ help_download }}</small>
-                </div>
-              </div>
+              <input type="hidden" name="product_filter[]" value="0"/>
+			  <input type="hidden" name="product_store[]" value="0"/>
+			  <input type="hidden" name="product_download[]" value="0"/>
               <div class="form-group row">
                 <label class="col-sm-2 col-form-label" for="input-related">{{ entry_related }}</label>
                 <div class="col-sm-10">
