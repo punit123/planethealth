@@ -41,7 +41,7 @@ class ModelCatalogGeneric extends Model {
 	}
 
 	public function getGenerics($data = array()) {
-		$sql = "SELECT * FROM " . DB_PREFIX . "generic ag WHERE ag.language_id = '" . (int)$this->config->get('config_language_id') . "'";
+		$sql = "SELECT * FROM " . DB_PREFIX . "generic ag WHERE 1=1";
        
 		$sort_data = array(
 			'ag.id',

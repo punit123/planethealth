@@ -29,13 +29,13 @@ class ModelCatalogGenericAttribute extends Model {
 	}
 
 	public function getAttribute($attribute_id) {
-		$query = $this->db->query("SELECT a.*, ad.generic_name	 FROM " . DB_PREFIX . "generic_attribute a LEFT JOIN " . DB_PREFIX . "generic ad ON (a.generic_id = ad.id) WHERE a.id = '" . (int)$attribute_id . "' AND ad.language_id = '" . (int)$this->config->get('config_language_id') . "'");
+		$query = $this->db->query("SELECT a.*, ad.generic_name	 FROM " . DB_PREFIX . "generic_attribute a LEFT JOIN " . DB_PREFIX . "generic ad ON (a.generic_id = ad.id) WHERE a.id = '" . (int)$attribute_id . "'");
 
 		return $query->row;
 	}
 
 	public function getAttributes($data = array()) {
-		$sql = "SELECT a.*, ad.generic_name FROM " . DB_PREFIX . "generic_attribute a LEFT JOIN " . DB_PREFIX . "generic ad ON (a.generic_id = ad.id) WHERE ad.language_id = '" . (int)$this->config->get('config_language_id') . "'";
+		$sql = "SELECT a.*, ad.generic_name FROM " . DB_PREFIX . "generic_attribute a LEFT JOIN " . DB_PREFIX . "generic ad ON (a.generic_id = ad.id) WHERE 1=1";
 
 		if (!empty($data['filter_name'])) {
 			$sql .= " AND ad.generic_name LIKE '" . $this->db->escape((string)$data['filter_name']) . "%'";
