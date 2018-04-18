@@ -539,4 +539,10 @@ class ModelCatalogProduct extends Model {
 			return 0;
 		}
 	}
+	
+	public function getProductbyCatid($category_id)
+	{
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_to_category pc LEFT JOIN " . DB_PREFIX . "product p ON (p.product_id = pc.product_id) WHERE pc.category_id = '". (int)$category_id ."' ");
+		return $query->rows;
+	}
 }
