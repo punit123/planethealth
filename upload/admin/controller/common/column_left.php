@@ -97,6 +97,33 @@ class ControllerCommonColumnLeft extends Controller {
 				);
 			}
 			
+			// Generic
+			$generic = array();
+			
+			if ($this->user->hasPermission('access', 'catalog/generic_attribute')) {
+				$generic[] = array(
+					'name'     => $this->language->get('text_generic_attribute'),
+					'href'     => $this->url->link('catalog/generic_attribute', 'user_token=' . $this->session->data['user_token']),
+					'children' => array()	
+				);
+			}
+			
+			if ($this->user->hasPermission('access', 'catalog/generic')) {
+				$generic[] = array(
+					'name'	   => $this->language->get('text_generic'),
+					'href'     => $this->url->link('catalog/generic', 'user_token=' . $this->session->data['user_token']),
+					'children' => array()		
+				);
+			}
+			
+			if ($generic) {
+				$catalog[] = array(
+					'name'	   => $this->language->get('text_generic'),
+					'href'     => '',
+					'children' => $generic
+				);
+			}			
+			
 			if ($this->user->hasPermission('access', 'catalog/option')) {
 				$catalog[] = array(
 					'name'	   => $this->language->get('text_option'),
@@ -112,6 +139,14 @@ class ControllerCommonColumnLeft extends Controller {
 					'children' => array()		
 				);
 			}
+			
+			if ($this->user->hasPermission('access', 'catalog/brand')) {
+				$catalog[] = array(
+					'name'	   => $this->language->get('text_brand'),
+					'href'     => $this->url->link('catalog/brand', 'user_token=' . $this->session->data['user_token']),
+					'children' => array()		
+				);
+			}			
 			
 			// if ($this->user->hasPermission('access', 'catalog/download')) {
 				// $catalog[] = array(
