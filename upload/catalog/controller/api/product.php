@@ -47,5 +47,25 @@ class ControllerApiProduct extends Controller {
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
+	
+	public function FeaturedProduct()
+	{
+				$this->load->model('catalog/product');
+				$json = array();
+		        $featured_product = $this->model_catalog_product->getFeaturedProductId();
+				$featured_product_id=$featured_product["product"];
+		        $featured_product = $this->model_catalog_product->getFeaturedproduct($featured_product_id);
+				
+				$json['status'] = 'success';
+				$json['message'] = $this->language->get('Success');
+				$json['data'] = $featured_product;
+				
+				$this->response->addHeader('Content-Type: application/json');
+				$this->response->setOutput(json_encode($json));
+				
+				
+	}
+	
+	
 }
 ?>
