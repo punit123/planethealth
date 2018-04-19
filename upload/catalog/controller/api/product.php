@@ -55,11 +55,17 @@ class ControllerApiProduct extends Controller {
 		        $featured_product = $this->model_catalog_product->getFeaturedProductId();
 				$featured_product_id=$featured_product["product"];
 		        $featured_product = $this->model_catalog_product->getFeaturedproduct($featured_product_id);
-				
+				if(count($featured_product)>0 && !empty($featured_product)){
 				$json['status'] = 'success';
 				$json['message'] = $this->language->get('Success');
 				$json['data'] = $featured_product;
-				
+				}
+				else
+				{
+				$json['status'] = 'error';
+				$json['message'] = $this->language->get('no record found!');
+	
+				}
 				$this->response->addHeader('Content-Type: application/json');
 				$this->response->setOutput(json_encode($json));
 				
