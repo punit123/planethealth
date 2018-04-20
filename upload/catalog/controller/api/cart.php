@@ -4,10 +4,6 @@ class ControllerApiCart extends Controller {
 		$this->load->language('api/cart');
 
 		$json = array();
-			
-		if (!isset($this->session->data['api_id'])) {
-			$json['error']['warning'] = $this->language->get('error_permission');
-		} else {
 			if (isset($this->request->post['product'])) {
 				$this->cart->clear();
 
@@ -31,7 +27,6 @@ class ControllerApiCart extends Controller {
 				$this->load->model('catalog/product');
 
 				$product_info = $this->model_catalog_product->getProduct($this->request->post['product_id']);
-
 				if ($product_info) {
 					if (isset($this->request->post['quantity'])) {
 						$quantity = $this->request->post['quantity'];
@@ -67,8 +62,7 @@ class ControllerApiCart extends Controller {
 					$json['error']['store'] = $this->language->get('error_store');
 				}
 			}
-		}
-
+			
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
@@ -77,11 +71,30 @@ class ControllerApiCart extends Controller {
 		$this->load->language('api/cart');
 
 		$json = array();
+		
+		$this->cart->update($this->request->post['cart_id'], $this->request->post['quantity']);
 
-		if (!isset($this->session->data['api_id'])) {
-			$json['error'] = $this->language->get('error_permission');
-		} else {
-			$this->cart->update($this->request->post['key'], $this->request->post['quantity']);
+		$json['success'] = $this->language->get('text_success');
+
+		unset($this->session->data['shipping_method']);
+		unset($this->session->data['shipping_methods']);
+		unset($this->session->data['payment_method']);
+		unset($this->session->data['payment_methods']);
+		unset($this->session->data['reward']);
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+
+	public function remove() {
+		$this->load->language('api/cart');
+
+		$json = array();
+		// Remove
+		if (isset($this->request->post['cart_id'])) {
+			$this->cart->cartRemove($this->request->post['cart_id']);
+
+			unset($this->session->data['vouchers'][$this->request->post['cart_id']]);
 
 			$json['success'] = $this->language->get('text_success');
 
@@ -96,42 +109,10 @@ class ControllerApiCart extends Controller {
 		$this->response->setOutput(json_encode($json));
 	}
 
-	public function remove() {
-		$this->load->language('api/cart');
-
-		$json = array();
-
-		if (!isset($this->session->data['api_id'])) {
-			$json['error'] = $this->language->get('error_permission');
-		} else {
-			// Remove
-			if (isset($this->request->post['key'])) {
-				$this->cart->remove($this->request->post['key']);
-
-				unset($this->session->data['vouchers'][$this->request->post['key']]);
-
-				$json['success'] = $this->language->get('text_success');
-
-				unset($this->session->data['shipping_method']);
-				unset($this->session->data['shipping_methods']);
-				unset($this->session->data['payment_method']);
-				unset($this->session->data['payment_methods']);
-				unset($this->session->data['reward']);
-			}
-		}
-
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
-	}
-
 	public function products() {
 		$this->load->language('api/cart');
 
 		$json = array();
-
-		if (!isset($this->session->data['api_id'])) {
-			$json['error']['warning'] = $this->language->get('error_permission');
-		} else {
 			// Stock
 			if (!$this->cart->hasStock() && (!$this->config->get('config_stock_checkout') || $this->config->get('config_stock_warning'))) {
 				$json['error']['stock'] = $this->language->get('error_stock');
@@ -251,8 +232,7 @@ class ControllerApiCart extends Controller {
 					'text'  => $this->currency->format($total['value'], $this->session->data['currency'])
 				);
 			}
-		}
-		
+			
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}

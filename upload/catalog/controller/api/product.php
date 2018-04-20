@@ -125,5 +125,110 @@ class ControllerApiProduct extends Controller {
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
+	
+	public function getAllManufacturerList(){
+		$this->load->model('catalog/product');
+		$json = array();
+		$getManufacturer = $this->model_catalog_product->getManufacturer();
+		if(!empty($getManufacturer) && count($getManufacturer)>0 && isset($getManufacturer)){
+			$json['status'] = 'success';
+			$json['message'] = $this->language->get('Success');
+			$json['data'] = $getManufacturer;
+		}
+		else{
+			$json['status'] = 'error';
+			$json['message'] = $this->language->get('no record found!');
+		}
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+	
+	public function getAllManufacturerListById(){
+		$this->load->model('catalog/product');
+		$json = array();
+		$manufatcure_id = $this->request->post['manufacturer_id'];
+		if($manufatcure_id && $manufatcure_id != ''){
+			$manufacturer_id = $this->request->post['manufacturer_id'];
+			$getManufacturerById = $this->model_catalog_product->getManufacturerById($manufacturer_id);
+			if(isset($getManufacturerById) && !empty($getManufacturerById) && count($getManufacturerById)){
+				$json['status'] = 'success';
+				$json['message'] = $this->language->get('Success');
+				$json['data'] = $getManufacturerById;
+			}
+			else{
+				$json['status'] = 'error';
+				$json['message'] = $this->language->get('no record found!');
+			}
+		}
+		else{
+			$json['status'] = 'error';
+			$json['message'] = $this->language->get('Invalid manufacturer!');
+		}
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+	
+	public function getAllBrandList(){
+		$this->load->model('catalog/product');
+		$json = array();
+		$getBrand = $this->model_catalog_product->getBrand();
+		if(!empty($getBrand) && count($getBrand)>0 && isset($getBrand)){
+			$json['status'] = 'success';
+			$json['message'] = $this->language->get('Success');
+			$json['data'] = $getBrand;
+		}
+		else{
+			$json['status'] = 'error';
+			$json['message'] = $this->language->get('no record found!');
+		}
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+	
+	public function getAllBrandListById(){
+		$this->load->model('catalog/product');
+		$json = array();
+		$brand_id = $this->request->post['brand_id'];
+		if($brand_id && $brand_id != ''){
+			$brand_id = $this->request->post['brand_id'];
+			$getBrandById = $this->model_catalog_product->getBrandById($brand_id);
+			if(isset($getBrandById) && !empty($getBrandById) && count($getBrandById)){
+				$json['status'] = 'success';
+				$json['message'] = $this->language->get('Success');
+				$json['data'] = $getBrandById;
+			}
+			else{
+				$json['status'] = 'error';
+				$json['message'] = $this->language->get('no record found!');
+			}
+		}
+		else{
+			$json['status'] = 'error';
+			$json['message'] = $this->language->get('Invalid brand!');
+		}
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+	
+	public function brandManufacturerList(){
+		$this->load->model('catalog/product');
+		$json = array();
+		$brand_id = $this->request->post['brand_id'];
+		if($brand_id && $brand_id != ''){
+			$brand_id = $this->request->post['brand_id'];
+			$getBrandManufacturer = $this->model_catalog_product->getBrandManufacturer($brand_id);
+			if(isset($getBrandManufacturer) && !empty($getBrandManufacturer) && count($getBrandManufacturer)){
+				$json['status'] = 'success';
+				$json['message'] = $this->language->get('Success');
+				$json['data'] = $getBrandManufacturer;
+			}
+		}
+		else{
+			$json['status'] = 'error';
+			$json['message'] = $this->language->get('Invalid brand!');
+		}
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
 }
 ?>
