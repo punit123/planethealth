@@ -44,10 +44,12 @@ class ControllerApiCustomer extends Controller {
 				}
 				// Check if customer has been approved.
 				$customer_info = $this->model_account_customer->getCustomerByEmail($this->request->post['email']);
-				if ($customer_info) {
+
+				if (is_array($customer_info) && count($customer_info)==0) {
 					$json['status'] = 'error';
-					$json['message'] = $this->language->get('error_approved');
+					$json['message'] = $this->language->get('your account has been deactivated!');
 				}
+				else{
 				if (!$this->error) {
 					if (!$this->customer->login($this->request->post['email'], $this->request->post['password'])) {
 						$json['status'] = 'error';
@@ -55,14 +57,16 @@ class ControllerApiCustomer extends Controller {
 						$this->model_account_customer->addLoginAttempt($this->request->post['email']);
 					} else {						
 						$this->model_account_customer->deleteLoginAttempts($this->request->post['email']);
-						$json['status'] = 'success';
-						$json['message'] = $this->language->get('customer_logged_in');
-						$json['data'] = $customer_info[0];
                         $postData['device_type'] = $_POST['device_type'];
                         $postData['fcm_id'] = $_POST['fcm_id'];
                         $this->model_account_customer->editCustomerfcm($customer_info[0]['customer_id'], $postData);
+				$customer_info = $this->model_account_customer->getCustomerByEmail($this->request->post['email']);
+						$json['status'] = 'success';
+						$json['message'] = $this->language->get('customer_logged_in');
+						$json['data'] = $customer_info;
 					}
 				}
+			}
 			}
 			else{
 				$json['status'] = 'error';
@@ -71,6 +75,7 @@ class ControllerApiCustomer extends Controller {
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));		
 	}
+
 	public function forgot(){
 		$this->load->language('api/customer');
 		$this->load->model('account/customer');

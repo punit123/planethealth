@@ -50,7 +50,7 @@ class ModelAccountCustomer extends Model {
 		return $query->row;
 	}
 	public function getCustomerByEmail($email) {
-		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "customer WHERE LOWER(email) = '" . $this->db->escape(utf8_strtolower($email)) . "'");
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "customer WHERE status = 1 AND (LOWER(email) = '" . $this->db->escape(utf8_strtolower($email)) . " ' OR telephone = '" . $this->db->escape(utf8_strtolower($email)) . "')");
 		return $query->rows;
 	}
 	public function getCustomerByCode($code) {
