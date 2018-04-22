@@ -229,5 +229,25 @@ class ControllerApiProduct extends Controller {
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
+	
+	public function storeList()
+	{
+		$this->load->model('catalog/product');
+		$json = array();
+		$product_id=$this->request->post['product_id'];
+		$getstoredetail = $this->model_catalog_product->getStoreId($product_id);
+		if(isset($getstoredetail) && !empty($getstoredetail) && count($getstoredetail)){
+				$json['status'] = 'success';
+				$json['message'] = $this->language->get('Success');
+				$json['data'] = $getstoredetail;
+			}
+			else{
+			$json['status'] = 'error';
+			$json['message'] = $this->language->get('No Store Found!');
+		}
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+	
 }
 ?>

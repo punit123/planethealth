@@ -615,4 +615,12 @@ class ModelCatalogProduct extends Model {
 		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "brand WHERE manufacturer_id = '". $manufacturer_id ."' ");
 		return $query->rows;
 	}
+	
+	public function getStoreId($product_id)
+	{
+			$query =$this->db->query("SELECT * FROM oc_store
+INNER JOIN oc_product_to_store ON oc_store.store_id=oc_product_to_store.store_id where product_id='$product_id'");
+		return $query->rows;
+	}
+	
 }
