@@ -25,6 +25,10 @@ class ModelLocalisationCustomnotification extends Model {
 
 		return $query->row;
 	}
+	public function getNotificationTitleID($select) {
+		$query = $this->db->query("SELECT ".$select." FROM " . DB_PREFIX . " custom_notification WHERE status = 1");
+		return $query->row;
+	}
 
 	public function getCustom_notifications($data = array()) {
 		if ($data) {

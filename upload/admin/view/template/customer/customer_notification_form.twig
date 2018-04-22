@@ -1,0 +1,69 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="submit" form="form-faq" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-light"><i class="fa fa-reply"></i></a></div>
+      <h1>{{ heading_title }}</h1>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          {% for breadcrumb in breadcrumbs %}
+            <li class="breadcrumb-item"><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+          {% endfor %}
+        </ol>
+      </nav>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {% if error_warning %}
+      <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+      </div>
+    {% endif %}
+    <div class="card">
+      <div class="card-header"><i class="fa fa-pencil"></i> {{ text_form }}</div>
+      <div class="card-body">
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-faq">
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="input-customer_id">{{ entry_customer_id }}</label>
+            <div class="col-sm-10">
+              <select name="customer_id" id="input-customer_id" class="form-control">
+                <option value="">Select Customer</option>
+                {% for cust in customerArr %}
+                  {% if cust.customer_id == customer_id %}
+                    <option value="{{ cust.customer_id }}" selected="selected">{{ cust.customer_name }}</option>
+                  {% else %}
+                    <option value="{{ cust.customer_id }}">{{ cust.customer_name }}</option>
+                  {% endif %}
+                {% endfor %}
+              </select>
+              {% if error_cutomer %}
+                <div class="invalid-tooltip">{{ error_customer_id }}</div>
+              {% endif %}
+            </div>
+          </div>
+		  <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="input-notification_id">{{ entry_notification_id }}</label>
+            <div class="col-sm-10">
+              <select name="notification_id" id="input-notification_id" class="form-control">
+                <option value="">Select Notification</option>
+                {% for notify in notificationArr %}
+                  {% if notify.id == notification_id %}
+                    <option value="{{ notify.id }}" selected="selected">{{ notify.title }}</option>
+                  {% else %}
+                    <option value="{{ notify.id }}">{{ notify.title }}</option>
+                  {% endif %}
+                {% endfor %}
+              </select>
+              {% if error_notification %}
+                <div class="invalid-tooltip">{{ error_notification_id }}</div>
+              {% endif %}
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{{ footer }}

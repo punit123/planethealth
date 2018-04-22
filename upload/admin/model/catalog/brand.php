@@ -59,7 +59,13 @@ class ModelCatalogbrand extends Model {
 
 		return $query->row;
 	}
-
+	
+	public function getBrandsByManufatureId($manufacturer_id) {
+		$query = $this->db->query("SELECT DISTINCT * FROM " . DB_PREFIX . "brand WHERE manufacturer_id = '" . (int)$manufacturer_id . "'");
+        
+		return $query->rows;
+	}
+    
 	public function getbrands($data = array()) {
 		$sql = "SELECT * FROM " . DB_PREFIX . "brand";
 
