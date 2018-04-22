@@ -213,10 +213,9 @@ class ControllerApiProduct extends Controller {
 	public function brandManufacturerList(){
 		$this->load->model('catalog/product');
 		$json = array();
-		$brand_id = $this->request->post['brand_id'];
-		if($brand_id && $brand_id != ''){
-			$brand_id = $this->request->post['brand_id'];
-			$getBrandManufacturer = $this->model_catalog_product->getBrandManufacturer($brand_id);
+		$manufatcure_id = $this->request->post['manufacturer_id'];
+		if(isset($manufatcure_id)&& count($manufatcure_id)>0){
+			$getBrandManufacturer = $this->model_catalog_product->getBrandManufacturer($manufatcure_id);
 			if(isset($getBrandManufacturer) && !empty($getBrandManufacturer) && count($getBrandManufacturer)){
 				$json['status'] = 'success';
 				$json['message'] = $this->language->get('Success');

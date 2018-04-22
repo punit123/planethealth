@@ -143,4 +143,10 @@ class ModelAccountCustomer extends Model {
 	
 		return $query->rows;
 	}
+	
+	public function customNotification($customer_id){
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "customer_notification crn INNER JOIN " . DB_PREFIX . "custom_notification cn ON crn.notification_id = cn.id WHERE customer_id = '" . (int)$customer_id . "'");
+		
+		return $query->rows;
+	}
 }

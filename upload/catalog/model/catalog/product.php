@@ -611,8 +611,8 @@ class ModelCatalogProduct extends Model {
 		return $query->row;
 	}
 	
-	public function getBrandManufacturer($brand_id){
-		$query = $this->db->query("SELECT b.* FROM " . DB_PREFIX . "brand b LEFT JOIN " . DB_PREFIX . "manufacturer m ON (b.manufacturer_id = m.manufacturer_id) WHERE b.brand_id = '". (int)$brand_id ."' ");
-		return $query->row;
+	public function getBrandManufacturer($manufacturer_id){
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "brand WHERE manufacturer_id = '". $manufacturer_id ."' ");
+		return $query->rows;
 	}
 }

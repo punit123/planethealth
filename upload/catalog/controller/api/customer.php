@@ -57,7 +57,7 @@ class ControllerApiCustomer extends Controller {
 						$this->model_account_customer->deleteLoginAttempts($this->request->post['email']);
 						$json['status'] = 'success';
 						$json['message'] = $this->language->get('customer_logged_in');
-						$json['data'] = $customer_info;
+						$json['data'] = $customer_info[0];
                         $postData['device_type'] = $_POST['device_type'];
                         $postData['fcm_id'] = $_POST['fcm_id'];
                         $this->model_account_customer->editCustomerfcm($customer_info[0]['customer_id'], $postData);
@@ -480,6 +480,32 @@ class ControllerApiCustomer extends Controller {
 			else{
 				$json['status'] = 'error';
 				$json['message'] = $this->language->get('Invalid customer!');
+			}
+		}
+		else{
+			$json['status'] = 'error';
+			$json['message'] = $this->language->get('Invalid Customer!');
+		}
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+	
+	public function customNotification(){
+		$this->load->language('api/customer');
+		$this->load->model('account/customer');
+		
+		$json = array();
+		$customer_id = $this->request->post['customer_id'];
+		if(isset($customer_id)){
+			$customerNotification = $this->model_account_customer->customNotification($customer_id);
+			if(isset($customerNotification) && !empty($customerNotification) && count($customerNotification)){
+				$json['status'] = 'success';
+				$json['message']= 'success';
+				$json['data'] = $customerNotification[0];
+			}
+			else{
+				$json['status'] = 'error';
+				$json['message'] = $this->language->get('No record found!');
 			}
 		}
 		else{
