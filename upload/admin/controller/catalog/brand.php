@@ -478,4 +478,38 @@ class ControllerCatalogbrand extends Controller {
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
+	public function autocompleteBrandByManufacturer() {
+		$json = array();
+
+		if (isset($this->request->get['mfid'])) {
+			$this->load->model('catalog/brand');
+            if (isset($this->request->get['filter_name'])) {
+				$filter_data = array(
+					'filter_name' => $this->request->get['filter_name'],
+					'start'       => 0,
+					'limit'       => 5
+				);
+            }
+			$mfid = $this->request->get['mfid'];
+			$results = $this->model_catalog_brand->getBrandsByManufatureId($mfid);
+            //echo "<pre>"; print_r($results);die;
+			foreach ($results as $result) {
+				$json[] = array(
+					'brand_id' => $result['brand_id'],
+					'name'            => strip_tags(html_entity_decode($result['name'], ENT_QUOTES, 'UTF-8'))
+				);
+			}
+		}
+
+		$sort_order = array();
+
+		foreach ($json as $key => $value) {
+			$sort_order[$key] = $value['name'];
+		}
+
+		array_multisort($sort_order, SORT_ASC, $json);
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
 }

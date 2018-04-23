@@ -213,6 +213,53 @@
                   </select>
                 </div>
               </div>
+			  <div class="form-group row">
+                <label class="col-sm-2 col-form-label" for="input-tablets_per_strip">{{ entry_tablets_per_strip }}</label>
+                <div class="col-sm-10">
+                  <input type="text" name="tablets_per_strip" value="{{ tablets_per_strip }}" placeholder="{{ entry_tablets_per_strip }}" id="input-tablets_per_strip" class="form-control"/>
+                </div>
+              </div>
+			  <div class="form-group row">
+				<label class="col-sm-2 col-form-label" for="input-per_tablet_price">
+				{{ entry_per_tablet_price }}</label>
+				<div class="col-sm-10">
+					<input type="text" name="per_tablet_price" value="{{ per_tablet_price }}" placeholder="{{ entry_per_tablet_price }}" id="input-per_tablet_price" class="form-control"/>
+				</div>
+			  </div>
+			  <div class="form-group row">
+				<label class="col-sm-2 col-form-label" for="input-is_prescription_required">{{ entry_is_prescription_required }}</label>
+				<div class="col-sm-10">
+					{% if is_prescription_required == 1 %}
+						<input type="checkbox" name="is_prescription_required" value="1" placeholder="{{ entry_is_prescription_required }}" id="input-is_prescription_required" checked="checked" class="form-control"/>
+					{% else %}
+						<input type="checkbox" name="is_prescription_required" value="1" placeholder="{{ entry_is_prescription_required }}" id="input-is_prescription_required" class="form-control"/>
+					{% endif %}
+				</div>
+			  </div>
+			  <div class="form-group row">
+				<label class="col-sm-2 col-form-label" for="input-Is_brekable">{{ entry_Is_brekable }}</label>
+				<div class="col-sm-10">
+					{% if Is_brekable == 1 %}
+						<input type="checkbox" name="Is_brekable" value="1" placeholder="{{ entry_Is_brekable }}" id="input-Is_brekable" checked="checked" class="form-control"/>
+					{% else %}
+						<input type="checkbox" name="Is_brekable" value="1" placeholder="{{ entry_Is_brekable }}" id="input-Is_brekable" class="form-control"/>
+					{% endif %}
+				</div>
+			  </div>
+			  <div class="form-group row">
+				<label class="col-sm-2 col-form-label" for="input-medicine_type">{{ entry_medicine_type }}</label>
+				<div class="col-sm-10">
+				  <select name="medicine_type" id="input-medicine_type" class="form-control">
+					{% for mkey,mvalue in medicinTypeArr %}
+					{% if medicine_type == mkey %}
+					  <option value="{{mkey}}" selected="selected">{{ mvalue }}</option>
+					{% else %}
+					  <option value="{{mkey}}">{{ mvalue }}</option>
+					{% endif %}
+					{% endfor %}
+				  </select>
+				</div>
+				</div>
               <div class="form-group row">
                 <label class="col-sm-2 col-form-label" for="input-sort-order">{{ entry_sort_order }}</label>
                 <div class="col-sm-10">
@@ -241,7 +288,23 @@
                   <small class="form-text text-muted">{{ help_category }}</small>
                 </div>
               </div>
-              <input type="hidden" name="product_filter[]" value="0"/>
+              <!-- Brand -->
+			  <div class="form-group row">
+                <label class="col-sm-2 col-form-label" for="input-brand">{{ entry_brand }}</label>
+                <div class="col-sm-10">
+                  <input type="text" name="brand" value="" placeholder="{{ entry_brand }}" id="input-brand" class="form-control"/>
+                  <div id="product-brand" class="form-control" style="height: 150px; overflow: auto;">
+				  {% for product_brand in product_brands %}
+                      <div id="product-brand{{ product_brand.brand_id }}"><i class="fa fa-minus-circle"></i> {{ product_brand.name }}
+                        <input type="hidden" name="product_brand[]" value="{{ product_brand.brand_id }}"/>
+                      </div>
+                    {% endfor %}
+                  </div>
+                  <small class="form-text text-muted">{{ help_brand }}</small>
+                </div>
+              </div>
+			  <!-- brand -->
+			  <input type="hidden" name="product_filter[]" value="0"/>
 			  <input type="hidden" name="product_store[]" value="0"/>
 			  <input type="hidden" name="product_download[]" value="0"/>
               <div class="form-group row">
@@ -627,7 +690,8 @@
     </div>
   </div>
 </div>
-<script type="text/javascript"><!--
+<script type="text/javascript">
+<!--
 // Manufacturer
 $('input[name=\'manufacturer\']').autocomplete({
 	'source': function(request, response) {
@@ -710,6 +774,35 @@ $('input[name=\'filter\']').autocomplete({
 });
 
 $('#product-filter').delegate('.fa-minus-circle', 'click', function() {
+	$(this).parent().remove();
+});
+// Brand
+$('input[name=\'brand\']').autocomplete({
+	'source': function(request, response) {
+	var manufacturerId = $('input[name=\'manufacturer_id\']').val();
+	 $.ajax({
+			url: 'index.php?route=catalog/brand/autocompleteBrandByManufacturer&user_token={{ user_token }}&mfid=' + manufacturerId +'&filter_name=' + encodeURIComponent(request),
+			dataType: 'json',
+			success: function(json) {
+				response($.map(json, function(item) {
+					return {
+						label: item['name'],
+						value: item['brand_id']
+					}
+				}));
+			}
+		});
+	},
+	'select': function(item) {
+		$('input[name=\'brand\']').val('');
+
+		$('#product-brand' + item['value']).remove();
+
+		$('#product-brand').append('<div id="product-brand' + item['value'] + '"><i class="fa fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="product_brand[]" value="' + item['value'] + '" /></div>');
+	}
+});
+
+$('#product-brand').delegate('.fa-minus-circle', 'click', function() {
 	$(this).parent().remove();
 });
 

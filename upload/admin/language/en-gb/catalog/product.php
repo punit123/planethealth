@@ -11,16 +11,24 @@ $_['text_filter']            = 'Filter';
 $_['text_default']           = 'Default';
 $_['text_option']            = 'Options';
 $_['text_keyword']           = 'Do not use spaces, instead replace spaces with - and make sure the SEO URL is globally unique.';
-
+$_['text_tablets_per_strip'] 	= 'Tablets Per Strip';
+$_['text_Is_brekable']            	= 'Is Breakable';
+$_['text_is_prescription_required']  = 'is_prescription_required';
+$_['text_per_tablet_price']          = 'Per Tablet Price';
+$_['text_medicine_type']             = 'Medicine Type';
 // Column
-$_['column_name']            = 'Product Name';
-$_['column_model']           = 'Model';
-$_['column_image']           = 'Image';
-$_['column_price']           = 'Price';
-$_['column_quantity']        = 'Quantity';
-$_['column_status']          = 'Status';
-$_['column_action']          = 'Action';
-
+$_['column_name']            		= 'Product Name';
+$_['column_model']           		= 'Model';
+$_['column_image']           		= 'Image';
+$_['column_price']           		= 'Price';
+$_['column_quantity']        		= 'Quantity';
+$_['column_status']          		= 'Status';
+$_['column_action']          		= 'Action';
+$_['column_tablets_per_strip'] 		= 'Tablets Per Strip';
+$_['column_Is_brekable']            	= 'Is Breakable';
+$_['column_is_prescription_required'] = 'is_prescription_required';
+$_['column_per_tablet_price']         = 'Per Tablet Price';
+$_['column_medicine_type']            = 'Medicine Type';
 // Entry
 $_['entry_name']             = 'Product Name';
 $_['entry_description']      = 'Description';
@@ -67,6 +75,7 @@ $_['entry_required']         = 'Required';
 $_['entry_status']           = 'Status';
 $_['entry_sort_order']       = 'Sort Order';
 $_['entry_category']         = 'Categories';
+$_['entry_brand']         	 = 'Brands';
 $_['entry_filter']           = 'Filters';
 $_['entry_download']         = 'Downloads';
 $_['entry_related']          = 'Related Products';
@@ -74,7 +83,11 @@ $_['entry_tag']              = 'Product Tags';
 $_['entry_reward']           = 'Reward Points';
 $_['entry_layout']           = 'Layout Override';
 $_['entry_recurring']        = 'Recurring Profile';
-
+$_['entry_tablets_per_strip'] 		= 'Tablets Per Strip';
+$_['entry_Is_brekable']            	= 'Is Breakable';
+$_['entry_is_prescription_required'] = 'is_prescription_required';
+$_['entry_per_tablet_price']         = 'Per Tablet Price';
+$_['entry_medicine_type']            = 'Medicine Type';
 // Help
 $_['help_sku']               = 'Stock Keeping Unit';
 $_['help_upc']               = 'Universal Product Code';
@@ -87,6 +100,7 @@ $_['help_minimum']           = 'Force a minimum ordered amount';
 $_['help_stock_status']      = 'Status shown when a product is out of stock';
 $_['help_points']            = 'Number of points needed to buy this item. If you don\'t want this product to be purchased with points leave as 0.';
 $_['help_category']          = '(Autocomplete)';
+$_['help_brand']             = '(Autocomplete)';
 $_['help_filter']            = '(Autocomplete)';
 $_['help_download']          = '(Autocomplete)';
 $_['help_related']           = '(Autocomplete)';

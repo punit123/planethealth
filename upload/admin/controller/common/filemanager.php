@@ -185,8 +185,10 @@ class ControllerCommonFileManager extends Controller {
 		// Make sure we have the correct directory
 		if (isset($this->request->get['directory'])) {
 			$directory = rtrim(DIR_IMAGE . 'catalog/' . $this->request->get['directory'], '/');
+			$httppath = HTTP_CATALOG. '/image/catalog/' . $this->request->get['directory'].'/';
 		} else {
 			$directory = DIR_IMAGE . 'catalog';
+			$httppath = HTTP_CATALOG. '/image/catalog/';
 		}
 
 		// Check its a directory
@@ -260,6 +262,7 @@ class ControllerCommonFileManager extends Controller {
 		}
 
 		if (!$json) {
+			$json['data'] = $httppath . $filename;
 			$json['success'] = $this->language->get('text_uploaded');
 		}
 

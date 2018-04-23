@@ -988,3 +988,6 @@ input[type="checkbox"]:checked::after, .checkbox input[type="checkbox"]:checked:
 	width: 235px;
     margin-left: 0px;
 }
+.note-popover.popover {
+    display: none;
+}

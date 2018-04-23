@@ -34,6 +34,29 @@
               {% endif %}
             </div>
           </div>
+		  <div class="form-group row">
+			<label class="col-sm-2 col-form-label" for="input-category">{{ entry_category }}</label>
+			<div class="col-sm-10">
+			  <input type="text" name="category" value="" placeholder="{{ entry_category }}" id="input-category" class="form-control"/>
+			  <div id="banner-category" class="form-control" style="height: 150px; overflow: auto;">{% for banner_category in banner_categories %}
+				  <div id="banner-category{{ banner_category.category_id }}"><i class="fa fa-minus-circle"></i> {{ banner_category.name }}
+					<input type="hidden" name="banner_category[]" value="{{ banner_category.category_id }}"/>
+				  </div>
+				{% endfor %}
+			  </div>
+			  <small class="form-text text-muted">{{ help_category }}</small>
+			</div>
+		  </div>
+		  <div class="form-group row">
+			<label class="col-sm-2 col-form-label" for="input-category">{{ entry_home }}</label>
+			<div class="col-sm-10">
+				{% if on_homepage %}
+					<input type="checkbox" name="on_homepage" value="1" placeholder="{{ entry_home }}" id="input-homepage" checked="checked"/>
+				{% else %}
+					<input type="checkbox" name="on_homepage" value="1" placeholder="{{ entry_home }}" id="input-homepage"/>
+				{% endif %}
+			</div>
+		  </div>		  
           <div class="form-group row">
             <label class="col-sm-2 col-form-label" for="input-status">{{ entry_status }}</label>
             <div class="col-sm-10">
@@ -77,7 +100,13 @@
                               <div class="invalid-tooltip">{{ error_banner_image[language.language_id][image_row] }}</div>
                             {% endif %}</td>
                           <td class="text-left" style="width: 30%;"><input type="text" name="banner_image[{{ language.language_id }}][{{ image_row }}][link]" value="{{ banner_image.link }}" placeholder="{{ entry_link }}" class="form-control"/></td>
-                          <td class="text-center"><a href="" id="thumb-image{{ image_row }}" data-toggle="image" class="img-thumbnail"><img src="{{ banner_image.thumb }}" alt="" title="" data-placeholder="{{ placeholder }}"/></a> <input type="hidden" name="banner_image[{{ language.language_id }}][{{ image_row }}][image]" value="{{ banner_image.image }}" id="input-image{{ image_row }}"/></td>
+                          <td class="text-center">
+							  <div class="card" style="max-width: 10rem;">
+								<img src="{{ banner_image.thumb }}" style="width: 158px;height: 100px;" class="image-preview"/>
+								<input type="hidden" name="banner_image[{{ language.language_id }}][{{ image_row }}][image]" value="{{ banner_image.image }}" id="input-image{{ image_row }}"/>
+								<button type="button" data-toggle="tooltip" title="{{ button_upload }}" id="button-upload-image" class="btn btn-primary button-upload"><i class="fa fa-upload"></i> Upload</button>					
+							  </div>
+						  </td>
                           <td class="text-right" style="width: 10%;"><input type="text" name="banner_image[{{ language.language_id }}][{{ image_row }}][sort_order]" value="{{ banner_image.sort_order }}" placeholder="{{ entry_sort_order }}" class="form-control"/></td>
                           <td class="text-left"><button type="button" onclick="$('#image-row{{ image_row }}, .tooltip').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>
                         </tr>
@@ -107,7 +136,7 @@ function addImage(language_id) {
 	html = '<tr id="image-row' + image_row + '">';
 	html += '  <td class="text-left"><input type="text" name="banner_image[' + language_id + '][' + image_row + '][title]" value="" placeholder="{{ entry_title }}" class="form-control" /></td>';
 	html += '  <td class="text-left" style="width: 30%;"><input type="text" name="banner_image[' + language_id + '][' + image_row + '][link]" value="" placeholder="{{ entry_link }}" class="form-control" /></td>';
-	html += '  <td class="text-center"><a href="" id="thumb-image' + image_row + '" data-toggle="image" class="img-thumbnail"><img src="{{ placeholder }}" alt="" title="" data-placeholder="{{ placeholder }}" /></a><input type="hidden" name="banner_image[' + language_id + '][' + image_row + '][image]" value="" id="input-image' + image_row + '" /></td>';
+	html += '  <td class="text-center"><div class="card" style="max-width: 10rem;"><img src="{{ placeholder }}" style="width: 158px;height: 100px;" class="image-preview"/><input type="hidden" name="banner_image[' + language_id + '][' + image_row + '][image]" value="" id="input-image' + image_row + '" /><button type="button" data-toggle="tooltip" title="{{ button_upload }}" id="button-upload-image" class="btn btn-primary button-upload"><i class="fa fa-upload"></i> Upload</button></div></td>';
 	html += '  <td class="text-right" style="width: 10%;"><input type="text" name="banner_image[' + language_id + '][' + image_row + '][sort_order]" value="" placeholder="{{ entry_sort_order }}" class="form-control" /></td>';
 	html += '  <td class="text-left"><button type="button" onclick="$(\'#image-row' + image_row + ', .tooltip\').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
 	html += '</tr>';
@@ -116,7 +145,34 @@ function addImage(language_id) {
 
 	image_row++;
 }
+// Category
+$('input[name=\'category\']').autocomplete({
+	'source': function(request, response) {
+		$.ajax({
+			url: 'index.php?route=catalog/category/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+			dataType: 'json',
+			success: function(json) {
+				response($.map(json, function(item) {
+					return {
+						label: item['name'],
+						value: item['category_id']
+					}
+				}));
+			}
+		});
+	},
+	'select': function(item) {
+		$('input[name=\'category\']').val('');
 
+		$('#banner-category' + item['value']).remove();
+
+		$('#banner-category').append('<div id="banner-category' + item['value'] + '"><i class="fa fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="banner_category[]" value="' + item['value'] + '" /></div>');
+	}
+});
+
+$('#banner-category').delegate('.fa-minus-circle', 'click', function() {
+	$(this).parent().remove();
+});
 //--></script>
 <script type="text/javascript"><!--
 $('#language li:first-child a').tab('show');
