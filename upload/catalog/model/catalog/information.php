@@ -27,4 +27,10 @@ class ModelCatalogInformation extends Model {
 			return 0;
 		}
 	}
+	
+	public function getFaq(){
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "faq WHERE status = 1 ");
+		
+		return $query->rows;
+	}
 }
