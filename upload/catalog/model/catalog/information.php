@@ -30,7 +30,7 @@ class ModelCatalogInformation extends Model {
 	
 	public function getFaq(){
 		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "faq WHERE status = 1 ");
-		
+	
 		return $query->rows;
 	}
 }

@@ -19,7 +19,7 @@ class ControllerApiInformation extends Controller {
 			$cmsInfoById = $this->model_catalog_information->getInformation($cmsInformationById);
 			if(count($cmsInfoById)>0 && $cmsInfoById != ''){
 				$json['status'] = 'success';
-                $json['message'] = 'success';
+                                $json['message'] = 'success';
 				$json['data'] = $cmsInfoById;
 			}
 			else{
@@ -37,9 +37,9 @@ class ControllerApiInformation extends Controller {
 	
 	public function getAllFaqs(){
 		$this->load->model('catalog/information');
-		
+	
 		$getAllFaq = $this->model_catalog_information->getFaq();
-		
+	
 		if(isset($getAllFaq) && count($getAllFaq)>0 && !empty($getAllFaq)){
 			$json['status'] = 'success';
 			$json['message'] = 'success';

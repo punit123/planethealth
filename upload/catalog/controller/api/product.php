@@ -64,7 +64,6 @@ class ControllerApiProduct extends Controller {
 		{
 		$json['status'] = 'error';
 		$json['message'] = $this->language->get('no record found!');
-
 		}
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));			
@@ -234,14 +233,13 @@ class ControllerApiProduct extends Controller {
 	{
 		$this->load->model('catalog/product');
 		$json = array();
-		$product_id=$this->request->post['product_id'];
-		$getstoredetail = $this->model_catalog_product->getStoreId($product_id);
+		$getstoredetail = $this->model_catalog_product->getStoreId();
 		if(isset($getstoredetail) && !empty($getstoredetail) && count($getstoredetail)){
 				$json['status'] = 'success';
 				$json['message'] = $this->language->get('Success');
 				$json['data'] = $getstoredetail;
-			}
-			else{
+		}
+		else{
 			$json['status'] = 'error';
 			$json['message'] = $this->language->get('No Store Found!');
 		}

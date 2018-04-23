@@ -14,11 +14,12 @@ class ControllerApiBanner extends Controller {
 			if ($banner_info) {
 				$this->session->data['banner'] = 7;
 				$json['status'] = 'success';
+				$json['message'] = 'success';
 				$json['data'] = $banner_info;
-				$json['message'] = $this->language->get('text_success');
+				
 			} else {
 				$json['status'] = 'error';
-				$json['message'] = $this->language->get('error_voucher');
+				$json['message'] = $this->language->get('No record found!');
 			}
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
