@@ -63,7 +63,10 @@ class ModelCustomerCustomer extends Model {
 
 		return $query->row;
 	}
-
+	public function getCustomerFields($select) {
+		$query = $this->db->query("SELECT ".$select." FROM " . DB_PREFIX . "customer WHERE status = 1 ORDER BY customer_id ASC");
+		return $query->row;
+	}
 	public function getCustomerByEmail($email) {
 		$query = $this->db->query("SELECT DISTINCT * FROM " . DB_PREFIX . "customer WHERE LCASE(email) = '" . $this->db->escape(utf8_strtolower($email)) . "'");
 

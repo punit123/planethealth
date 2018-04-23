@@ -566,29 +566,7 @@ class ControllerCatalogCategory extends Controller {
 				}
 			}
 		}
-
-		if ($this->request->post['category_seo_url']) {
-			$this->load->model('design/seo_url');
-
-			foreach ($this->request->post['category_seo_url'] as $store_id => $language) {
-				foreach ($language as $language_id => $keyword) {
-					if ($keyword) {
-						$seo_urls = $this->model_design_seo_url->getSeoUrlsByKeyword($keyword);
-
-						foreach ($seo_urls as $seo_url) {
-							if (($seo_url['store_id'] == $store_id) && ($seo_url['language_id'] == $language_id) && (!isset($this->request->get['category_id']) || ($seo_url['query'] != 'path=' . $this->model_catalog_category->getPath($this->request->get['category_id'])))) {
-								$this->error['keyword'][$store_id][$language_id] = $this->language->get('error_keyword');
-
-								break;
-							}
-						}
-					} else {
-						$this->error['keyword'][$store_id][$language_id] = $this->language->get('error_seo');
-					}
-				}
-			}
-		}
-
+		
 		if ($this->error && !isset($this->error['warning'])) {
 			$this->error['warning'] = $this->language->get('error_warning');
 		}

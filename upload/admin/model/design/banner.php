@@ -1,7 +1,7 @@
 <?php
 class ModelDesignBanner extends Model {
 	public function addBanner($data) {
-		$this->db->query("INSERT INTO " . DB_PREFIX . "banner SET name = '" . $this->db->escape((string)$data['name']) . "', status = '" . (int)$data['status'] . "'");
+		$this->db->query("INSERT INTO " . DB_PREFIX . "banner SET name = '" . $this->db->escape((string)$data['name']) . "', status = '" . (int)$data['status'] . "',on_homepage = '".(int)$data['on_homepage']."'");
 
 		$banner_id = $this->db->getLastId();
 
@@ -12,14 +12,27 @@ class ModelDesignBanner extends Model {
 				}
 			}
 		}
+		
+		if (isset($data['banner_category'])) {
+			foreach ($data['banner_category'] as $value) {
+					$this->db->query("INSERT INTO " . DB_PREFIX . "banner_to_category SET banner_id = '" . (int)$banner_id . "', category_id = '" . (int)$value."'");
+			}
+		}
 
 		return $banner_id;
 	}
 
 	public function editBanner($banner_id, $data) {
-		$this->db->query("UPDATE " . DB_PREFIX . "banner SET name = '" . $this->db->escape((string)$data['name']) . "', status = '" . (int)$data['status'] . "' WHERE banner_id = '" . (int)$banner_id . "'");
+		if(isset($data['on_homepage'])){
+			$homepage = $data['on_homepage'];
+		}else{
+			$homepage = 0;
+		}
+		$this->db->query("UPDATE " . DB_PREFIX . "banner SET name = '" . $this->db->escape((string)$data['name']) . "', status = '" . (int)$data['status'] . "',on_homepage = '".(int)$homepage."' WHERE banner_id = '" . (int)$banner_id . "'");
 
 		$this->db->query("DELETE FROM " . DB_PREFIX . "banner_image WHERE banner_id = '" . (int)$banner_id . "'");
+		
+		$this->db->query("DELETE FROM " . DB_PREFIX . "banner_to_category WHERE banner_id = '" . (int)$banner_id . "'");
 
 		if (isset($data['banner_image'])) {
 			foreach ($data['banner_image'] as $language_id => $value) {
@@ -28,6 +41,12 @@ class ModelDesignBanner extends Model {
 				}
 			}
 		}
+		
+		if (isset($data['banner_category'])) {
+			foreach ($data['banner_category'] as $value) {
+					$this->db->query("INSERT INTO " . DB_PREFIX . "banner_to_category SET banner_id = '" . (int)$banner_id . "', category_id = '" . (int)$value."'");
+			}
+		}		
 	}
 
 	public function deleteBanner($banner_id) {
@@ -100,4 +119,15 @@ class ModelDesignBanner extends Model {
 
 		return $query->row['total'];
 	}
+	public function getBannerCategories($banner_id) {
+		$banner_category_data = array();
+
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "banner_to_category WHERE banner_id = '" . (int)$banner_id . "'");
+
+		foreach ($query->rows as $result) {
+			$banner_category_data[] = $result['category_id'];
+		}
+
+		return $banner_category_data;
+	}	
 }

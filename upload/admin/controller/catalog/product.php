@@ -72,6 +72,7 @@ class ControllerCatalogProduct extends Controller {
 		$this->load->model('catalog/product');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
+			//echo "<pre>"; print_r($this->request->post); die;	
 			$this->model_catalog_product->editProduct($this->request->get['product_id'], $this->request->post);
 
 			$this->session->data['success'] = $this->language->get('text_success');
@@ -669,7 +670,42 @@ class ControllerCatalogProduct extends Controller {
 		} else {
 			$data['mpn'] = '';
 		}
-
+		if (isset($this->request->post['is_prescription_required'])) {
+			$data['is_prescription_required'] = $this->request->post['is_prescription_required'];
+		} elseif (!empty($product_info)) {
+			$data['is_prescription_required'] = $product_info['is_prescription_required'];
+		} else {
+			$data['is_prescription_required'] = '';
+		}
+		if (isset($this->request->post['Is_brekable'])) {
+			$data['Is_brekable'] = $this->request->post['Is_brekable'];
+		} elseif (!empty($product_info)) {
+			$data['Is_brekable'] = $product_info['Is_brekable'];
+		} else {
+			$data['Is_brekable'] = '';
+		}
+		if (isset($this->request->post['medicine_type'])) {
+			$data['medicine_type'] = $this->request->post['medicine_type'];
+		} elseif (!empty($product_info)) {
+			$data['medicine_type'] = $product_info['medicine_type'];
+		} else {
+			$data['medicine_type'] = '';
+		}
+		if (isset($this->request->post['tablets_per_strip'])) {
+			$data['tablets_per_strip'] = $this->request->post['tablets_per_strip'];
+		} elseif (!empty($product_info)) {
+			$data['tablets_per_strip'] = $product_info['tablets_per_strip'];
+		} else {
+			$data['tablets_per_strip'] = '';
+		}
+		if (isset($this->request->post['per_tablet_price'])) {
+			$data['per_tablet_price'] = $this->request->post['per_tablet_price'];
+		} elseif (!empty($product_info)) {
+			$data['per_tablet_price'] = $product_info['per_tablet_price'];
+		} else {
+			$data['per_tablet_price'] = '';
+		}
+        //echo "<pre>"; print_r($data); die;		
 		if (isset($this->request->post['location'])) {
 			$data['location'] = $this->request->post['location'];
 		} elseif (!empty($product_info)) {
@@ -907,7 +943,30 @@ class ControllerCatalogProduct extends Controller {
 				);
 			}
 		}
+        
+	// Brands
+	$this->load->model('catalog/brand');
+	if (isset($this->request->post['product_brand'])) {
+		$brands = $this->request->post['product_brand'];
+	} elseif (isset($this->request->get['product_id'])) {
+		$brands = $this->model_catalog_product->getProductBrands($this->request->get['product_id']);
+	} else {
+		$brands = array();
+	}
+	$data['product_brands'] = array();
 
+	foreach ($brands as $brand_id) {
+		$brand_info = $this->model_catalog_brand->getbrand($brand_id);
+
+		if ($brand_info) {
+			$data['product_brands'][] = array(
+				'brand_id' => $brand_info['brand_id'],
+				'name'     => $brand_info['name']
+			);
+		}
+	}
+	// Medicine Type
+	$data['medicinTypeArr'] = array(1 => 'tablet', 2 => 'syrup', 3 => 'capsule');
 		// Filters
 		$this->load->model('catalog/filter');
 
@@ -1138,11 +1197,11 @@ class ControllerCatalogProduct extends Controller {
 		$this->response->setOutput($this->load->view('catalog/product_form', $data));
 	}
 
-	protected function validateForm() {
-		if (!$this->user->hasPermission('modify', 'catalog/product')) {
+	protected function validateForm() { 
+		if (!$this->user->hasPermission('modify', 'catalog/product')) { 
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
-
+         
 		foreach ($this->request->post['product_description'] as $language_id => $value) {
 			if ((utf8_strlen($value['name']) < 1) || (utf8_strlen($value['name']) > 255)) {
 				$this->error['name'][$language_id] = $this->language->get('error_name');
@@ -1182,7 +1241,7 @@ class ControllerCatalogProduct extends Controller {
 		if ($this->error && !isset($this->error['warning'])) {
 			$this->error['warning'] = $this->language->get('error_warning');
 		}
-
+        //echo "<pre>"; print_r($this->error); die;
 		return !$this->error;
 	}
 

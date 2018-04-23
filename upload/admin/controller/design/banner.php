@@ -313,6 +313,14 @@ class ControllerDesignBanner extends Controller {
 		} else {
 			$data['name'] = '';
 		}
+		
+		if (isset($this->request->post['on_homepage'])) {
+			$data['on_homepage'] = $this->request->post['on_homepage'];
+		} elseif (!empty($banner_info)) {
+			$data['on_homepage'] = $banner_info['on_homepage'];
+		} else {
+			$data['on_homepage'] = '';
+		}		
 
 		if (isset($this->request->post['status'])) {
 			$data['status'] = $this->request->post['status'];
@@ -335,12 +343,11 @@ class ControllerDesignBanner extends Controller {
 		} else {
 			$banner_images = array();
 		}
-
 		$data['banner_images'] = array();
-
+		
 		foreach ($banner_images as $key => $value) {
-			foreach ($value as $banner_image) {
-				if (is_file(DIR_IMAGE . $banner_image['image'])) {
+			foreach ($value as $banner_image) {				
+				if ($banner_image['image'] != '') {
 					$image = $banner_image['image'];
 					$thumb = $banner_image['image'];
 				} else {
@@ -352,12 +359,36 @@ class ControllerDesignBanner extends Controller {
 					'title'      => $banner_image['title'],
 					'link'       => $banner_image['link'],
 					'image'      => $image,
-					'thumb'      => $this->model_tool_image->resize($thumb, 100, 100),
+					'thumb'      => $thumb,
 					'sort_order' => $banner_image['sort_order']
 				);
 			}
 		}
 
+		// Categories
+		$this->load->model('catalog/category');
+
+		if (isset($this->request->post['banner_category'])) {
+			$categories = $this->request->post['banner_category'];
+		} elseif (isset($this->request->get['banner_id'])) {
+			$categories = $this->model_design_banner->getBannerCategories($this->request->get['banner_id']);
+		} else {
+			$categories = array();
+		}
+
+		$data['banner_categories'] = array();
+
+		foreach ($categories as $category_id) {
+			$category_info = $this->model_catalog_category->getCategory($category_id);
+
+			if ($category_info) {
+				$data['banner_categories'][] = array(
+					'category_id' => $category_info['category_id'],
+					'name'        => ($category_info['path']) ? $category_info['path'] . ' &gt; ' . $category_info['name'] : $category_info['name']
+				);
+			}
+		}		
+		
 		$data['placeholder'] = $this->model_tool_image->resize('no_image.png', 100, 100);
 
 		$data['header'] = $this->load->controller('common/header');
