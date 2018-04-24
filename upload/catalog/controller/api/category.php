@@ -33,4 +33,30 @@ class ControllerApiCategory extends Controller {
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
+	
+	public function categoryToBanner(){
+		$this->load->language('api/category');
+		$this->load->model('catalog/category');
+		$json = array();
+	
+		$category_id = $this->request->post['category_id'];
+		if($category_id){
+			$categoryToBannerDetail = $this->model_catalog_category->getCatoryToBannerDetail($category_id);
+			if(!empty($categoryToBannerDetail) && count($categoryToBannerDetail)>0){
+				$json['status'] = 'success';
+				$json['message'] = 'success';
+				$json['data'] = $categoryToBannerDetail[0];
+			}
+			else{
+				$json['status'] = 'error';
+				$json['message'] = 'Category banner not found!';
+			}
+		}
+		else{
+			$json['status'] = 'error';
+			$json['message'] = $this->language->get('Invalid Category!');
+		}
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
 }

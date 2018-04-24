@@ -66,4 +66,10 @@ class ModelCatalogCategory extends Model {
 
 		return $query->row['total'];
 	}
+	
+	public function getCatoryToBannerDetail($category_id){
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "banner_to_category btc INNER JOIN " . DB_PREFIX . "banner b on btc.banner_id = b.banner_id WHERE category_id = '" . (int)$category_id . "'");
+		
+		return $query->rows;
+	}
 }
