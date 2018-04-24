@@ -175,7 +175,7 @@ class ControllerCommonColumnLeft extends Controller {
 			}
 			
 			// Extension
-			// $marketplace = array();
+			 $marketplace = array();
 			
 			// if ($this->user->hasPermission('access', 'marketplace/marketplace')) {		
 				// $marketplace[] = array(
@@ -193,13 +193,13 @@ class ControllerCommonColumnLeft extends Controller {
 				// );					
 			// }	
 			
-			// if ($this->user->hasPermission('access', 'marketplace/extension')) {		
-				// $marketplace[] = array(
-					// 'name'	   => $this->language->get('text_extension'),
-					// 'href'     => $this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token']),
-					// 'children' => array()
-				// );
-			// }
+			if ($this->user->hasPermission('access', 'marketplace/extension')) {		
+				$marketplace[] = array(
+					'name'	   => $this->language->get('text_extension'),
+					'href'     => $this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token']),
+					'children' => array()
+				);
+			}
 								
 			// if ($this->user->hasPermission('access', 'marketplace/modification')) {
 				// $marketplace[] = array(
@@ -225,26 +225,26 @@ class ControllerCommonColumnLeft extends Controller {
 				// );
 			// }
 
-			// if ($marketplace) {					
-				// $data['menus'][] = array(
-					// 'id'       => 'menu-extension',
-					// 'icon'	   => 'fa-puzzle-piece', 
-					// 'name'	   => $this->language->get('text_extension'),
-					// 'href'     => '',
-					// 'children' => $marketplace
-				// );		
-			// }
+			if ($marketplace) {					
+				$data['menus'][] = array(
+					'id'       => 'menu-extension',
+					'icon'	   => 'fa-puzzle-piece', 
+					'name'	   => $this->language->get('text_extension'),
+					'href'     => '',
+					'children' => $marketplace
+				);		
+			}
 			
 			// Design
 			$design = array();
 			
-			// if ($this->user->hasPermission('access', 'design/layout')) {
-				// $design[] = array(
-					// 'name'	   => $this->language->get('text_layout'),
-					// 'href'     => $this->url->link('design/layout', 'user_token=' . $this->session->data['user_token']),
-					// 'children' => array()
-				// );	
-			// }
+			if ($this->user->hasPermission('access', 'design/layout')) {
+				$design[] = array(
+					'name'	   => $this->language->get('text_layout'),
+					'href'     => $this->url->link('design/layout', 'user_token=' . $this->session->data['user_token']),
+					'children' => array()
+				);	
+			}
 			
 			// if ($this->user->hasPermission('access', 'design/theme')) {	
 				// $design[] = array(
