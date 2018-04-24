@@ -35,13 +35,15 @@ class ModelAccountCustomer extends Model {
   return $query->rows;
  }
 	public function editCustomer($customer_id, $data) {
-		$query = $this->db->query("UPDATE " . DB_PREFIX . "customer SET firstname = '" . $this->db->escape((string)$data['firstname']) . "', lastname = '" . $this->db->escape((string)$data['lastname']) . "', email = '" . $this->db->escape((string)$data['email']) . "', telephone = '" . $this->db->escape((string)$data['telephone']) . "', gender = '" . $this->db->escape((int)$data['gender']) . "', blood_group = '" . $this->db->escape((string)$data['blood_group']) . "' , date_of_birth = '" . $this->db->escape($data['date_of_birth']) . "' , anniversary_date = '" . $this->db->escape($data['anniversary_date']) . "' , custom_field = '" . $this->db->escape(isset($data['custom_field']['account']) ? json_encode($data['custom_field']['account']) : '') . "' WHERE customer_id = '" . (int)$customer_id . "'");
-$return = $this->db->countAffected();
-if(isset($data['image'])){
-		$query = $this->db->query("UPDATE " . DB_PREFIX . "customer SET image = '" . $this->db->escape((string)$data['image']) . "' WHERE customer_id = '" . (int)$customer_id . "'");
-            $return = $this->db->countAffected();
-}
-return $return;
+		$query = $this->db->query("UPDATE " . DB_PREFIX . "customer SET firstname = '" . $this->db->escape((string)$data['firstname']) . "', lastname = '" . $this->db->escape((string)$data['lastname']) . "', email = '" . $this->db->escape((string)$data['email']) . "', telephone = '" . $this->db->escape((string)$data['telephone']) . "', image = '" . $this->db->escape((string)$data['image']) . "', gender = '" . $this->db->escape((int)$data['gender']) . "', blood_group = '" . $this->db->escape((string)$data['blood_group']) . "' , date_of_birth = '" . $this->db->escape($data['date_of_birth']) . "' , anniversary_date = '" . $this->db->escape($data['anniversary_date']) . "' , custom_field = '" . $this->db->escape(isset($data['custom_field']['account']) ? json_encode($data['custom_field']['account']) : '') . "' WHERE customer_id = '" . (int)$customer_id . "'");
+		$return =  $this->db->countAffected();
+		/*
+		if(isset($data['image'])){
+				$query = $this->db->query("UPDATE " . DB_PREFIX . "customer SET image = '" . $this->db->escape((string)$data['image']) . "' WHERE customer_id = '" . (int)$customer_id . "'");
+				$abc = $this->db->countAffected();
+		}
+		*/
+		return $return;
 	}
 	public function editCustomerfcm($customer_id, $data) {
 		$query = $this->db->query("UPDATE " . DB_PREFIX . "customer SET  fcm_id= '" . $this->db->escape((string)$data['fcm_id']) . "', device_type= " . $this->db->escape((int)$data['device_type']) . " WHERE customer_id = '" . (int)$customer_id . "'");
@@ -73,13 +75,9 @@ return $return;
 		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "customer WHERE customer_id = '" . (int)$customer_id . "'");
 		return $query->row;
 	}
-	public function getCustomerByEmail($email) {
-		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "customer WHERE status = 1 AND (LOWER(email) = '" . $this->db->escape(utf8_strtolower($email)) . " ' OR telephone = '" . $this->db->escape(utf8_strtolower($email)) . "')");
-		return $query->rows;
-	}
-        public function getCustomerByEmailAndPhone($email,$phone) {
-		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "customer WHERE status = 1 AND (LOWER(email) = '" . $this->db->escape(utf8_strtolower($email)) . " ' OR telephone = '" . $this->db->escape(utf8_strtolower($phone)) . "')");
-		return $query->rows;
+    public function getCustomerByEmailAndPhone($email,$phone,$customer_id) {
+			$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "customer WHERE status = 1 AND (LOWER(email) = '" . $this->db->escape(utf8_strtolower($email)) . " ' OR telephone = '" . $this->db->escape(utf8_strtolower($phone)) . "') AND customer_id != '".$customer_id."'");
+			return $query->rows;
 	}
 	public function getCustomerByCode($code) {
 		$query = $this->db->query("SELECT customer_id, firstname, lastname, email FROM `" . DB_PREFIX . "customer` WHERE code = '" . $this->db->escape($code) . "' AND code != ''");
