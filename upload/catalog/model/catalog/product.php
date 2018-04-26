@@ -342,7 +342,7 @@ class ModelCatalogProduct extends Model {
 		$product_data = array();
 	
 		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_related pr LEFT JOIN " . DB_PREFIX . "product p ON (pr.related_id = p.product_id) LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE pr.product_id = '" . (int)$product_id . "' AND p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "'");
-	
+		
 		foreach ($query->rows as $result) {
 			$product_data[$result['related_id']] = $this->getProductRelatedData($result['related_id']);
 		}
@@ -455,7 +455,7 @@ class ModelCatalogProduct extends Model {
 	}
 	
 	public function getProductbyCatid($category_id){
-		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_to_category pc LEFT JOIN " . DB_PREFIX . "product p ON (p.product_id = pc.product_id) WHERE pc.category_id = '". (int)$category_id ."' ");
+		$query = $this->db->query("SELECT p.image,pd.name,m.name,p.price,pc.* FROM " . DB_PREFIX . "product_to_category pc LEFT JOIN " . DB_PREFIX . "product p ON (p.product_id = pc.product_id) LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) LEFT JOIN " . DB_PREFIX . "manufacturer m ON (p.manufacturer_id = m.manufacturer_id) WHERE pc.category_id = '". (int)$category_id ."'");
 		return $query->rows;
 	}
 	
@@ -500,10 +500,21 @@ class ModelCatalogProduct extends Model {
 		return $query->rows;
 	}
 	
-	public function getStoreId()
-	{
-		$query =$this->db->query("SELECT * FROM oc_location");
+	public function getStoreId(){
+		$query =$this->db->query("SELECT * FROM " . DB_PREFIX . "location");
 		return $query->rows;
 	}
 	
+	public function getAllProduct($customer_id){
+		//echo '<pre>';print_r($customer_id);die;
+		//echo "SELECT * FROM " . DB_PREFIX . "product p LEFT JOIN ". DB_PREFIX ."customer_wishlist cw ON p.product_id = cw.product_id where customer_id = '". (int)$customer_id ."' ";die;
+		if(!empty($customer_id)){
+			$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product p LEFT JOIN ". DB_PREFIX ."customer_wishlist cw ON p.product_id = cw.product_id where customer_id = '". (int)$customer_id ."' ");
+			return $query->rows;
+		}
+		else{
+			$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product");
+			return $query->rows;
+		}
+	}
 }

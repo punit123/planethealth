@@ -8,7 +8,6 @@ class ControllerApiCategory extends Controller {
 
 		$json = array();
 
-
 			$this->load->model('catalog/category');
 
 			if (isset($this->request->post['category'])) {
@@ -45,7 +44,7 @@ class ControllerApiCategory extends Controller {
 			if(!empty($categoryToBannerDetail) && count($categoryToBannerDetail)>0){
 				$json['status'] = 'success';
 				$json['message'] = 'success';
-				$json['data'] = $categoryToBannerDetail[0];
+				$json['data'] = $categoryToBannerDetail;
 			}
 			else{
 				$json['status'] = 'error';

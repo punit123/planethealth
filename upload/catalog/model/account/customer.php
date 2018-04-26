@@ -15,36 +15,36 @@ class ModelAccountCustomer extends Model {
 		}
 		return $customer_id;
 	}
- public function addCustomerSocial($data) {
-  if (isset($data['customer_group_id']) && is_array($this->config->get('config_customer_group_display')) && in_array($data['customer_group_id'], $this->config->get('config_customer_group_display'))) {
-   $customer_group_id = $data['customer_group_id'];
-  } else {
-   $customer_group_id = $this->config->get('config_customer_group_id');
-  }
-  $this->load->model('account/customer_group');
-  $customer_group_info = $this->model_account_customer_group->getCustomerGroup($customer_group_id);
-  $this->db->query("INSERT INTO " . DB_PREFIX . "customer SET customer_group_id = '" . (int)$customer_group_id . "', store_id = '" . (int)$this->config->get('config_store_id') . "', language_id = '" . (int)$this->config->get('config_language_id') . "', firstname = '" . $this->db->escape((string)$data['firstname']) . "', lastname = '" . $this->db->escape((string)$data['lastname']) . "', email = '" . $this->db->escape((string)$data['email']) . "', telephone = '" . $this->db->escape((string)$data['telephone']) . "', custom_field = '" . $this->db->escape(isset($data['custom_field']['account']) ? json_encode($data['custom_field']['account']) : '') . "', salt = '', login_token ='".$this->db->escape((string)$data['login_token'])."',login_type ='".$this->db->escape((int)$data['login_type'])."',newsletter = '" . (isset($data['newsletter']) ? (int)$data['newsletter'] : 0) . "', ip = '" . $this->db->escape($this->request->server['REMOTE_ADDR']) . "', status = '" . (int)!$customer_group_info['approval'] . "', date_added = NOW(),fcm_id = '".$this->db->escape((string)$data['fcm_id'])."',device_type = '".$this->db->escape((int)$data['device_type'])."'");
-  $customer_id = $this->db->getLastId();
-  if ($customer_group_info['approval']) {
-   $this->db->query("INSERT INTO `" . DB_PREFIX . "customer_approval` SET customer_id = '" . (int)$customer_id . "', type = 'customer', date_added = NOW()");
-  }
-  return $customer_id;
- }
- public function getCustomerByLoginToken($token) {
-  $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "customer WHERE  login_token = '" . $this->db->escape($token) . "'");
-  return $query->rows;
- }
+	 public function addCustomerSocial($data) {
+	  if (isset($data['customer_group_id']) && is_array($this->config->get('config_customer_group_display')) && in_array($data['customer_group_id'], $this->config->get('config_customer_group_display'))) {
+	   $customer_group_id = $data['customer_group_id'];
+	  } else {
+	   $customer_group_id = $this->config->get('config_customer_group_id');
+	  }
+	  $this->load->model('account/customer_group');
+	  $customer_group_info = $this->model_account_customer_group->getCustomerGroup($customer_group_id);
+	  $this->db->query("INSERT INTO " . DB_PREFIX . "customer SET customer_group_id = '" . (int)$customer_group_id . "', store_id = '" . (int)$this->config->get('config_store_id') . "', language_id = '" . (int)$this->config->get('config_language_id') . "', firstname = '" . $this->db->escape((string)$data['firstname']) . "', lastname = '" . $this->db->escape((string)$data['lastname']) . "', email = '" . $this->db->escape((string)$data['email']) . "', telephone = '" . $this->db->escape((string)$data['telephone']) . "', custom_field = '" . $this->db->escape(isset($data['custom_field']['account']) ? json_encode($data['custom_field']['account']) : '') . "', salt = '', login_token ='".$this->db->escape((string)$data['login_token'])."',login_type ='".$this->db->escape((int)$data['login_type'])."',newsletter = '" . (isset($data['newsletter']) ? (int)$data['newsletter'] : 0) . "', ip = '" . $this->db->escape($this->request->server['REMOTE_ADDR']) . "', status = '" . (int)!$customer_group_info['approval'] . "', date_added = NOW(),fcm_id = '".$this->db->escape((string)$data['fcm_id'])."',device_type = '".$this->db->escape((int)$data['device_type'])."'");
+	  $customer_id = $this->db->getLastId();
+	  if ($customer_group_info['approval']) {
+	   $this->db->query("INSERT INTO `" . DB_PREFIX . "customer_approval` SET customer_id = '" . (int)$customer_id . "', type = 'customer', date_added = NOW()");
+	  }
+	  return $customer_id;
+	 }
+	 public function getCustomerByLoginToken($token) {
+	  $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "customer WHERE  login_token = '" . $this->db->escape($token) . "'");
+	  return $query->rows;
+	 }
 	public function editCustomer($customer_id, $data) {
-		$query = $this->db->query("UPDATE " . DB_PREFIX . "customer SET firstname = '" . $this->db->escape((string)$data['firstname']) . "', lastname = '" . $this->db->escape((string)$data['lastname']) . "', email = '" . $this->db->escape((string)$data['email']) . "', telephone = '" . $this->db->escape((string)$data['telephone']) . "', image = '" . $this->db->escape((string)$data['image']) . "', gender = '" . $this->db->escape((int)$data['gender']) . "', blood_group = '" . $this->db->escape((string)$data['blood_group']) . "' , date_of_birth = '" . $this->db->escape($data['date_of_birth']) . "' , anniversary_date = '" . $this->db->escape($data['anniversary_date']) . "' , custom_field = '" . $this->db->escape(isset($data['custom_field']['account']) ? json_encode($data['custom_field']['account']) : '') . "' WHERE customer_id = '" . (int)$customer_id . "'");
-		$return =  $this->db->countAffected();
-		/*
-		if(isset($data['image'])){
-				$query = $this->db->query("UPDATE " . DB_PREFIX . "customer SET image = '" . $this->db->escape((string)$data['image']) . "' WHERE customer_id = '" . (int)$customer_id . "'");
-				$abc = $this->db->countAffected();
-		}
-		*/
-		return $return;
-	}
+	  $query = $this->db->query("UPDATE " . DB_PREFIX . "customer SET firstname = '" . $this->db->escape((string)$data['firstname']) . "', lastname = '" . $this->db->escape((string)$data['lastname']) . "', email = '" . $this->db->escape((string)$data['email']) . "', telephone = '" . $this->db->escape((string)$data['telephone']) . "', gender = '" . $this->db->escape((int)$data['gender']) . "', blood_group = '" . $this->db->escape((string)$data['blood_group']) . "' , date_of_birth = '" . $this->db->escape($data['date_of_birth']) . "' , anniversary_date = '" . $this->db->escape($data['anniversary_date']) . "' , custom_field = '" . $this->db->escape(isset($data['custom_field']['account']) ? json_encode($data['custom_field']['account']) : '') . "' WHERE customer_id = '" . (int)$customer_id . "'");
+	  $return =  $this->db->countAffected();
+	  
+	  if(isset($data['image'])){
+	    $query = $this->db->query("UPDATE " . DB_PREFIX . "customer SET image = '" . $this->db->escape((string)$data['image']) . "' WHERE customer_id = '" . (int)$customer_id . "'");
+	    $return = $this->db->countAffected();
+	  }
+	  
+	  return $return;
+	 }
 	public function editCustomerfcm($customer_id, $data) {
 		$query = $this->db->query("UPDATE " . DB_PREFIX . "customer SET  fcm_id= '" . $this->db->escape((string)$data['fcm_id']) . "', device_type= " . $this->db->escape((int)$data['device_type']) . " WHERE customer_id = '" . (int)$customer_id . "'");
 		return $this->db->countAffected();
@@ -74,6 +74,10 @@ class ModelAccountCustomer extends Model {
 	public function getCustomer($customer_id) {
 		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "customer WHERE customer_id = '" . (int)$customer_id . "'");
 		return $query->row;
+	}
+	public function getCustomerByEmail($email) {
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "customer WHERE status = 1 AND (LOWER(email) = '" . $this->db->escape(utf8_strtolower($email)) . " ' OR telephone = '" . $this->db->escape(utf8_strtolower($email)) . "')");
+		return $query->rows;
 	}
     public function getCustomerByEmailAndPhone($email,$phone,$customer_id) {
 			$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "customer WHERE status = 1 AND (LOWER(email) = '" . $this->db->escape(utf8_strtolower($email)) . " ' OR telephone = '" . $this->db->escape(utf8_strtolower($phone)) . "') AND customer_id != '".$customer_id."'");

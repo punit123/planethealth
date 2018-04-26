@@ -319,26 +319,25 @@ class ControllerApiCustomer extends Controller {
 				'date_of_birth' 	=> $this->request->post['date_of_birth'],
 				'anniversary_date' 	=> $this->request->post['anniversary_date']
 			);
-			if(isset($this->request->files['image'])){
-				$data['image'] = $this->request->files['image'];
-				if($data['image']['size']<=500000 && ( $data['image']['type'] !== 'jpeg' || $data['image']['type'] !== 'png' || $data['image']['type'] !== 'jpg')){
-					$fileName = strtotime("now").$data['image']['name'];
-					$target = DIR_IMAGE . 'catalog/profile_pic/';
-					$fileTarget = $target.$fileName;
-					$tempFileName = $_FILES["image"]["tmp_name"];
-					$data['image'] = $fileName;
-					$result = move_uploaded_file($tempFileName,$fileTarget);
-				}
-			}
-			else{
-				$data['image'] = '';
-			}
+			 if(isset($this->request->files['image'])){
+			    $data['image'] = $this->request->files['image'];
+			    if($data['image']['size']<=500000 && ( $data['image']['type'] !== 'jpeg' || $data['image']['type'] !== 'png' || $data['image']['type'] !== 'jpg')){
+			     $fileName = strtotime("now").$data['image']['name'];
+			     $target = DIR_IMAGE . 'catalog/profile_pic/';
+			     $fileTarget = $target.$fileName;
+			     $tempFileName = $_FILES["image"]["tmp_name"];
+			     $data['image'] = $fileName;
+			     $result = move_uploaded_file($tempFileName,$fileTarget);
+			    }else{
+			 			unset($data['image']);
+			 		}
+   			}
 			$validation_check_email_phone = $this->model_account_customer->getCustomerByEmailAndPhone($data['email'],$data['telephone'],$customer_id);
 			if(empty($validation_check_email_phone)){
 				$customer_info = $this->model_account_customer->editCustomer($customer_id, $data);
 				if($customer_info == 1){
 					$json['status'] = 'success';
-					$json['message']= $this->language->get('text_success');
+					$json['message']= $this->language->get('Your profile updated successfully!');
 					$json['data']= $this->model_account_customer->getCustomer($customer_id);
 				}
 				else{
@@ -464,12 +463,12 @@ class ControllerApiCustomer extends Controller {
 			$listcustomerFamilies = $this->model_account_customer->listCustomerFamilies($customer_id);
 			if(!empty($listcustomerFamilies) && count($listcustomerFamilies)>0){
 				$json['status'] = 'success';
-				$json['message']=$this->language->get('text_success');
-				$json['data']=$listcustomerFamilies[0];
+				$json['message']=$this->language->get('success');
+				$json['data']=$listcustomerFamilies;
 			}
 			else{
 				$json['status'] = 'error';
-				$json['message'] = $this->language->get('No record found!');
+				$json['message'] = $this->language->get('No family member list found!');
 			}
 		}
 		else{
