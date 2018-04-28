@@ -175,6 +175,9 @@ class ControllerLocalisationCustomnotification extends Controller {
 				'id' => $result['id'],
 				'title'=> $result['title'],
 				'message' => $result['message'],
+				'push_notification' => $result['push_notification'],
+				'email' => $result['email'],
+				'sms' => $result['sms'],
 				'edit'   => $this->url->link('localisation/custom_notification/edit', 'user_token=' . $this->session->data['user_token'] . '&id=' . $result['id'] . $url)
 			);
 		}

@@ -304,15 +304,18 @@ class ControllerApiProduct extends Controller {
 		$sub_category = '';
 		$manufacturer_id = '';
 		$url = '';
-		if (isset($this->request->get['search_by'])) {
-			$search_by = $this->request->get['search_by'];
+		$product_total = 0;
+	if(($this->request->server['REQUEST_METHOD'] == 'POST')){
+		//echo $this->request->post['search_by'];die;
+		if (isset($this->request->post['search_by'])) {
+			$search_by = $this->request->post['search_by'];
 		} else {
 			$search_by = '';
 		}
 		
 		if(isset($search_by) && !empty($search_by)){
-			if (isset($this->request->get['search_value'])) {
-				$search_value = $this->request->get['search_value'];
+			if (isset($this->request->post['search_value'])) {
+				$search_value = $this->request->post['search_value'];
 			} else {
 				$search_value = '';
 			}
@@ -362,33 +365,38 @@ class ControllerApiProduct extends Controller {
 			
 		}
 		//echo $search_by . "--" .$search_value; die;
-		if (isset($this->request->get['sort'])) {
-			$sort = $this->request->get['sort'];
+		if (isset($this->request->post['sort_by'])) {
+			$sort = $this->request->post['sort_by'];
 		} else {
 			$sort = 'p.sort_order';
 		}
 
-		if (isset($this->request->get['order'])) {
-			$order = $this->request->get['order'];
+		if (isset($this->request->post['sort_type'])) {
+			$order = $this->request->post['sort_type'];
 		} else {
 			$order = 'ASC';
 		}
 
-		if (isset($this->request->get['page'])) {
-			$page = $this->request->get['page'];
+		if (isset($this->request->post['page'])) {
+			$page = $this->request->post['page'];
 		} else {
 			$page = 1;
 		}
+		if (isset($this->request->post['offset'])) {
+			$offset = $this->request->post['offset'];
+		} else {
+			$offset = 0;
+		}
 
-		if (isset($this->request->get['limit'])) {
-			$limit = (int)$this->request->get['limit'];
+		if (isset($this->request->post['limit'])) {
+			$limit = (int)$this->request->post['limit'];
 		} else {
 			$limit = $this->config->get('theme_' . $this->config->get('config_theme') . '_product_limit');
 		}
 		$this->load->model('catalog/category');
 
 		// 3 Level Category Search
-		$data['categories'] = array();
+		//$data['categories'] = array();
 
 		$categories_1 = $this->model_catalog_category->getCategories(0);
 
@@ -416,16 +424,14 @@ class ControllerApiProduct extends Controller {
 				);
 			}
 
-			$data['categories'][] = array(
+			/*$data['categories'][] = array(
 				'category_id' => $category_1['category_id'],
 				'name'        => $category_1['name'],
 				'children'    => $level_2_data
-			);
+			);*/
 		}
-
+        
 		$data['products'] = array();
-
-		if (isset($search) || isset($tag)) {
 			$filter_data = array(
 				'filter_name'         	=> $search,
 				'filter_tag'          	=> $tag,
@@ -435,14 +441,16 @@ class ControllerApiProduct extends Controller {
 				'filter_manufacturer_id'=> $manufacturer_id,
 				'sort'                	=> $sort,
 				'order'               	=> $order,
-				'start'               	=> ($page - 1) * $limit,
+				'start'               	=> $offset,
 				'limit'               	=> $limit
 			);
+            
+			$product_total_res = $this->model_catalog_product->getProductsInfo($filter_data, $totalFlag = 1);
 
-			$product_total = $this->model_catalog_product->getTotalProducts($filter_data);
-
-			$results = $this->model_catalog_product->getProducts($filter_data);
-
+			$results = $this->model_catalog_product->getProductsInfo($filter_data, $totalFlag = 0);
+            if(isset($results) && !empty($results)){
+				$product_total = count($product_total_res);
+			}
 			foreach ($results as $result) {
 				if ($result['image']) {
 					$image = $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_height'));
@@ -478,73 +486,16 @@ class ControllerApiProduct extends Controller {
 					'product_id'  => $result['product_id'],
 					'thumb'       => $image,
 					'name'        => $result['name'],
+					'manufacturer'=> $result['manufacturer'],
+					'brand'       => $result['brand'],
 					'description' => utf8_substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_product_description_length')) . '..',
 					'price'       => $price,
 					'special'     => $special,
 					'tax'         => $tax,
 					'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
-					'rating'      => $result['rating'],
-					'href'        => $this->url->link('product/product', 'language=' . $this->config->get('config_language') . '&product_id=' . $result['product_id'] . $url)
+					'rating'      => $result['rating']
 				);
 			}
-
-			$data['limits'] = array();
-
-			$limits = array_unique(array($this->config->get('theme_' . $this->config->get('config_theme') . '_product_limit'), 25, 50, 75, 100));
-
-			sort($limits);
-
-			foreach($limits as $value) {
-				$data['limits'][] = array(
-					'text'  => $value,
-					'value' => $value,
-					'href'  => $this->url->link('product/search', 'language=' . $this->config->get('config_language') . $url . '&limit=' . $value)
-				);
-			}
-
-			$url = '';
-
-			if (isset($this->request->get['search'])) {
-				$url .= '&search=' . urlencode(html_entity_decode($this->request->get['search'], ENT_QUOTES, 'UTF-8'));
-			}
-
-			if (isset($this->request->get['tag'])) {
-				$url .= '&tag=' . urlencode(html_entity_decode($this->request->get['tag'], ENT_QUOTES, 'UTF-8'));
-			}
-
-			if (isset($this->request->get['description'])) {
-				$url .= '&description=' . $this->request->get['description'];
-			}
-
-			if (isset($this->request->get['category_id'])) {
-				$url .= '&category_id=' . $this->request->get['category_id'];
-			}
-
-			if (isset($this->request->get['sub_category'])) {
-				$url .= '&sub_category=' . $this->request->get['sub_category'];
-			}
-
-			if (isset($this->request->get['sort'])) {
-				$url .= '&sort=' . $this->request->get['sort'];
-			}
-
-			if (isset($this->request->get['order'])) {
-				$url .= '&order=' . $this->request->get['order'];
-			}
-
-			if (isset($this->request->get['limit'])) {
-				$url .= '&limit=' . $this->request->get['limit'];
-			}
-
-			$pagination = new Pagination();
-			$pagination->total = $product_total;
-			$pagination->page = $page;
-			$pagination->limit = $limit;
-			$pagination->url = $this->url->link('product/search', 'language=' . $this->config->get('config_language') . $url . '&page={page}');
-
-			$data['pagination'] = $pagination->render();
-
-			$data['results'] = sprintf($this->language->get('text_pagination'), ($product_total) ? (($page - 1) * $limit) + 1 : 0, ((($page - 1) * $limit) > ($product_total - $limit)) ? $product_total : ((($page - 1) * $limit) + $limit), $product_total, ceil($product_total / $limit));
 
 			if (isset($this->request->get['search']) && $this->config->get('config_customer_search')) {
 				$this->load->model('account/search');
@@ -573,24 +524,20 @@ class ControllerApiProduct extends Controller {
 
 				$this->model_account_search->addSearch($search_data);
 			}
-		}
-
-		$data['search'] = $search;
-		$data['description'] = $description;
-		$data['category_id'] = $category_id;
-		$data['sub_category'] = $sub_category;
-		$data['sort'] = $sort;
-		$data['order'] = $order;
-		$data['limit'] = $limit;
-
-		$data['language'] = $this->config->get('config_language');
 		if(!empty($data)){
-			$json['status'] = 'success';
+			$json['status']  = 'success';
 			$json['message'] = $this->language->get('Success');
-			$json['data'] = $data;
-		}
-		else{
+			$json['total']   = $product_total;
+			$json['data'] 	 = $data;
+			
+		} else{
 			$json['status'] = 'error';
+			$json['total']   = $product_total;
+			$json['message'] = $this->language->get('No products Found!');
+		}
+		}else{
+			$json['status'] = 'error';
+			$json['total']   = $product_total;
 			$json['message'] = $this->language->get('No products Found!');
 		}
 		$this->response->addHeader('Content-Type: application/json');

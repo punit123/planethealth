@@ -9,10 +9,11 @@ $_['text_add']                = 'Add Custom Notification';
 $_['text_edit']               = 'Edit Custom Notification';
 
 // Column
-//$_['column_name']             = 'Custom Notification Name';
 $_['column_title']         	  = 'Title';
 $_['column_message']          = 'Message';
 $_['column_push_notification']= 'Push Notification';
+$_['column_email']            = 'Email';
+$_['column_sms']          	  = 'SMS';
 $_['column_message']          = 'Message';
 $_['column_action']           = 'Action';
 

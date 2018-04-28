@@ -46,6 +46,21 @@
                     {% else %}
                       <a href="{{ sort_message }}">{{ column_message }}</a>
                     {% endif %}</td>
+				 <td class="text-left">{% if sort == 'column_push_notification' %}
+                      <a href="{{ sort_push_notification }}" class="{{ order|lower }}">{{ column_push_notification }}</a>
+                    {% else %}
+                      <a href="{{ sort_push_notification }}">{{ column_push_notification }}</a>
+                    {% endif %}</td>
+				<td class="text-left">{% if sort == 'column_email' %}
+                      <a href="{{ sort_email }}" class="{{ order|lower }}">{{ column_email }}</a>
+                    {% else %}
+                      <a href="{{ sort_email }}">{{ column_email }}</a>
+                    {% endif %}</td>
+				<td class="text-left">{% if sort == 'column_sms' %}
+                      <a href="{{ sort_sms }}" class="{{ order|lower }}">{{ column_sms }}</a>
+                    {% else %}
+                      <a href="{{ sort_sms }}">{{ column_sms }}</a>
+                    {% endif %}</td>					
                   <td class="text-right">{{ column_action }}</td>
                 </tr>
               </thead>
@@ -60,9 +75,9 @@
                         {% endif %}</td>
                       <td class="text-left">{{ custom_notification.title }}</td>
                       <td class="text-left">{{ custom_notification.message }}</td>
-					  <td class="text-left">{{ custom_notification.push_notification }}</td>
-					  <td class="text-left">{{ custom_notification.email }}</td>
-					  <td class="text-left">{{ custom_notification.sms }}</td>
+					  <td class="text-left">{% if custom_notification.push_notification == 1 %} Yes {% else %} No{% endif %}</td>
+					  <td class="text-left">{% if custom_notification.email == 1 %} Yes {% else %} No{% endif %}</td>
+					  <td class="text-left">{% if custom_notification.sms == 1 %} Yes {% else %} No {% endif %}</td>
                       <td class="text-right"><a href="{{ custom_notification.edit }}" data-toggle="tooltip" custom_notification="{{ button_edit }}" class="btn btn-primary"><i class="fa fa-pencil"></i></a></td>
                     </tr>
                   {% endfor %}
