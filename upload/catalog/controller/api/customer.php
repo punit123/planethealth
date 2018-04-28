@@ -556,7 +556,6 @@ class ControllerApiCustomer extends Controller {
 	}
 	
     public function customNotification(){
-
 		$this->load->language('api/customer');
 		$this->load->model('account/customer');
 		
@@ -577,6 +576,38 @@ class ControllerApiCustomer extends Controller {
 		else{
 			$json['status'] = 'error';
 			$json['message'] = $this->language->get('Invalid Customer!');
+		}
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+	
+	public function updateAddress(){
+		$this->load->model('account/address');
+		$json = array();
+		if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
+			$data = $this->request->post['lastname'] = '';$data = $this->request->post['company'] = ''; 
+			$data = $this->request->post['address_2'] = '';
+			$data = $this->request->post;
+			if($data['customer_id'] && $data){
+				$customerUpdate = $this->model_account_address->editAddress($data['address_id'],$data);
+				$customerSetUpdate = $this->model_account_address->updatesetAddress($data['address_id'],$data);
+				if($customerUpdate){
+					$json['status'] = 'success';
+					$json['message']= 'Customer address updated!';
+				}
+				elseif ($customerSetUpdate){
+					$json['status'] = 'success';
+					$json['message']= 'Customer address updated!';
+				}
+				else{
+					$json['status'] = 'error';
+					$json['message'] = $this->language->get('Customer address not updated!');
+				}
+			}
+			else {
+				$json['status'] = 'error';
+				$json['message'] = $this->language->get('Invalid Customer!');
+			}
 		}
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));

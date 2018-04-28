@@ -1,7 +1,7 @@
 <?php
 class ModelAccountAddress extends Model {
 	public function addAddress($customer_id, $data) {
-		$this->db->query("INSERT INTO " . DB_PREFIX . "address SET customer_id = '" . (int)$customer_id . "', firstname = '" . $this->db->escape((string)$data['firstname']) . "', lastname = '" . $this->db->escape((string)$data['lastname']) . "', phone = '" . $this->db->escape((string)$data['phone']) . "',  email = '" . $this->db->escape((string)$data['email']) . "',company = '" . $this->db->escape((string)$data['company']) . "', address_1 = '" . $this->db->escape((string)$data['address_1']) . "', address_2 = '" . $this->db->escape((string)$data['address_2']) . "', area = '" . $this->db->escape((string)$data['area']) . "', postcode = '" . $this->db->escape((string)$data['postcode']) . "', city = '" . $this->db->escape((string)$data['city']) . "',   zone_id = '" . (int)$data['zone_id'] . "', country_id = '" . (int)$data['country_id'] . "', address_type = '" . (int)$data['address_type'] . "', default_address = '" . (int)$data['default_address'] . "', custom_field = '" . $this->db->escape(isset($data['custom_field']['address']) ? json_encode($data['custom_field']['address']) : '') . "'");
+		$this->db->query("INSERT INTO " . DB_PREFIX . "address SET customer_id = '" . (int)$customer_id . "', firstname = '" . $this->db->escape((string)$data['firstname']) . "', lastname = '" . $this->db->escape((string)$data['lastname']) . "', phone = '" . $this->db->escape((string)$data['phone']) . "',  email = '" . $this->db->escape((string)$data['email']) . "',company = '" . $this->db->escape((string)$data['company']) . "', address_1 = '" . $this->db->escape((string)$data['address_1']) . "', address_2 = '" . $this->db->escape((string)$data['address_2']) . "', area = '" . $this->db->escape((string)$data['area']) . "', postcode = '" . $this->db->escape((string)$data['postcode']) . "', city = '" . $this->db->escape((string)$data['city']) . "',   zone_id = '" . (int)$data['zone_id'] . "', country_id = '" . (int)$data['country_id'] . "', address_type = '" . (int)$data['address_type'] . "', custom_field = '" . $this->db->escape(isset($data['custom_field']['address']) ? json_encode($data['custom_field']['address']) : '') . "'");
 		
 		$address_id = $this->db->getLastId();
 		
@@ -11,13 +11,23 @@ class ModelAccountAddress extends Model {
 		return $address_id;
 	}
 	public function editAddress($address_id, $data) {
-		//echo "UPDATE " . DB_PREFIX . "address SET firstname = '" . $data['firstname'] . "', lastname = '" . (string)$data['lastname'] . "', phone = '" . $data['phone'] . "',  email = '" . $data['email'] . "', company = '" . $data['company'] . "', address_1 = '" . $data['address_1'] . "', address_2 = '" . $data['address_2'] . "', area = '" . $data['area'] . "', postcode = '" . $data['postcode'] . "', city = '" . $data['city'] . "',  zone_id = '" . $data['zone_id'] . "', country_id = '" . $data['country_id'] . "', address_type = '" . $data['address_type'] . "', custom_field = '" . $this->db->escape(isset($data['custom_field']['address']) ? json_encode($data['custom_field']['address']) : '') . "' WHERE address_id  = '" . $address_id . "' AND customer_id = '" . (int)$data['customer_id'] . "'";die;
 		$this->db->query("UPDATE " . DB_PREFIX . "address SET firstname = '" . $data['firstname'] . "', lastname = '" . (string)$data['lastname'] . "', phone = '" . $data['phone'] . "',  email = '" . $data['email'] . "', company = '" . $data['company'] . "', address_1 = '" . $data['address_1'] . "', address_2 = '" . $data['address_2'] . "', area = '" . $data['area'] . "', postcode = '" . $data['postcode'] . "', city = '" . $data['city'] . "',  zone_id = '" . $data['zone_id'] . "', country_id = '" . $data['country_id'] . "', address_type = '" . $data['address_type'] . "', custom_field = '" . $this->db->escape(isset($data['custom_field']['address']) ? json_encode($data['custom_field']['address']) : '') . "' WHERE address_id  = '" . $address_id . "' AND customer_id = '" . (int)$data['customer_id'] . "'");
+		
+		return $this->db->countAffected();
+	}
+
+	public function updatesetAddress($address_id, $data){
 		if (!empty($data['default_address'])) {
+			$this->db->query("UPDATE " . DB_PREFIX . "customer SET address_id = '" . (int)$address_id . "' WHERE customer_id = '" . (int)$data['customer_id'] . "'");
+		}
+		else{
+			$address_id = 0;
 			$this->db->query("UPDATE " . DB_PREFIX . "customer SET address_id = '" . (int)$address_id . "' WHERE customer_id = '" . (int)$data['customer_id'] . "'");
 		}
 		return $this->db->countAffected();
 	}
+	
+	
 	public function deleteAddress($address_id,$customer_id) {
 		$this->db->query("DELETE FROM " . DB_PREFIX . "address WHERE address_id = '" . (int)$address_id . "' AND customer_id = '" . $customer_id . "'");
 		return $this->db->countAffected();
