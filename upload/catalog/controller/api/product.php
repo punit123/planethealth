@@ -305,8 +305,10 @@ class ControllerApiProduct extends Controller {
 		$manufacturer_id = '';
 		$url = '';
 		$product_total = 0;
+		$product_detail = '';
+		$product_detail_id = '';
 	if(($this->request->server['REQUEST_METHOD'] == 'POST')){
-		//echo $this->request->post['search_by'];die;
+		
 		if (isset($this->request->post['search_by'])) {
 			$search_by = $this->request->post['search_by'];
 		} else {
@@ -324,12 +326,18 @@ class ControllerApiProduct extends Controller {
 					$search = $search_value;
 				}
 			}
+			if($search_by == "product_detail"){
+				if(isset($search_value)){
+					$product_detail_id = $search_value;
+				}
+			}
 			if($search_by == "tag"){
 				if(isset($search_value)){
 					$tag = $search_value;
 				} else if(isset($search)){
 					$tag = $search;
-				} else {
+			
+			} else {
 					$tag = '';
 				}
 			}
@@ -397,7 +405,7 @@ class ControllerApiProduct extends Controller {
 
 		// 3 Level Category Search
 		//$data['categories'] = array();
-
+        /*
 		$categories_1 = $this->model_catalog_category->getCategories(0);
 
 		foreach ($categories_1 as $category_1) {
@@ -424,12 +432,12 @@ class ControllerApiProduct extends Controller {
 				);
 			}
 
-			/*$data['categories'][] = array(
+			$data['categories'][] = array(
 				'category_id' => $category_1['category_id'],
 				'name'        => $category_1['name'],
 				'children'    => $level_2_data
-			);*/
-		}
+			);
+		}*/
         
 		$data['products'] = array();
 			$filter_data = array(
@@ -444,10 +452,15 @@ class ControllerApiProduct extends Controller {
 				'start'               	=> $offset,
 				'limit'               	=> $limit
 			);
-            
-			$product_total_res = $this->model_catalog_product->getProductsInfo($filter_data, $totalFlag = 1);
-
-			$results = $this->model_catalog_product->getProductsInfo($filter_data, $totalFlag = 0);
+			
+            if($search_by == 'product_detail' && isset($product_detail_id) && $product_detail_id ! = 0) {
+				$product_total_res = 1
+			    $results = $this->model_catalog_product->getProduct($product_detail_id);		
+			} else {
+				$product_total_res = $this->model_catalog_product->getProductsInfo($filter_data, $totalFlag = 1);
+			    $results = $this->model_catalog_product->getProductsInfo($filter_data, $totalFlag = 0);
+			}
+			
             if(isset($results) && !empty($results)){
 				$product_total = count($product_total_res);
 			}
