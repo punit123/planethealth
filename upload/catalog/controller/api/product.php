@@ -275,7 +275,7 @@ class ControllerApiProduct extends Controller {
 		$this->load->model('catalog/product');
 		$json = array();
 		$customer_id = $this->request->post['customer_id'];
-		$getAllProduct = $this->model_catalog_product->getAllProduct($customer_id);
+		$getAllProduct = $this->model_catalog_product->getProducts();
 		if(!empty($getAllProduct)){
 			$json['status'] = 'success';
 			$json['message'] = $this->language->get('Success');

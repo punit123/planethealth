@@ -504,17 +504,4 @@ class ModelCatalogProduct extends Model {
 		$query =$this->db->query("SELECT * FROM " . DB_PREFIX . "location");
 		return $query->rows;
 	}
-	
-	public function getAllProduct($customer_id){
-		//echo '<pre>';print_r($customer_id);die;
-		//echo "SELECT * FROM " . DB_PREFIX . "product p LEFT JOIN ". DB_PREFIX ."customer_wishlist cw ON p.product_id = cw.product_id where customer_id = '". (int)$customer_id ."' ";die;
-		if(!empty($customer_id)){
-			$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product p LEFT JOIN ". DB_PREFIX ."customer_wishlist cw ON p.product_id = cw.product_id where customer_id = '". (int)$customer_id ."' ");
-			return $query->rows;
-		}
-		else{
-			$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product");
-			return $query->rows;
-		}
-	}
 }
