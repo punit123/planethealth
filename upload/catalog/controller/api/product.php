@@ -395,6 +395,8 @@ class ControllerApiProduct extends Controller {
 		$product_total = 0;
 		$product_detail = '';
 		$product_detail_id = '';
+		$featured_product_id = '';
+		$brand_id = '';
 		$customer_id = $this->request->post['customer_id'];
 	if(($this->request->server['REQUEST_METHOD'] == 'POST')){
 		
@@ -459,7 +461,13 @@ class ControllerApiProduct extends Controller {
 					$manufacturer_id = '';
 				}
 			}
-			
+			if($search_by == "brand"){
+				if(isset($search_value)){
+					$brand_id = $search_value;
+				} else {
+					$brand_id = '';
+				}
+			}
 		}
 		if (isset($this->request->post['sort_by'])) {
 			$sort = $this->request->post['sort_by'];
@@ -485,20 +493,25 @@ class ControllerApiProduct extends Controller {
 			$limit = $this->config->get('theme_' . $this->config->get('config_theme') . '_product_limit');
 		}
 		$this->load->model('catalog/category');
-        
+        if($search_by == "featured_product"){
+			$featured_product = $this->model_catalog_product->getFeaturedProductId();
+			$featured_product_id = $featured_product["product"];		
+		}
 		$data['products'] = array();
 			$filter_data = array(
-			    'customer_id'         	=> $customer_id,
-				'filter_name'         	=> $search,
-				'filter_tag'          	=> $tag,
-				'filter_description'  	=> $description,
-				'filter_category_id'  	=> $category_id,
-				'filter_sub_category' 	=> $sub_category,
-				'filter_manufacturer_id'=> $manufacturer_id,
-				'sort'                	=> $sort,
-				'order'               	=> $order,
-				'start'               	=> $offset,
-				'limit'               	=> $limit
+			    'customer_id'         		=> $customer_id,
+				'filter_name'         		=> $search,
+				'filter_tag'          		=> $tag,
+				'filter_description'  		=> $description,
+				'filter_category_id'  		=> $category_id,
+				'filter_sub_category' 		=> $sub_category,
+				'filter_manufacturer_id'	=> $manufacturer_id,
+				'filter_featured_product_id'=> $featured_product_id,
+				'filter_brand_id'         	=> $brand_id,
+				'sort'                		=> $sort,
+				'order'               		=> $order,
+				'start'               		=> $offset,
+				'limit'               		=> $limit
 			);
 			
             if($search_by == 'product_detail' && isset($product_detail_id) && $product_detail_id != 0) {

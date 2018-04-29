@@ -157,6 +157,14 @@ class ModelCatalogProduct extends Model {
 		if (!empty($data['filter_manufacturer_id'])) {
 			$sql .= " AND p.manufacturer_id = '" . (int)$data['filter_manufacturer_id'] . "'";
 		}
+		if (!empty($data['filter_brand_id'])) {
+			$sql .= " AND p.brand_id = '" . (int)$data['filter_brand_id'] . "'";
+		}
+		if (!empty($data['filter_featured_product_id']) && $data['filter_featured_product_id'] != 0) {
+			$featured_product_id	=	implode(",",$data['filter_featured_product_id']);
+			$sql .= " AND p.product_id in(".$featured_product_id.")";
+		}
+		
 		$sql .= " GROUP BY p.product_id";
 		$sort_data = array(
 			'pd.name',
