@@ -136,7 +136,7 @@
                           <div class="invalid-tooltip">{{ error_option_value[option_value_row][language.language_id] }}</div>
                         {% endif %}
                       {% endfor %}</td>
-                    <td class="text-left"><a href="" id="thumb-image{{ option_value_row }}" data-toggle="image" class="img-thumbnail"><img src="{{ option_value.thumb }}" alt="" title="" data-placeholder="{{ placeholder }}"/></a> <input type="hidden" name="option_value[{{ option_value_row }}][image]" value="{{ option_value.image }}" id="input-image{{ option_value_row }}"/></td>
+					<td class="text-center"><div class="card" style="max-width: 10rem;"><img src="{{ option_value.thumb  }}" style="width: 158px;height: 100px;" class="image-preview"/><input type="hidden" name="option_value[{{ option_value_row }}][image]" value="{{ option_value.image }}" id="input-image{{ option_value_row }}" /><button type="button" data-toggle="tooltip" title="{{ button_upload }}" id="button-upload-image" class="btn btn-primary button-upload"><i class="fa fa-upload"></i> Upload</button></div></td>
                     <td class="text-right"><input type="text" name="option_value[{{ option_value_row }}][sort_order]" value="{{ option_value.sort_order }}" class="form-control"/></td>
                     <td class="text-right"><button type="button" onclick="$('#option-value-row{{ option_value_row }}').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>
                   </tr>
@@ -179,7 +179,7 @@ function addOptionValue() {
 	html += '    </div>';
   {% endfor %}
 	html += '  </td>';
-	html += '  <td class="text-center"><a href="" id="thumb-image' + option_value_row + '" data-toggle="image" class="img-thumbnail"><img src="{{ placeholder }}" alt="" title="" data-placeholder="{{ placeholder }}" /></a><input type="hidden" name="option_value[' + option_value_row + '][image]" value="" id="input-image' + option_value_row + '" /></td>';
+	html += '  <td class="text-center"><div class="card" style="max-width: 10rem;"><img src="{{ placeholder }}" style="width: 158px;height: 100px;" class="image-preview"/><input type="hidden" name="option_value[' + option_value_row + '][image]" value="" id="input-image' + option_value_row + '" /><button type="button" data-toggle="tooltip" title="{{ button_upload }}" id="button-upload-image" class="btn btn-primary button-upload"><i class="fa fa-upload"></i> Upload</button></div></td>';
 	html += '  <td class="text-right"><input type="text" name="option_value[' + option_value_row + '][sort_order]" value="" placeholder="{{ entry_sort_order }}" class="form-control" /></td>';
 	html += '  <td class="text-right"><button type="button" onclick="$(\'#option-value-row' + option_value_row + '\').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
 	html += '</tr>';

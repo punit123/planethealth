@@ -5,6 +5,7 @@ define('VERSION', '3.1.0.0b');
 // Configuration
 if (is_file('config.php')) {
 	require_once('config.php');
+	require_once('S3.php');
 }
 
 // Install

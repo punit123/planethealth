@@ -72,12 +72,22 @@ class ControllerApiProduct extends Controller {
 		$this->load->model('catalog/product');
 		$product_id = $this->request->post['product_id'];
 		$json = array();
+		$mainArray = array();
 		if(($this->request->server['REQUEST_METHOD'] == 'POST') && $product_id != ''){
 			$fetchAllProductDetails = $this->model_catalog_product->getProduct($product_id);
 			if(isset($fetchAllProductDetails) && !empty($fetchAllProductDetails) && count($fetchAllProductDetails)>0){
+				$mainArray['details'] = $fetchAllProductDetails; 				
+				$productAttribute = $this->model_catalog_product->getProductAttributes($product_id);			
+				$mainArray['attributes'] = $productAttribute;
+				$productAttribute = $this->model_catalog_product->getProductImages($product_id);			
+				$mainArray['images'] = $productAttribute;
+				$productAttribute = $this->model_catalog_product->getProductRelated($product_id);			
+				$mainArray['releated'] = $productAttribute;								
+				$productOptions = $this->model_catalog_product->getProductOptions($product_id);			
+				$mainArray['options'] = $productOptions;				
 				$json['status'] = 'success';
 				$json['message'] = $this->language->get('Success');
-				$json['data'] = $fetchAllProductDetails;
+				$json['data'] = $mainArray;
 			}
 			else{
 				$json['status'] = 'error';
