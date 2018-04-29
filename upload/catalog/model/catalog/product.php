@@ -617,8 +617,45 @@ class ModelCatalogProduct extends Model {
 		return $query->row;
 	}
 	
-	public function getBrand(){
-		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "brand");
+	public function getBrand($data = array()){
+		$sql = "SELECT b.*, IFNULL(m.name, '') AS manufacturer FROM " . DB_PREFIX . "brand AS b LEFT JOIN ". DB_PREFIX ."manufacturer AS m ON b.manufacturer_id = m.manufacturer_id";
+		if (!empty($data['filter_name'])) {
+			    $sql .= " AND (";
+				$sql .= " OR LCASE(b.name) LIKE '%" . $this->db->escape(utf8_strtolower($data['filter_name'])) . "%'";
+				$sql .= " OR LCASE(m.name) LIKE '%" . $this->db->escape(utf8_strtolower($data['filter_name'])) . "%'";
+				$sql .= ")";
+			}
+		$sort_data = array(
+			'b.name',
+			'p.brand_id',
+			'b.sort_order'
+		);
+		if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
+			if ($data['sort'] == 'b.name' || $data['sort'] == 'b.brand_id') {
+				$sql .= " ORDER BY LCASE(" . $data['sort'] . ")";
+			} else {
+				$sql .= " ORDER BY " . $data['sort'];
+			}
+		} else {
+			$sql .= " ORDER BY b.sort_order";
+		}
+		if (isset($data['order']) && ($data['order'] == 'DESC')) {
+			$sql .= " DESC";
+		} else {
+			$sql .= " ASC";
+		}
+		if($totalFlag == 0){
+			if (isset($data['start']) || isset($data['limit'])) {
+				if ($data['start'] < 0) {
+					$data['start'] = 0;
+				}
+				if ($data['limit'] < 1) {
+					$data['limit'] = 20;
+				}
+				$sql .= " LIMIT " . (int)$data['start'] . "," . (int)$data['limit'];
+			}
+		}
+		$query = $this->db->query($sql);
 		return $query->rows;
 	}
 	
