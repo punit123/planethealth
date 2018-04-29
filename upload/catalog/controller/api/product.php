@@ -463,18 +463,13 @@ class ControllerApiProduct extends Controller {
 			$order = 'ASC';
 		}
 
-		if (isset($this->request->post['page'])) {
-			$page = $this->request->post['page'];
-		} else {
-			$page = 1;
-		}
-		if (isset($this->request->post['offset'])) {
+		if (isset($this->request->post['offset']) && $this->request->post['offset'] !=0) {
 			$offset = $this->request->post['offset'];
 		} else {
 			$offset = 0;
 		}
 
-		if (isset($this->request->post['limit'])) {
+		if (isset($this->request->post['limit']) && $this->request->post['limit'] !=0) {
 			$limit = (int)$this->request->post['limit'];
 		} else {
 			$limit = $this->config->get('theme_' . $this->config->get('config_theme') . '_product_limit');
@@ -575,45 +570,21 @@ class ControllerApiProduct extends Controller {
 	//Search
 	public function allSearch() {
 		$this->load->language('product/search');
-
 		$this->load->model('catalog/category');
-
 		$this->load->model('catalog/product');
-
 		$this->load->model('tool/image');
-
-		if (isset($this->request->get['search'])) {
-			$search = $this->request->get['search'];
-		} else {
-			$search = '';
+        $customer_id = 0;
+		$product_total = 0;
+		$json = array();
+		if(isset($this->request->post['customer_id']) && !empty($this->request->post['customer_id'])){
+			$customer_id = $this->request->post['customer_id'];
 		}
-
-		if (isset($this->request->get['tag'])) {
-			$tag = $this->request->get['tag'];
-		} elseif (isset($this->request->get['search'])) {
-			$tag = $this->request->get['search'];
+		$search = '';
+		if (isset($this->request->post['keyword']) && !empty($this->request->post['keyword'])) {
+			$search = $keyword = $this->request->post['keyword'];
 		} else {
-			$tag = '';
+			$keyword = '';
 		}
-
-		if (isset($this->request->get['description'])) {
-			$description = $this->request->get['description'];
-		} else {
-			$description = '';
-		}
-
-		if (isset($this->request->get['category_id'])) {
-			$category_id = $this->request->get['category_id'];
-		} else {
-			$category_id = 0;
-		}
-
-		if (isset($this->request->get['sub_category'])) {
-			$sub_category = $this->request->get['sub_category'];
-		} else {
-			$sub_category = '';
-		}
-
 		if (isset($this->request->post['sort_by'])) {
 			$sort = $this->request->post['sort_by'];
 		} else {
@@ -624,12 +595,6 @@ class ControllerApiProduct extends Controller {
 			$order = $this->request->post['sort_type'];
 		} else {
 			$order = 'ASC';
-		}
-
-		if (isset($this->request->post['page'])) {
-			$page = $this->request->post['page'];
-		} else {
-			$page = 1;
 		}
 		if (isset($this->request->post['offset'])) {
 			$offset = $this->request->post['offset'];
@@ -644,60 +609,19 @@ class ControllerApiProduct extends Controller {
 		}
 
 		$this->load->model('catalog/category');
-
-		// 3 Level Category Search
-		$data['categories'] = array();
-
-		$categories_1 = $this->model_catalog_category->getCategories(0);
-
-		foreach ($categories_1 as $category_1) {
-			$level_2_data = array();
-
-			$categories_2 = $this->model_catalog_category->getCategories($category_1['category_id']);
-
-			foreach ($categories_2 as $category_2) {
-				$level_3_data = array();
-
-				$categories_3 = $this->model_catalog_category->getCategories($category_2['category_id']);
-
-				foreach ($categories_3 as $category_3) {
-					$level_3_data[] = array(
-						'category_id' => $category_3['category_id'],
-						'name'        => $category_3['name'],
-					);
-				}
-
-				$level_2_data[] = array(
-					'category_id' => $category_2['category_id'],
-					'name'        => $category_2['name'],
-					'children'    => $level_3_data
-				);
-			}
-
-			$data['categories'][] = array(
-				'category_id' => $category_1['category_id'],
-				'name'        => $category_1['name'],
-				'children'    => $level_2_data
-			);
-		}
-
 		$data['products'] = array();
-
-		if (isset($this->request->get['search']) || isset($this->request->get['tag'])) {
+		if (isset($this->request->post['keyword'])) {
 			$filter_data = array(
-				'filter_name'         => $search,
-				'filter_tag'          => $tag,
-				'filter_description'  => $description,
-				'filter_category_id'  => $category_id,
-				'filter_sub_category' => $sub_category,
+				'customer_id'         => $customer_id,
+				'filter_name'         => $keyword,
 				'sort'                => $sort,
 				'order'               => $order,
 				'start'               => $offset,
 				'limit'               => $limit
 			);
-
-			$product_total = $this->model_catalog_product->getTotalProducts($filter_data);
-			$results = $this->model_catalog_product->getProducts($filter_data);
+			echo "<pre>"; print_r($filter_data); die;
+			$product_total = $this->model_catalog_product->getTotalAllSearch($filter_data, $totalFlag = 1);
+			$results = $this->model_catalog_product->getAllSearch($filter_data, $totalFlag = 0);
 
 			foreach ($results as $result) {
 				if ($result['image']) {
@@ -743,42 +667,24 @@ class ControllerApiProduct extends Controller {
 					'href'        => $this->url->link('product/product', 'language=' . $this->config->get('config_language') . '&product_id=' . $result['product_id'] . $url)
 				);
 			}
-			if (isset($this->request->get['search']) && $this->config->get('config_customer_search')) {
-				$this->load->model('account/search');
-
-				if ($this->customer->isLogged()) {
-					$customer_id = $this->customer->getId();
-				} else {
-					$customer_id = 0;
-				}
-
-				if (isset($this->request->server['REMOTE_ADDR'])) {
-					$ip = $this->request->server['REMOTE_ADDR'];
-				} else {
-					$ip = '';
-				}
-
-				$search_data = array(
-					'keyword'       => $search,
-					'category_id'   => $category_id,
-					'sub_category'  => $sub_category,
-					'description'   => $description,
-					'products'      => $product_total,
-					'customer_id'   => $customer_id,
-					'ip'            => $ip
-				);
-
-				$this->model_account_search->addSearch($search_data);
+			if(!empty($data)){
+				$json['status']  = 'success';
+				$json['message'] = $this->language->get('Success');
+				$json['total']   = $product_total;
+				$json['data'] 	 = $data;			
+			} else{
+				$json['status'] = 'error';
+				$json['total']   = $product_total;
+				$json['message'] = $this->language->get('No products Found!');
 			}
+		} else {
+			$json['status'] = 'error';
+			$json['total']   = $product_total;
+			$json['message'] = $this->language->get('No products Found!');
+		
 		}
-
-		$data['search'] = $search;
-		$data['description'] = $description;
-		$data['category_id'] = $category_id;
-		$data['sub_category'] = $sub_category;
-
-
-		$this->response->setOutput($this->load->view('product/search', $data));
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
 	}
 }
 ?>
