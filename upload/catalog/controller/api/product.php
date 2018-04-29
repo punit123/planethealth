@@ -385,6 +385,7 @@ class ControllerApiProduct extends Controller {
 		$product_total = 0;
 		$product_detail = '';
 		$product_detail_id = '';
+		$customer_id = $this->request->post['customer_id'];
 	if(($this->request->server['REQUEST_METHOD'] == 'POST')){
 		
 		if (isset($this->request->post['search_by'])) {
@@ -450,7 +451,6 @@ class ControllerApiProduct extends Controller {
 			}
 			
 		}
-		//echo $search_by . "--" .$search_value; die;
 		if (isset($this->request->post['sort_by'])) {
 			$sort = $this->request->post['sort_by'];
 		} else {
@@ -483,6 +483,7 @@ class ControllerApiProduct extends Controller {
         
 		$data['products'] = array();
 			$filter_data = array(
+			    'customer_id'         	=> $customer_id,
 				'filter_name'         	=> $search,
 				'filter_tag'          	=> $tag,
 				'filter_description'  	=> $description,
@@ -539,6 +540,7 @@ class ControllerApiProduct extends Controller {
 
 				$data['products'][] = array(
 					'product_id'  => $result['product_id'],
+					'is_whishlist'  => $result['is_whishlist'],
 					'thumb'       => $image,
 					'name'        => $result['name'],
 					'manufacturer'=> $result['manufacturer'],
