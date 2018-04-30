@@ -991,3 +991,9 @@ input[type="checkbox"]:checked::after, .checkbox input[type="checkbox"]:checked:
 .note-popover.popover {
     display: none;
 }
+.filter-btn {
+    margin-top: 38px;
+}
+.filter-left {
+    float: left;
+}

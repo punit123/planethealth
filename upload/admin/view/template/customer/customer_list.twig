@@ -17,6 +17,83 @@
       </nav>
     </div>
   </div>
+  <div class="container-fluid">
+	<div class="row">
+		<div id="filter-customer" class="col-md-12 col-sm-12 order-md-9 d-none d-md-block">
+        <div class="card">
+          <div class="card-header"><i class="fa fa-filter"></i> {{ text_filter }}</div>
+          <div class="card-body">
+			<div class="col-md-12 col-sm-12">
+				<div class="col-md-3 col-sm-12 filter-left">
+					<div class="form-group">
+					  <label class="col-form-label" for="input-name">{{ entry_name }}</label> <input type="text" name="filter_name" value="{{ filter_name }}" placeholder="{{ entry_name }}" id="input-name" class="form-control"/>
+					</div>
+				</div>
+				<div class="col-md-3 col-sm-12 filter-left">
+					<div class="form-group">
+					  <label class="col-form-label" for="input-email">{{ entry_email }}</label> <input type="text" name="filter_email" value="{{ filter_email }}" placeholder="{{ entry_email }}" id="input-email" class="form-control"/>
+					</div>
+				</div>
+				<div class="col-md-3 col-sm-12 filter-left">
+					<div class="form-group">
+					  <label class="col-form-label" for="input-customer-group">{{ entry_customer_group }}</label> <select name="filter_customer_group_id" id="input-customer-group" class="form-control">
+						<option value=""></option>
+						{% for customer_group in customer_groups %}
+						  {% if customer_group.customer_group_id == filter_customer_group_id %}
+							<option value="{{ customer_group.customer_group_id }}" selected="selected">{{ customer_group.name }}</option>
+						  {% else %}
+							<option value="{{ customer_group.customer_group_id }}">{{ customer_group.name }}</option>
+						  {% endif %}
+						{% endfor %}
+					  </select>
+					</div>
+				</div>
+				<div class="col-md-3 col-sm-12 filter-left">
+					<div class="form-group">
+					  <label class="col-form-label" for="input-status">{{ entry_status }}</label> <select name="filter_status" id="input-status" class="form-control">
+						<option value=""></option>
+						{% if filter_status == '1' %}
+						  <option value="1" selected="selected">{{ text_enabled }}</option>
+						{% else %}
+						  <option value="1">{{ text_enabled }}</option>
+						{% endif %}
+						{% if filter_status == '0' %}
+						  <option value="0" selected="selected">{{ text_disabled }}</option>
+						{% else %}
+						  <option value="0">{{ text_disabled }}</option>
+						{% endif %}
+					  </select>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-12 col-sm-12">
+				<div class="col-md-5 col-sm-12 filter-left">
+					<div class="form-group">
+					  <label class="col-form-label" for="input-ip">{{ entry_ip }}</label> <input type="text" name="filter_ip" value="{{ filter_ip }}" placeholder="{{ entry_ip }}" id="input-ip" class="form-control"/>
+					</div>
+				</div>
+				<div class="col-md-5 col-sm-12 filter-left">
+					<div class="form-group">
+					  <label class="col-form-label" for="input-date-added">{{ entry_date_added }}</label>
+					  <div class="input-group date">
+						<input type="text" name="filter_date_added" value="{{ filter_date_added }}" placeholder="{{ entry_date_added }}" data-date-format="YYYY-MM-DD" data-locale="{{ datepicker }}" id="input-date-added" class="form-control"/>
+						<div class="input-group-append">
+						  <button type="button" class="btn btn-light"><i class="fa fa-calendar"></i></button>
+						</div>
+					  </div>
+					</div>
+				</div>
+				<div class="col-md-2 col-sm-12 filter-left">
+					<div class="form-group filter-btn text-center">
+					  <button type="button" id="button-filter" class="btn btn-light"><i class="fa fa-filter"></i> {{ button_filter }}</button>
+					</div>
+				</div>
+			</div>	
+			</div>
+		  </div>
+        </div>
+      </div>
+	</div>
   <div class="container-fluid">{% if error_warning %}
       <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
         <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -28,62 +105,7 @@
       </div>
     {% endif %}
     <div class="row">
-      <div id="filter-customer" class="col-md-3 col-sm-12 order-md-9 d-none d-md-block">
-        <div class="card">
-          <div class="card-header"><i class="fa fa-filter"></i> {{ text_filter }}</div>
-          <div class="card-body">
-            <div class="form-group">
-              <label class="col-form-label" for="input-name">{{ entry_name }}</label> <input type="text" name="filter_name" value="{{ filter_name }}" placeholder="{{ entry_name }}" id="input-name" class="form-control"/>
-            </div>
-            <div class="form-group">
-              <label class="col-form-label" for="input-email">{{ entry_email }}</label> <input type="text" name="filter_email" value="{{ filter_email }}" placeholder="{{ entry_email }}" id="input-email" class="form-control"/>
-            </div>
-            <div class="form-group">
-              <label class="col-form-label" for="input-customer-group">{{ entry_customer_group }}</label> <select name="filter_customer_group_id" id="input-customer-group" class="form-control">
-                <option value=""></option>
-                {% for customer_group in customer_groups %}
-                  {% if customer_group.customer_group_id == filter_customer_group_id %}
-                    <option value="{{ customer_group.customer_group_id }}" selected="selected">{{ customer_group.name }}</option>
-                  {% else %}
-                    <option value="{{ customer_group.customer_group_id }}">{{ customer_group.name }}</option>
-                  {% endif %}
-                {% endfor %}
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="col-form-label" for="input-status">{{ entry_status }}</label> <select name="filter_status" id="input-status" class="form-control">
-                <option value=""></option>
-                {% if filter_status == '1' %}
-                  <option value="1" selected="selected">{{ text_enabled }}</option>
-                {% else %}
-                  <option value="1">{{ text_enabled }}</option>
-                {% endif %}
-                {% if filter_status == '0' %}
-                  <option value="0" selected="selected">{{ text_disabled }}</option>
-                {% else %}
-                  <option value="0">{{ text_disabled }}</option>
-                {% endif %}
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="col-form-label" for="input-ip">{{ entry_ip }}</label> <input type="text" name="filter_ip" value="{{ filter_ip }}" placeholder="{{ entry_ip }}" id="input-ip" class="form-control"/>
-            </div>
-            <div class="form-group">
-              <label class="col-form-label" for="input-date-added">{{ entry_date_added }}</label>
-              <div class="input-group date">
-                <input type="text" name="filter_date_added" value="{{ filter_date_added }}" placeholder="{{ entry_date_added }}" data-date-format="YYYY-MM-DD" data-locale="{{ datepicker }}" id="input-date-added" class="form-control"/>
-                <div class="input-group-append">
-                  <button type="button" class="btn btn-light"><i class="fa fa-calendar"></i></button>
-                </div>
-              </div>
-            </div>
-            <div class="form-group text-right">
-              <button type="button" id="button-filter" class="btn btn-light"><i class="fa fa-filter"></i> {{ button_filter }}</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-9 col-sm-12">
+      <div class="col-md-12 col-sm-12">
         <div class="card">
           <div class="card-header"><i class="fa fa-list"></i> {{ text_list }}</div>
           <div class="card-body">
