@@ -63,7 +63,19 @@ class ControllerCatalogProduct extends Controller {
 
 		$this->getForm();
 	}
-
+	
+	public function active(){
+		$this->load->model('catalog/product');
+		$this->model_catalog_product->statusActiveInactive($this->request->get['product_id'], 1);
+		$this->getList();
+	}
+	
+	public function inactive(){
+		$this->load->model('catalog/product');
+		$this->model_catalog_product->statusActiveInactive($this->request->get['product_id'], 0);
+		$this->getList();
+	}
+	
 	public function edit() {
 		$this->load->language('catalog/product');
 
@@ -224,8 +236,12 @@ class ControllerCatalogProduct extends Controller {
 
 		$this->getList();
 	}
-
+		
 	protected function getList() {
+		$this->load->language('catalog/product');
+		
+		$this->document->setTitle($this->language->get('heading_title'));
+		
 		if (isset($this->request->get['filter_name'])) {
 			$filter_name = $this->request->get['filter_name'];
 		} else {
@@ -379,12 +395,14 @@ class ControllerCatalogProduct extends Controller {
 				'image'      => $image,
 				'name'       => $result['name'],
 				'model'      => $result['model'],
-				'sku'      => $result['sku'],
+				'sku'      	=> $result['sku'],
 				'price'      => $this->currency->format($result['price'], $this->config->get('config_currency')),
 				'special'    => $special,
 				'quantity'   => $result['quantity'],
 				'status'     => $result['status'] ? $this->language->get('text_enabled') : $this->language->get('text_disabled'),
-				'edit'       => $this->url->link('catalog/product/edit', 'user_token=' . $this->session->data['user_token'] . '&product_id=' . $result['product_id'] . $url)
+				'edit'       => $this->url->link('catalog/product/edit', 'user_token=' . $this->session->data['user_token'] . '&product_id=' . $result['product_id'] . $url),
+				'active'     => $this->url->link('catalog/product/active', 'user_token=' . $this->session->data['user_token'] . '&product_id=' . $result['product_id'] . $url),
+				'inactive'   => $this->url->link('catalog/product/inactive', 'user_token=' . $this->session->data['user_token'] . '&product_id=' . $result['product_id'] . $url)
 			);
 		}
 
