@@ -43,6 +43,18 @@ class ControllerCatalogCategory extends Controller {
 
 		$this->getForm();
 	}
+	
+	public function active(){
+		$this->load->model('catalog/category');
+		$this->model_catalog_category->statusActiveInactive($this->request->get['category_id'], 1);
+		$this->getList();
+	}
+	
+	public function inactive(){
+		$this->load->model('catalog/category');
+		$this->model_catalog_category->statusActiveInactive($this->request->get['category_id'], 0);
+		$this->getList();
+	}
 
 	public function edit() {
 		$this->load->language('catalog/category');
@@ -143,6 +155,12 @@ class ControllerCatalogCategory extends Controller {
 	}
 
 	protected function getList() {
+		$this->load->language('catalog/category');
+		
+		$this->document->setTitle($this->language->get('heading_title'));
+		
+		$this->load->model('catalog/category');
+		
 		if (isset($this->request->get['sort'])) {
 			$sort = $this->request->get['sort'];
 		} else {
@@ -209,8 +227,11 @@ class ControllerCatalogCategory extends Controller {
 				'category_id' => $result['category_id'],
 				'name'        => $result['name'],
 				'sort_order'  => $result['sort_order'],
+				'status'  		=> $result['status'],
 				'edit'        => $this->url->link('catalog/category/edit', 'user_token=' . $this->session->data['user_token'] . '&category_id=' . $result['category_id'] . $url),
-				'delete'      => $this->url->link('catalog/category/delete', 'user_token=' . $this->session->data['user_token'] . '&category_id=' . $result['category_id'] . $url)
+				'delete'      => $this->url->link('catalog/category/delete', 'user_token=' . $this->session->data['user_token'] . '&category_id=' . $result['category_id'] . $url),
+				'active'      => $this->url->link('catalog/category/active', 'user_token=' . $this->session->data['user_token'] . '&category_id=' . $result['category_id'] . $url),
+				'inactive'    => $this->url->link('catalog/category/inactive', 'user_token=' . $this->session->data['user_token'] . '&category_id=' . $result['category_id'] . $url)
 			);
 		}
 

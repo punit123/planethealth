@@ -59,7 +59,15 @@
                         {% endif %}</td>
                       <td class="text-left">{{ category.name }}</td>
                       <td class="text-right">{{ category.sort_order }}</td>
-                      <td class="text-right"><a href="{{ category.edit }}" data-toggle="tooltip" title="{{ button_edit }}" class="btn btn-primary"><i class="fa fa-pencil"></i></a></td>
+                      <td class="text-right">
+					  <a href="{{ category.edit }}" data-toggle="tooltip" title="{{ button_edit }}" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
+					  {% if category.status == '0' %}
+						<a href="{{ category.active }}" data-toggle="tooltip" title="{{ button_active }}" class="btn btn-success"><i class="fa fa-check" aria-hidden="true"></i></a>
+					  {% endif %}
+					  {% if category.status == '1' %}
+						<a href="{{ category.inactive }}" data-toggle="tooltip" title="{{ button_inactive }}" class="btn btn-danger"><i class="fa fa-ban" aria-hidden="true"></i></a>
+					  {% endif %}
+					  </td>
                     </tr>
                   {% endfor %}
                 {% else %}
