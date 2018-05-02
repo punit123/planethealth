@@ -424,49 +424,56 @@ class ControllerCommonColumnLeft extends Controller {
 			}
 			
 			// Marketing
-			// $marketing = array();
+			 $marketing = array();
 
-			// if ($this->user->hasPermission('access', 'marketing/affiliate')) {
-				// $marketing[] = array(
-					// 'name'	   => $this->language->get('text_affiliate'),
-					// 'href'     => $this->url->link('marketing/affiliate', 'user_token=' . $this->session->data['user_token']),
-					// 'children' => array()
-				// );
-			// }
+			if ($this->user->hasPermission('access', 'marketing/affiliate')) {
+				$marketing[] = array(
+					'name'	   => $this->language->get('text_affiliate'),
+					'href'     => $this->url->link('marketing/affiliate', 'user_token=' . $this->session->data['user_token']),
+					'children' => array()
+				);
+			}
 
-			// if ($this->user->hasPermission('access', 'marketing/marketing')) {
-				// $marketing[] = array(
-					// 'name'	   => $this->language->get('text_marketing'),
-					// 'href'     => $this->url->link('marketing/marketing', 'user_token=' . $this->session->data['user_token']),
-					// 'children' => array()		
-				// );	
-			// }
+			if ($this->user->hasPermission('access', 'marketing/marketing')) {
+				$marketing[] = array(
+					'name'	   => $this->language->get('text_marketing'),
+					'href'     => $this->url->link('marketing/marketing', 'user_token=' . $this->session->data['user_token']),
+					'children' => array()		
+				);	
+			}
 			
-			// if ($this->user->hasPermission('access', 'marketing/coupon')) {	
-				// $marketing[] = array(
-					// 'name'	   => $this->language->get('text_coupon'),
-					// 'href'     => $this->url->link('marketing/coupon', 'user_token=' . $this->session->data['user_token']),
-					// 'children' => array()		
-				// );	
-			// }
+			if ($this->user->hasPermission('access', 'marketing/coupon')) {	
+				$marketing[] = array(
+					'name'	   => $this->language->get('text_coupon'),
+					'href'     => $this->url->link('marketing/coupon', 'user_token=' . $this->session->data['user_token']),
+					'children' => array()		
+				);	
+			}
+			if ($this->user->hasPermission('access', 'marketing/deal')) {	
+				$marketing[] = array(
+					'name'	   => $this->language->get('text_deal'),
+					'href'     => $this->url->link('marketing/deal', 'user_token=' . $this->session->data['user_token']),
+					'children' => array()		
+				);	
+			}
 			
-			// if ($this->user->hasPermission('access', 'marketing/contact')) {
-				// $marketing[] = array(
-					// 'name'	   => $this->language->get('text_contact'),
-					// 'href'     => $this->url->link('marketing/contact', 'user_token=' . $this->session->data['user_token']),
-					// 'children' => array()		
-				// );
-			// }
+			if ($this->user->hasPermission('access', 'marketing/contact')) {
+				$marketing[] = array(
+					'name'	   => $this->language->get('text_contact'),
+					'href'     => $this->url->link('marketing/contact', 'user_token=' . $this->session->data['user_token']),
+					'children' => array()		
+				);
+			}
 			
-			// if ($marketing) {
-				// $data['menus'][] = array(
-					// 'id'       => 'menu-marketing',
-					// 'icon'	   => 'fa-share-alt', 
-					// 'name'	   => $this->language->get('text_marketing'),
-					// 'href'     => '',
-					// 'children' => $marketing
-				// );	
-			// }
+			if ($marketing) {
+				$data['menus'][] = array(
+					'id'       => 'menu-marketing',
+					'icon'	   => 'fa-share-alt', 
+					'name'	   => $this->language->get('text_marketing'),
+					'href'     => '',
+					'children' => $marketing
+				);	
+			}
 			
 			// System
 			$system = array();
