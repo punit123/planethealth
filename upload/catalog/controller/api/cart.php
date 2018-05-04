@@ -3,6 +3,8 @@ class ControllerApiCart extends Controller {
 	public function add() {
 		$this->load->language('api/cart');
 		$json = array();
+			$customer_id = $this->request->post['customer_id'];
+			$device_id = $this->request->post['device_id'];
 			if (isset($this->request->post['product'])) {
 				$this->cart->clear();
 				foreach ($this->request->post['product'] as $product) {
@@ -11,9 +13,10 @@ class ControllerApiCart extends Controller {
 					} else {
 						$option = array();
 					}
-					$this->cart->add($product['product_id'], $product['quantity'], $option);
+					$this->cart->add($product['product_id'], $product['quantity'], $option,$customer_id,$device_id);
 				}
-				$json['success'] = $this->language->get('text_success');
+				$json['status'] = 'success';
+				$json['message'] = $this->language->get('text_success');
 				unset($this->session->data['shipping_method']);
 				unset($this->session->data['shipping_methods']);
 				unset($this->session->data['payment_method']);
@@ -35,19 +38,22 @@ class ControllerApiCart extends Controller {
 					$product_options = $this->model_catalog_product->getProductOptions($this->request->post['product_id']);
 					foreach ($product_options as $product_option) {
 						if ($product_option['required'] && empty($option[$product_option['product_option_id']])) {
-							$json['error']['option'][$product_option['product_option_id']] = sprintf($this->language->get('error_required'), $product_option['name']);
+							$json['status'] = 'error';
+				            $json['message'] = sprintf($this->language->get('error_required'), $product_option['name']);							
 						}
 					}
-					if (!isset($json['error']['option'])) {
-						$this->cart->add($this->request->post['product_id'], $quantity, $option);
-						$json['success'] = $this->language->get('text_success');
+					if (1==1) {
+						$this->cart->add($this->request->post['product_id'], $quantity, $option,$customer_id,$device_id);
+						$json['status'] = 'success';
+						$json['message'] = $this->language->get('text_success');
 						unset($this->session->data['shipping_method']);
 						unset($this->session->data['shipping_methods']);
 						unset($this->session->data['payment_method']);
 						unset($this->session->data['payment_methods']);
 					}
 				} else {
-					$json['error']['store'] = $this->language->get('error_store');
+					$json['status'] = 'error';
+					$json['message'] = $this->language->get('error_store');
 				}
 			}
 			
@@ -57,9 +63,11 @@ class ControllerApiCart extends Controller {
 	public function edit() {
 		$this->load->language('api/cart');
 		$json = array();
-		
-		$this->cart->update($this->request->post['cart_id'], $this->request->post['quantity']);
-		$json['success'] = $this->language->get('text_success');
+		$customer_id = $this->request->post['customer_id'];
+		$device_id = $this->request->post['device_id'];
+		$this->cart->update($this->request->post['cart_id'], $this->request->post['quantity'],$customer_id,$device_id);
+		$json['status'] = 'success';
+		$json['message'] = $this->language->get('text_success');
 		unset($this->session->data['shipping_method']);
 		unset($this->session->data['shipping_methods']);
 		unset($this->session->data['payment_method']);
@@ -75,7 +83,8 @@ class ControllerApiCart extends Controller {
 		if (isset($this->request->post['cart_id'])) {
 			$this->cart->cartRemove($this->request->post['cart_id']);
 			unset($this->session->data['vouchers'][$this->request->post['cart_id']]);
-			$json['success'] = $this->language->get('text_success');
+			$json['status'] = 'success';
+			$json['message'] = $this->language->get('text_success');
 			unset($this->session->data['shipping_method']);
 			unset($this->session->data['shipping_methods']);
 			unset($this->session->data['payment_method']);
@@ -88,22 +97,17 @@ class ControllerApiCart extends Controller {
 	public function products() {
 		$this->load->language('api/cart');
 		$json = array();
-			// Stock
-			if (!$this->cart->hasStock() && (!$this->config->get('config_stock_checkout') || $this->config->get('config_stock_warning'))) {
-				$json['error']['stock'] = $this->language->get('error_stock');
-			}
 			// Products
-			$json['products'] = array();
-			$products = $this->cart->getProducts();
+			$json['data']['products'] = array();
+			$customer_id = $this->request->post['customer_id'];
+			$products = $this->cart->getProducts($customer_id);
+			if(!empty($products)){
 			foreach ($products as $product) {
 				$product_total = 0;
 				foreach ($products as $product_2) {
 					if ($product_2['product_id'] == $product['product_id']) {
 						$product_total += $product_2['quantity'];
 					}
-				}
-				if ($product['minimum'] > $product_total) {
-					$json['error']['minimum'][] = sprintf($this->language->get('error_minimum'), $product['name'], $product['minimum']);
 				}
 				$option_data = array();
 				foreach ($product['option'] as $option) {
@@ -115,10 +119,13 @@ class ControllerApiCart extends Controller {
 						'type'                    => $option['type']
 					);
 				}
-				$json['products'][] = array(
+				$json['data']['products'][] = array(
 					'cart_id'    => $product['cart_id'],
 					'product_id' => $product['product_id'],
-					'name'       => $product['name'],
+					'is_prescription_required'     => $product['is_prescription_required'],
+					'name'            => $product['name'],
+					'manufacturer_name'            => $product['manufacturer_name'],
+					'brand_name'       => $product['brand_name'],
 					'model'      => $product['model'],
 					'option'     => $option_data,
 					'quantity'   => $product['quantity'],
@@ -130,10 +137,10 @@ class ControllerApiCart extends Controller {
 				);
 			}
 			// Voucher
-			$json['vouchers'] = array();
+			$json['data']['vouchers'] = array();
 			if (!empty($this->session->data['vouchers'])) {
 				foreach ($this->session->data['vouchers'] as $key => $voucher) {
-					$json['vouchers'][] = array(
+					$json['data']['vouchers'][] = array(
 						'code'             => $voucher['code'],
 						'description'      => $voucher['description'],
 						'from_name'        => $voucher['from_name'],
@@ -178,14 +185,20 @@ class ControllerApiCart extends Controller {
 				$sort_order[$key] = $value['sort_order'];
 			}
 			array_multisort($sort_order, SORT_ASC, $totals);
-			$json['totals'] = array();
+			$json['data']['totals'] = array();
 			foreach ($totals as $total) {
-				$json['totals'][] = array(
+				$json['data']['totals'][] = array(
 					'title' => $total['title'],
 					'text'  => $this->currency->format($total['value'], $this->session->data['currency'])
 				);
 			}
-			
+			$json['status'] = 'success';
+			$json['message'] = 'success';
+			}else{
+				$json['status'] = 'error';
+				$json['data'] = array();
+				$json['message'] = 'No records Found';
+			}
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}

@@ -266,7 +266,7 @@ class ModelCatalogProduct extends Model {
 
 		$this->cache->delete('product');
 	}
-
+	
 	public function statusActiveInactive($product_id,$data){
 		$this->db->query("UPDATE " . DB_PREFIX . "product SET status = '".$data."' WHERE product_id = '". (int)$product_id ."'");
 	}
@@ -409,7 +409,7 @@ class ModelCatalogProduct extends Model {
 
 	public function getProductsByCategoryId($category_id) {
 		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) LEFT JOIN " . DB_PREFIX . "product_to_category p2c ON (p.product_id = p2c.product_id) WHERE pd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND p2c.category_id = '" . (int)$category_id . "' ORDER BY pd.name ASC");
-        
+
 		return $query->rows;
 	}
 
@@ -443,6 +443,50 @@ class ModelCatalogProduct extends Model {
 
 		return $product_category_data;
 	}
+	public function getProductGenerics($product_id) {
+		$product_generic_data = array();
+
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "generic_product WHERE product_id = '" . (int)$product_id . "'");
+
+		foreach ($query->rows as $result) {
+			$product_generic_data[] = $result['generic_id'];
+		}
+
+		return $product_generic_data;
+	}
+	public function getProductGenericsAttributes($product_id) {
+		$product_generic_data = array();
+
+		$query = $this->db->query("SELECT gpa.*,ga.title FROM " . DB_PREFIX . "generic_product_attributes gpa inner join ".DB_PREFIX."generic_attribute as ga on gpa.generic_attribute_id = ga.id WHERE product_id = '" . (int)$product_id . "'");
+
+		foreach ($query->rows as $result) {
+			$product_generic_data[] = $result;
+		}
+
+		return $product_generic_data;
+	}
+	public function getProductWarnings($product_id) {
+		$product_generic_data = array();
+
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_warning WHERE product_id = '" . (int)$product_id . "'");
+
+		foreach ($query->rows as $result) {
+			$product_generic_data[] = $result;
+		}
+
+		return $product_generic_data;
+	}
+	public function getProductDisease($product_id) {
+		$product_generic_data = array();
+
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_disease WHERE product_id = '" . (int)$product_id . "'");
+
+		foreach ($query->rows as $result) {
+			$product_generic_data[] = $result;
+		}
+
+		return $product_generic_data;
+	}	
 	public function getProductBrands($product_id) {
 		$product_brand_data = array();
 

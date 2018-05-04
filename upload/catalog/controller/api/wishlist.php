@@ -1,5 +1,5 @@
 <?php
-class ControllerApiWishList extends Controller {
+class ControllerApiWishlist extends Controller {
 	public function addWishlist() {
 		$this->load->language('account/wishlist');
 		$json = array();
@@ -26,7 +26,7 @@ class ControllerApiWishList extends Controller {
 					foreach ($data as $result) {
 						// for never get one more time with same product id
 						if(!isset($product_data[$result['product_id']])){
-						$product_data[$result['product_id']] = $this->getProduct($result['product_id'],$data['customer_id']);
+						$product_data[$result['product_id']] = $this->model_catalog_product->getProduct($result['product_id'],$result['customer_id']);
 						}	
 					}
 					$json['status'] = 'success';
@@ -63,15 +63,32 @@ class ControllerApiWishList extends Controller {
 				$this->load->model('account/wishlist');
 				$product_data = $data = array();
 				$data = $this->model_account_wishlist->getWishlistAPI($customer_id);
-				foreach ($data as $result) {
+				foreach ($data as $result1) {
 					// for never get one more time with same product id
-					if(!isset($product_data[$result['product_id']])){
-					$product_data[$result['product_id']] = $this->getProduct($result['product_id'],$data['customer_id']);
+					if(!isset($product_data[$result1['product_id']])){
+						$result = $this->model_catalog_product->getProduct($result1['product_id'],$customer_id);
+						$product_data[] = array(
+											'product_id'  => $result['product_id'],
+											'is_prescription_required'  => $result['is_prescription_required'],
+											'is_cart'  => $result['is_cart'],					
+											'is_whishlist'  => $result['is_whishlist'],
+											'thumb'       => $result['image'],
+											'name'        => $result['name'],
+											'manufacturer'=> $result['manufacturer'],
+											'brand'       => $result['brand'],
+											'discount'     => 5,
+											'description' => utf8_substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_product_description_length')) . '..',
+											'price'       => $price,
+											'special'     => $special,
+											'tax'         => $tax,
+											'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
+											'rating'      => $result['rating']
+										);
 					}	
 				}
 				$json['status'] = 'success';
 				$json['message']= 'success';
-				$json['data'] 	= $product_data;
+				$json['data']['products'][] = $product_data;
 				$json['total'] 	= $this->model_account_wishlist->getTotalWishlistAPI($customer_id);
 		} else {
 			$json['status'] = 'error';
@@ -102,22 +119,12 @@ class ControllerApiWishList extends Controller {
 			if ($product_id && $customer_id) {
 				$this->load->model('account/wishlist');
 				$this->model_account_wishlist->deleteWishlistAPI($product_id, $customer_id); 
-				$product_data = $data = array();
-				$data = $this->model_account_wishlist->getWishlistAPI();
-				foreach ($data as $result) {
-					// for never get one more time with same product id
-					if(!isset($product_data[$result['product_id']])){
-					$product_data[$result['product_id']] = $this->getProduct($result['product_id'],$data['customer_id']);
-					}	
-				}
 				$json['status'] = 'success';
 				$json['message']= 'success';
-				$json['data'] 	= $product_data;
-				$json['total'] 	= $this->model_account_wishlist->getTotalWishlistAPI($customer_id);
-		} else {
-			$json['status'] = 'error';
-			$json['message'] = 'Product no more available!';
-		}
+		    } else {
+			    $json['status'] = 'error';
+			    $json['message'] = 'Product no more available!';
+		     }
 	   } else {
 					$json['status'] = 'error';
 					$json['message'] = 'Invalid parameter';

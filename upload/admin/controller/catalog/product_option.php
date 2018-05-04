@@ -494,6 +494,7 @@ class ControllerCatalogProductOption extends Controller {
 				'points'                  => $product_option_value['points'],
 				'points_prefix'           => $product_option_value['points_prefix'],
 				'weight'                  => $product_option_value['weight'],
+				'url'                     => $this->url->link('catalog/product_option_image/add', 'user_token=' . $this->session->data['user_token'].'&product_option_value_id='.$product_option_value['product_option_value_id'].'&product_option_id='.$this->request->get['product_option_id']),
 				'weight_prefix'           => $product_option_value['weight_prefix']
 			);
 		}

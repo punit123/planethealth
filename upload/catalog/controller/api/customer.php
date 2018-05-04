@@ -12,7 +12,7 @@ class ControllerApiCustomer extends Controller {
 				$password = $_POST['password'];
 				$fcm_id = $_POST['fcm_id'];
 				$device_type = $_POST['device_type'];
-				$customer_id = '';
+                                $customer_id = '';
 				$customerByEmail = $this->model_account_customer->getCustomerByEmailAndPhone($email,$phone,$customer_id);
 				if(empty($customerByEmail)){
 					$customer_id = $this->model_account_customer->addCustomer($_POST);
@@ -45,14 +45,10 @@ class ControllerApiCustomer extends Controller {
 				$login_type = $_POST['login_type'];
 				$fcm_id = $_POST['fcm_id'];
 				$device_type = $_POST['device_type'];
-				$customerByEmail = $this->model_account_customer->getCustomerByEmail($email);
-				if(empty($customerByEmail)){
-					$customer_id = $this->model_account_customer->addCustomerSocial($_POST);
-					$json['status'] = 'success';
-					$json['message'] = $this->language->get('customer_success');
-					$json['data'] = $this->model_account_customer->getCustomer($customer_id);
-				}
-				else{
+				$customer_id = '';
+				$customerByEmail = $this->model_account_customer->getCustomerByEmailAndPhone($email,$phone,$customer_id);
+                                if(empty($customerByEmail) || (($email == '' || $email == null) && ($phone == '' || $phone == null)) ){
+                                      if(($email == '' || $email == null) && ($phone == '' || $phone == null)){
 					$customerByEmail = $this->model_account_customer->getCustomerByLoginToken($login_token);
 					if(!empty($customerByEmail)){
 						$customer_id = $customerByEmail[0]['customer_id'];
@@ -60,8 +56,32 @@ class ControllerApiCustomer extends Controller {
 						$json['message'] = $this->language->get('customer_logged_in');
 						$json['data'] = $this->model_account_customer->getCustomer($customer_id);						
 					}else{
-						$json['status'] = 'error';
-						$json['message'] = $this->language->get('Email is already exist!');						
+                                                $customer_id = $this->model_account_customer->addCustomerSocial($_POST);
+                       				$json['status'] = 'success';
+			       		        $json['message'] = $this->language->get('customer_success');
+                  			        $json['data'] = $this->model_account_customer->getCustomer($customer_id);                                      
+						
+					}
+                                      }else{
+					$customer_id = $this->model_account_customer->addCustomerSocial($_POST);
+					$json['status'] = 'success';
+					$json['message'] = $this->language->get('customer_success');
+					$json['data'] = $this->model_account_customer->getCustomer($customer_id);                                      
+                                      }
+
+				}
+				else{
+					$customerByToken = $this->model_account_customer->getCustomerByLoginToken($login_token);
+					if(!empty($customerByToken)){
+						$customer_id = $customerByToken[0]['customer_id'];
+						$json['status'] = 'success';
+						$json['message'] = $this->language->get('customer_logged_in');
+						$json['data'] = $this->model_account_customer->getCustomer($customer_id);						
+					}else{
+						$customer_id = $customerByEmail[0]['customer_id'];
+						$json['status'] = 'success';
+						$json['message'] = $this->language->get('customer_logged_in');
+						$json['data'] = $this->model_account_customer->getCustomer($customer_id);						
 					}
 				}
 			}
@@ -85,6 +105,7 @@ class ControllerApiCustomer extends Controller {
 				}
 				// Check if customer has been approved.
 				$customer_info = $this->model_account_customer->getCustomerByEmail($this->request->post['email']);
+
 				if (is_array($customer_info) && count($customer_info)==0) {
 					$json['status'] = 'error';
 					$json['message'] = $this->language->get('your account has been deactivated!');
@@ -186,7 +207,7 @@ class ControllerApiCustomer extends Controller {
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
-		
+	
 	public function list_address(){
 		$this->load->language('api/customer');
 		$this->load->model('account/customer');
@@ -320,18 +341,18 @@ class ControllerApiCustomer extends Controller {
 				'anniversary_date' 	=> $this->request->post['anniversary_date']
 			);
 			 if(isset($this->request->files['image'])){
-			    $data['image'] = $this->request->files['image'];
-			    if($data['image']['size']<=500000 && ( $data['image']['type'] !== 'jpeg' || $data['image']['type'] !== 'png' || $data['image']['type'] !== 'jpg')){
-			     $fileName = strtotime("now").$data['image']['name'];
-			     $target = DIR_IMAGE . 'catalog/profile_pic/';
-			     $fileTarget = $target.$fileName;
-			     $tempFileName = $_FILES["image"]["tmp_name"];
-			     $data['image'] = $fileName;
-			     $result = move_uploaded_file($tempFileName,$fileTarget);
-			    }else{
-			 			unset($data['image']);
-			 		}
-   			}
+    $data['image'] = $this->request->files['image'];
+    if($data['image']['size']<=500000 && ( $data['image']['type'] !== 'jpeg' || $data['image']['type'] !== 'png' || $data['image']['type'] !== 'jpg')){
+     $fileName = strtotime("now").$data['image']['name'];
+     $target = DIR_IMAGE . 'catalog/profile_pic/';
+     $fileTarget = $target.$fileName;
+     $tempFileName = $_FILES["image"]["tmp_name"];
+     $data['image'] = $fileName;
+     $result = move_uploaded_file($tempFileName,$fileTarget);
+    }else{
+ unset($data['image']);
+ }
+   }
 			$validation_check_email_phone = $this->model_account_customer->getCustomerByEmailAndPhone($data['email'],$data['telephone'],$customer_id);
 			if(empty($validation_check_email_phone)){
 				$customer_info = $this->model_account_customer->editCustomer($customer_id, $data);
@@ -438,7 +459,7 @@ class ControllerApiCustomer extends Controller {
 			'customer_id' 	=> $this->request->post['customer_id'],
 			'name' 			=> $this->request->post['name'],
 			'relation' 		=> $this->request->post['relation'],
-			'date_of_birth' => $this->request->post['date_of_birth'],
+			'date_of_birth' => date('Y-m-d', strtotime($this->request->post['date_of_birth'])),
 			'blood_group' 	=> $this->request->post['blood_group']
 		);
 		$addCustomerFamilies = $this->model_account_customer->addCustomerFamilies($data);
@@ -489,7 +510,7 @@ class ControllerApiCustomer extends Controller {
 				'customer_id' 	=> $this->request->post['customer_id'],
 				'name' 			=> $this->request->post['name'],
 				'relation' 		=> $this->request->post['relation'],
-				'date_of_birth' => $this->request->post['date_of_birth'],
+				'date_of_birth' => date('Y-m-d', strtotime($this->request->post['date_of_birth'])),
 				'blood_group' 	=> $this->request->post['blood_group']
 		);
 		$listAllCustomerFamilies = $this->model_account_customer->listAllCustomerFamilies($id, $data['customer_id']);
@@ -499,7 +520,7 @@ class ControllerApiCustomer extends Controller {
 					$json['status'] = 'success';
 					$json['message']=$this->language->get('families_updated');
 					$customerFamiliesData = $this->model_account_customer->listCustomerFamiliesById($id);
-					$json['data'] = $customerFamiliesData[0];
+					$json['data'] = $customerFamiliesData;
 				}
 				else{
 					$json['status'] = 'error';
@@ -554,8 +575,8 @@ class ControllerApiCustomer extends Controller {
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
-	
-    public function customNotification(){
+
+                public function customNotification(){
 		$this->load->language('api/customer');
 		$this->load->model('account/customer');
 		
@@ -576,38 +597,6 @@ class ControllerApiCustomer extends Controller {
 		else{
 			$json['status'] = 'error';
 			$json['message'] = $this->language->get('Invalid Customer!');
-		}
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
-	}
-	
-	public function updateAddress(){
-		$this->load->model('account/address');
-		$json = array();
-		if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
-			$data = $this->request->post['lastname'] = '';$data = $this->request->post['company'] = ''; 
-			$data = $this->request->post['address_2'] = '';
-			$data = $this->request->post;
-			if($data['customer_id'] && $data){
-				$customerUpdate = $this->model_account_address->editAddress($data['address_id'],$data);
-				$customerSetUpdate = $this->model_account_address->updatesetAddress($data['address_id'],$data);
-				if($customerUpdate){
-					$json['status'] = 'success';
-					$json['message']= 'Customer address updated!';
-				}
-				elseif ($customerSetUpdate){
-					$json['status'] = 'success';
-					$json['message']= 'Customer address updated!';
-				}
-				else{
-					$json['status'] = 'error';
-					$json['message'] = $this->language->get('Customer address not updated!');
-				}
-			}
-			else {
-				$json['status'] = 'error';
-				$json['message'] = $this->language->get('Invalid Customer!');
-			}
 		}
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));

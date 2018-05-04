@@ -983,7 +983,95 @@ class ControllerCatalogProduct extends Controller {
 				);
 			}
 		}
-        
+		
+		// Categories
+		$this->load->model('catalog/generic');
+
+		if (isset($this->request->post['product_generic'])) {
+			$generics = $this->request->post['product_generic'];
+		} elseif (isset($this->request->get['product_id'])) {
+			$generics = $this->model_catalog_product->getProductGenerics($this->request->get['product_id']);
+		} else {
+			$generics = array();
+		}
+
+		$data['product_generics'] = array();
+
+		foreach ($generics as $generic_id) {
+			$generic_info = $this->model_catalog_generic->getGeneric($generic_id);
+
+			if ($generic_info) {
+				$data['product_generics'][] = array(
+					'generic_id' => $generic_info['id'],
+					'name'        => $generic_info['generic_name']
+				);
+			}
+		}
+ //attribute
+		if (isset($this->request->post['product_generic_attributes'])) {
+			$generic_attribute = $this->request->post['product_generic_attributes'];
+		} elseif (isset($this->request->get['product_id'])) {
+			$generic_attribute = $this->model_catalog_product->getProductGenericsAttributes($this->request->get['product_id']);
+		} else {
+			$generic_attribute = array();
+		}
+
+		$data['generic_attributes'] = array();
+
+		foreach ($generic_attribute as $generic_attribu) {
+			$generic_attribute_info = $this->model_catalog_product->getProductGenericsAttributes($generic_attribu['id']);
+
+			if ($generic_attribute_info) {
+				$data['generic_attributes'][] = array(
+					'id' => $generic_attribute_info[0]['id'],
+					'value'        => $generic_attribute_info[0]['value'],
+					'title'        => $generic_attribute_info[0]['title'],
+				);
+			}
+		}		
+  //Warnings
+		if (isset($this->request->post['product_warnings'])) {
+			$warnings = $this->request->post['product_warnings'];
+		} elseif (isset($this->request->get['product_id'])) {
+			$warnings = $this->model_catalog_product->getProductWarnings($this->request->get['product_id']);
+		} else {
+			$warnings = array();
+		}
+
+		$data['product_warnings'] = array();
+
+		foreach ($warnings as $warning) {
+			$warning_info = $this->model_catalog_generic->getWarnings($warning['product_warning_id']);
+
+			if ($warning_info) {
+				$data['product_warnings'][] = array(
+					'product_warning_id' => $warning_info[0]['product_warning_id'],
+					'title'        => $warning_info[0]['title'],
+					'flag'        => $warning_info[0]['flag']
+				);
+			}
+		}  
+ //disease
+		if (isset($this->request->post['product_disease'])) {
+			$diseases = $this->request->post['product_disease'];
+		} elseif (isset($this->request->get['product_id'])) {
+			$diseases = $this->model_catalog_product->getProductDisease($this->request->get['product_id']);
+		} else {
+			$diseases = array();
+		}
+
+		$data['product_diseases'] = array();
+
+		foreach ($diseases as $disease) {
+			$disease_info = $this->model_catalog_generic->getProductDisease($disease['product_disease_id']);
+
+			if ($disease_info) {
+				$data['product_diseases'][] = array(
+					'product_disease_id' => $disease_info[0]['product_disease_id'],
+					'disease'        => $disease_info[0]['disease']
+				);
+			}
+		}		
 	// Brands
 	$this->load->model('catalog/brand');
 	if (isset($this->request->post['product_brand'])) {
