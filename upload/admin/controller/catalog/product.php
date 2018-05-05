@@ -996,14 +996,15 @@ class ControllerCatalogProduct extends Controller {
 		}
 
 		$data['product_generics'] = array();
-
-		foreach ($generics as $generic_id) {
-			$generic_info = $this->model_catalog_generic->getGeneric($generic_id);
+		
+		foreach ($generics as $genkey=>$generic_id) {
+			$generic_info = $this->model_catalog_generic->getGeneric($genkey);
 
 			if ($generic_info) {
 				$data['product_generics'][] = array(
 					'generic_id' => $generic_info['id'],
-					'name'        => $generic_info['generic_name']
+					'name'        => $generic_info['generic_name'],
+					'generic_weight'        => $generics[$genkey]
 				);
 			}
 		}
@@ -1019,13 +1020,13 @@ class ControllerCatalogProduct extends Controller {
 		$data['generic_attributes'] = array();
 
 		foreach ($generic_attribute as $generic_attribu) {
-			$generic_attribute_info = $this->model_catalog_product->getProductGenericsAttributes($generic_attribu['id']);
+			$generic_attribute_info = $this->model_catalog_generic->getGenericsAttributes($generic_attribu['id']);
 
 			if ($generic_attribute_info) {
 				$data['generic_attributes'][] = array(
-					'id' => $generic_attribute_info[0]['id'],
-					'value'        => $generic_attribute_info[0]['value'],
-					'title'        => $generic_attribute_info[0]['title'],
+					'id' => $generic_attribute_info['id'],
+					'value'        => $generic_attribute_info['value'],
+					'title'        => $generic_attribute_info['title'],
 				);
 			}
 		}		
@@ -1042,12 +1043,11 @@ class ControllerCatalogProduct extends Controller {
 
 		foreach ($warnings as $warning) {
 			$warning_info = $this->model_catalog_generic->getWarnings($warning['product_warning_id']);
-
 			if ($warning_info) {
 				$data['product_warnings'][] = array(
-					'product_warning_id' => $warning_info[0]['product_warning_id'],
-					'title'        => $warning_info[0]['title'],
-					'flag'        => $warning_info[0]['flag']
+					'product_warning_id' => $warning_info['product_warning_id'],
+					'title'        => $warning_info['title'],
+					'flag'        => $warning_info['flag']
 				);
 			}
 		}  
@@ -1063,12 +1063,12 @@ class ControllerCatalogProduct extends Controller {
 		$data['product_diseases'] = array();
 
 		foreach ($diseases as $disease) {
-			$disease_info = $this->model_catalog_generic->getProductDisease($disease['product_disease_id']);
+			$disease_info = $this->model_catalog_generic->getDisease($disease['product_disease_id']);
 
 			if ($disease_info) {
 				$data['product_diseases'][] = array(
-					'product_disease_id' => $disease_info[0]['product_disease_id'],
-					'disease'        => $disease_info[0]['disease']
+					'product_disease_id' => $disease_info['product_disease_id'],
+					'disease'        => $disease_info['disease']
 				);
 			}
 		}		

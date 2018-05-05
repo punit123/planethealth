@@ -449,7 +449,7 @@ class ModelCatalogProduct extends Model {
 		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "generic_product WHERE product_id = '" . (int)$product_id . "'");
 
 		foreach ($query->rows as $result) {
-			$product_generic_data[] = $result['generic_id'];
+			$product_generic_data[$result['generic_id']] =$result['generic_weight'] ;
 		}
 
 		return $product_generic_data;

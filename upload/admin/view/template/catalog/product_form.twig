@@ -366,22 +366,44 @@
                 <label class="col-sm-2 col-form-label" for="input-generic">{{ entry_generic }}</label>
                 <div class="col-sm-10">
                   <input type="text" name="generic" value="" placeholder="{{ entry_generic }}" id="input-category" class="form-control"/>
-                  <div id="product-generic" class="form-control" style="height: 150px; overflow: auto;">{% for product_generic in product_generics %}
-                      <div id="product-generic{{ product_generic.generic_id }}"><i class="fa fa-minus-circle"></i> {{ product_generic.name }}
-                        <input type="hidden" name="product_generic[]" value="{{ product_generic.generic_id }}"/>
-                      </div>
-                    {% endfor %}
+				</div><br/>
+                <div class="col-md-12" style="margin-top:10px">				
+                  <div id="product-generic">
+					  <div class="table-responsive">
+						<table id="generics" class="table table-striped table-bordered table-hover">
+						  <thead>
+							<tr>
+							  <td class="text-left">{{ tab_generic }}</td>
+							  <td class="text-left">Weight</td>
+							  <td></td>
+							</tr>
+						  </thead>
+						 <tbody>
+						 {% set generic__row = 0 %}
+                         {% for product_generic in product_generics %}						 
+						  <tr id="generic-row{{ generic_row }}">
+							<td class="text-left"><input type="text" name="product_generic[{{ generic_row }}][name]" value="{{ product_generic.name }}" placeholder="{{ entry_attribute }}" class="form-control"/> <input type="hidden" name="product_generic[{{ generic_row }}][generic_id]" value="{{ product_generic.generic_id }}"/></td>
+							<td class="text-left">
+								<div class="input-group mb-12">
+								  <input type="text" name="product_generic[{{ generic_row }}][generic_weight]" value="{{ product_generic.generic_weight }}" class="form-control" />
+								</div>
+							</td>
+							<td class="text-left"><button type="button" onclick="$('#generic-row{{ generic_row }}').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>
+						  </tr>
+						  {% set generic_attribute_row = generic_attribute_row + 1 %}
+						{% endfor %}
+                         </tbody>
+						 </table>
+                    </div>
                   </div>
-                  <small class="form-text text-muted">{{ help_category }}</small>
-                </div>
-              </div>
+                </div></div>
 				<ul class="nav nav-tabs">
 					<li class="nav-item"><a href="#tab-generic-attribute" data-toggle="tab" class="nav-link active">{{ tab_generic_attribute }}</a></li>
 					<li class="nav-item"><a href="#tab-warning" data-toggle="tab" class="nav-link">{{ tab_warning }}</a></li>
 					<li class="nav-item"><a href="#tab-disease" data-toggle="tab" class="nav-link">{{ tab_disease }}</a></li>
 				</ul>
 				<div class="tab-content">
-				<div class="tab-pane" id="tab-generic-attribute">
+				<div class="tab-pane active" id="tab-generic-attribute">
 				<div class="form-group row">
 				  <div class="table-responsive">
 					<table id="generic_attributes" class="table table-striped table-bordered table-hover">
@@ -395,14 +417,14 @@
 					  <tbody>
 						{% set generic_attribute_row = 0 %}
 						{% for generic_attribute in generic_attributes %}
-						  <tr id="attribute-row{{ generic_attribute_row }}">
+						  <tr id="genattribute-row{{ generic_attribute_row }}">
 							<td class="text-left"><input type="text" name="generic_attribute[{{ generic_attribute_row }}][title]" value="{{ generic_attribute.title }}" placeholder="{{ entry_attribute }}" class="form-control"/> <input type="hidden" name="generic_attribute[{{ generic_attribute_row }}][id]" value="{{ generic_attribute.id }}"/></td>
 							<td class="text-left">
 								<div class="input-group mb-12">
 								  <textarea name="generic_attribute[{{ generic_attribute_row }}][value]" rows="5" placeholder="{{ entry_text }}" class="form-control">{{ generic_attribute.value }}</textarea>
 								</div>
 							</td>
-							<td class="text-left"><button type="button" onclick="$('#attribute-row{{ generic_attribute_row }}').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>
+							<td class="text-left"><button type="button" onclick="$('#genattribute-row{{ generic_attribute_row }}').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>
 						  </tr>
 						  {% set generic_attribute_row = generic_attribute_row + 1 %}
 						{% endfor %}
@@ -425,14 +447,14 @@
 						  <tbody>
 							{% set product_warnings_row = 0 %}
 							{% for product_warning in product_warnings %}
-							  <tr id="attribute-row{{ product_warnings_row }}">
+							  <tr id="warning-row{{ product_warnings_row }}">
 								<td class="text-left"><input type="text" name="product_warning[{{ product_warnings_row }}][title]" value="{{ product_warning.title }}" placeholder="{{ entry_attribute }}" class="form-control"/> <input type="hidden" name="product_warning[{{ product_warnings_row }}][product_warning_id]" value="{{ product_warning.product_warning_id }}"/></td>
 								<td class="text-left">
 									<div class="input-group mb-4">
 									  <input type="checkbox" name="generic_attribute[{{ product_warnings_row }}][falg]" value="1" />
 									</div>
 								</td>
-								<td class="text-left"><button type="button" onclick="$('#attribute-row{{ product_warnings_row }}').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>
+								<td class="text-left"><button type="button" onclick="$('#warning-row{{ product_warnings_row }}').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>
 							  </tr>
 							  {% set product_warnings_row = product_warnings_row + 1 %}
 							{% endfor %}
@@ -442,10 +464,31 @@
 					</div>				
 				</div>
 				<div class="tab-pane" id="tab-disease">
-				
+					<div class="form-group row">
+					  <div class="table-responsive">
+						<table id="product_disease" class="table table-striped table-bordered table-hover">
+						  <thead>
+							<tr>
+							  <td class="text-left">{{ tab_disease }}</td>
+							  <td></td>
+							</tr>
+						  </thead>
+						  <tbody>
+							{% set product_diseases_row = 0 %}
+							{% for product_disease in product_diseases %}
+							  <tr id="disease-row{{ product_diseases_row }}">
+								<td class="text-left"><input type="text" name="product_disease[{{ product_diseases_row }}][disease]" value="{{ product_disease.disease }}" placeholder="{{ entry_attribute }}" class="form-control"/> <input type="hidden" name="product_disease[{{ product_diseases_row }}][product_disease_id]" value="{{ product_disease.product_disease_id }}"/></td>
+								<td class="text-left"><button type="button" onclick="$('#disease-row{{ product_diseases_row }}').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>
+							  </tr>
+							  {% set product_diseases_row = product_diseases_row + 1 %}
+							{% endfor %}
+						  </tbody>
+						</table>
+					  </div>				
+					</div>				
 				</div>				
 			  </div>
-          </div>			
+          </div>		  
             <div class="tab-pane" id="tab-recurring">
               <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover">

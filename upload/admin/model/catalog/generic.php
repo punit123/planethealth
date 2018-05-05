@@ -40,6 +40,18 @@ class ModelCatalogGeneric extends Model {
 		return $query->row;
 	}
 
+	public function getGenericsAttributes($id) {
+		$query = $this->db->query("SELECT gpa.*,ga.title FROM " . DB_PREFIX . "generic_product_attributes gpa inner join ".DB_PREFIX."generic_attribute as ga on gpa.generic_attribute_id = ga.id WHERE gpa.id = '" . (int)$id . "'");
+		return $query->row;
+	}
+	public function getWarnings($id) {
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_warning WHERE product_warning_id = '" . (int)$id . "'");
+		return $query->row;
+	}
+	public function getDisease($id) {
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_disease WHERE product_disease_id = '" . (int)$id . "'");
+		return $query->row;
+	}		
 	public function getGenerics($data = array()) {
 		$sql = "SELECT * FROM " . DB_PREFIX . "generic ag WHERE 1=1";
        
