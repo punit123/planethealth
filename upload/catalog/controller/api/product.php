@@ -82,7 +82,15 @@ class ControllerApiProduct extends Controller {
 				$productAttribute = $this->model_catalog_product->getProductImages($product_id);			
 				$mainArray[0]['images'] = $productAttribute;					
 				$productOptions = $this->model_catalog_product->getProductOptions($product_id);			
-				$mainArray[0]['options'] = $productOptions;				
+				$mainArray[0]['options'] = $productOptions;
+				$productGenerics = $this->model_catalog_product->getProductGenerics($product_id);			
+				$mainArray[0]['generics'] = $productGenerics;
+				$productGenericsAttr = $this->model_catalog_product->getProductGenericsAttributes($product_id);
+				$mainArray[0]['generics_attribute'] = $productGenericsAttr;
+				$productWarnings = $this->model_catalog_product->getProductWarnings($product_id);
+				$mainArray[0]['warnings'] = $productWarnings;
+				$productDisease = $this->model_catalog_product->getProductDisease($product_id);
+				$mainArray[0]['disease'] = $productDisease;
 				$json['status'] = 'success';
 				$json['message'] = $this->language->get('Success');
 				$json['data'] = $mainArray;

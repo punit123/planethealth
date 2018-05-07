@@ -770,4 +770,48 @@ class ModelCatalogProduct extends Model {
 		}
 		return $product_data;
 	}
+	public function getProductGenerics($product_id) {
+		$product_generic_data = array();
+
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "generic_product WHERE product_id = '" . (int)$product_id . "'");
+
+		foreach ($query->rows as $result) {
+			$product_generic_data[$result['generic_id']] =$result['generic_weight'] ;
+		}
+
+		return $product_generic_data;
+	}
+	public function getProductGenericsAttributes($product_id) {
+		$product_generic_data = array();
+
+		$query = $this->db->query("SELECT gpa.*,ga.title FROM " . DB_PREFIX . "generic_product_attributes gpa inner join ".DB_PREFIX."generic_attribute as ga on gpa.generic_attribute_id = ga.id WHERE product_id = '" . (int)$product_id . "'");
+
+		foreach ($query->rows as $result) {
+			$product_generic_data[] = $result;
+		}
+
+		return $product_generic_data;
+	}
+	public function getProductWarnings($product_id) {
+		$product_generic_data = array();
+
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_warning WHERE product_id = '" . (int)$product_id . "'");
+
+		foreach ($query->rows as $result) {
+			$product_generic_data[] = $result;
+		}
+
+		return $product_generic_data;
+	}
+	public function getProductDisease($product_id) {
+		$product_generic_data = array();
+
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_disease WHERE product_id = '" . (int)$product_id . "'");
+
+		foreach ($query->rows as $result) {
+			$product_generic_data[] = $result;
+		}
+
+		return $product_generic_data;
+	}	
 }
