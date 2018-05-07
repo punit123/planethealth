@@ -986,6 +986,7 @@ class ControllerCatalogProduct extends Controller {
 		
 		// Categories
 		$this->load->model('catalog/generic');
+		        
 
 		if (isset($this->request->post['product_generic'])) {
 			$generics = $this->request->post['product_generic'];
@@ -996,6 +997,8 @@ class ControllerCatalogProduct extends Controller {
 		}
 
 		$data['product_generics'] = array();
+		$genericids = array_keys($generics);
+		$data['totalGenerics'] = $this->model_catalog_generic->getAllProductGenerics($genericids);
 		
 		foreach ($generics as $genkey=>$generic_id) {
 			$generic_info = $this->model_catalog_generic->getGeneric($genkey);
@@ -1471,6 +1474,14 @@ class ControllerCatalogProduct extends Controller {
 			}
 		}
 
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+	public function getgenericattribute(){
+		$generic_id = $_POST['generic_id'];		
+		$this->load->model('catalog/generic_attribute');
+		$generics = $this->model_catalog_generic_attribute->getAttributebyGeneric($generic_id);	
+		$json['data'] = $generics;
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}

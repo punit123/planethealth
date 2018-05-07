@@ -33,7 +33,11 @@ class ModelCatalogGenericAttribute extends Model {
 
 		return $query->row;
 	}
+	public function getAttributebyGeneric($generic_id) {
+		$query = $this->db->query("SELECT a.*,GROUP_CONCAT(a.default_value) as default_values	 FROM " . DB_PREFIX . "generic_attribute a LEFT JOIN " . DB_PREFIX . "generic ad ON (a.generic_id = ad.id) WHERE a.generic_id = '" . (int)$generic_id . "'");
 
+		return $query->row;
+	}
 	public function getAttributes($data = array()) {
 		$sql = "SELECT a.*, ad.generic_name FROM " . DB_PREFIX . "generic_attribute a LEFT JOIN " . DB_PREFIX . "generic ad ON (a.generic_id = ad.id) WHERE 1=1";
 

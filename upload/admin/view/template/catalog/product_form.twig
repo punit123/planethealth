@@ -365,7 +365,12 @@
               <div class="form-group row">
                 <label class="col-sm-2 col-form-label" for="input-generic">{{ entry_generic }}</label>
                 <div class="col-sm-10">
-                  <input type="text" name="generic" value="" placeholder="{{ entry_generic }}" id="input-category" class="form-control"/>
+				<select name="generic" placeholder="{{ entry_generic }}" id="input-generic" class="form-control">
+				<option value="">Select Generic</option>
+				{% for totalGeneric in totalGenerics %}
+					<option value="{{totalGeneric.id}}">{{totalGeneric.generic_name}}</option>
+				{% endfor %}
+				</select>
 				</div><br/>
                 <div class="col-md-12" style="margin-top:10px">				
                   <div id="product-generic">
@@ -380,9 +385,9 @@
 						  </thead>
 						 <tbody>
 						 {% set generic__row = 0 %}
-                         {% for product_generic in product_generics %}						 
+                         {% for product_generic in product_generics %}
 						  <tr id="generic-row{{ generic_row }}">
-							<td class="text-left"><input type="text" name="product_generic[{{ generic_row }}][name]" value="{{ product_generic.name }}" placeholder="{{ entry_attribute }}" class="form-control"/> <input type="hidden" name="product_generic[{{ generic_row }}][generic_id]" value="{{ product_generic.generic_id }}"/></td>
+							<td class="text-left">{{ product_generic.name }}<input type="hidden" name="product_generic[{{ generic_row }}][generic_id]" value="{{ product_generic.generic_id }}"/></td>
 							<td class="text-left">
 								<div class="input-group mb-12">
 								  <input type="text" name="product_generic[{{ generic_row }}][generic_weight]" value="{{ product_generic.generic_weight }}" class="form-control" />
@@ -418,7 +423,7 @@
 						{% set generic_attribute_row = 0 %}
 						{% for generic_attribute in generic_attributes %}
 						  <tr id="genattribute-row{{ generic_attribute_row }}">
-							<td class="text-left"><input type="text" name="generic_attribute[{{ generic_attribute_row }}][title]" value="{{ generic_attribute.title }}" placeholder="{{ entry_attribute }}" class="form-control"/> <input type="hidden" name="generic_attribute[{{ generic_attribute_row }}][id]" value="{{ generic_attribute.id }}"/></td>
+							<td class="text-left">{{ generic_attribute.title }}<input type="hidden" name="generic_attribute[{{ generic_attribute_row }}][id]" value="{{ generic_attribute.id }}"/></td>
 							<td class="text-left">
 								<div class="input-group mb-12">
 								  <textarea name="generic_attribute[{{ generic_attribute_row }}][value]" rows="5" placeholder="{{ entry_text }}" class="form-control">{{ generic_attribute.value }}</textarea>
@@ -451,7 +456,11 @@
 								<td class="text-left"><input type="text" name="product_warning[{{ product_warnings_row }}][title]" value="{{ product_warning.title }}" placeholder="{{ entry_attribute }}" class="form-control"/> <input type="hidden" name="product_warning[{{ product_warnings_row }}][product_warning_id]" value="{{ product_warning.product_warning_id }}"/></td>
 								<td class="text-left">
 									<div class="input-group mb-4">
-									  <input type="checkbox" name="generic_attribute[{{ product_warnings_row }}][falg]" value="1" />
+									{% if product_warning.flag == 1 %}
+										<input type="checkbox" name="generic_attribute[{{ product_warnings_row }}][falg]" value="1" checked="checked" />
+								    {% else %}
+										<input type="checkbox" name="generic_attribute[{{ product_warnings_row }}][falg]" value="1" />
+								    {% endif %}
 									</div>
 								</td>
 								<td class="text-left"><button type="button" onclick="$('#warning-row{{ product_warnings_row }}').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>
@@ -963,6 +972,18 @@ $('input[name=\'related\']').autocomplete({
 $('#product-related').delegate('.fa-minus-circle', 'click', function() {
 	$(this).parent().remove();
 });
+$('#input-generic').on('change',function(){
+var value = $(this).val();
+		$.ajax({
+			url: 'index.php?route=catalog/product/getgenericattribute&user_token={{ user_token }}',
+			dataType: 'json',
+			method:'post',
+			data:{generic_id:value},
+			success: function(json) {
+				console.log(json);
+			}
+		});
+});
 //--></script>
 <script type="text/javascript"><!--
 var attribute_row = {{ attribute_row }};
@@ -1017,57 +1038,6 @@ $('#attribute tbody tr').each(function(index, element) {
 });
 //--></script>
 <script type="text/javascript"><!--
-var discount_row = {{ discount_row }};
-
-function addDiscount() {
-	html = '<tr id="discount-row' + discount_row + '">';
-	html += '  <td class="text-left"><select name="product_discount[' + discount_row + '][customer_group_id]" class="form-control">';
-  {% for customer_group in customer_groups %}
-	html += '    <option value="{{ customer_group.customer_group_id }}">{{ customer_group.name|escape('js') }}</option>';
-  {% endfor %}
-	html += '  </select></td>';
-	html += '  <td class="text-right"><input type="text" name="product_discount[' + discount_row + '][quantity]" value="" placeholder="{{ entry_quantity }}" class="form-control" /></td>';
-	html += '  <td class="text-right"><input type="text" name="product_discount[' + discount_row + '][priority]" value="" placeholder="{{ entry_priority }}" class="form-control" /></td>';
-	html += '  <td class="text-right"><input type="text" name="product_discount[' + discount_row + '][price]" value="" placeholder="{{ entry_price }}" class="form-control" /></td>';
-	html += '  <td class="text-left"><div class="input-group date"><input type="text" name="product_discount[' + discount_row + '][date_start]" value="" placeholder="{{ entry_date_start }}" data-date-format="YYYY-MM-DD" class="form-control" /><div class="input-group-append"><button type="button" class="btn btn-light"><i class="fa fa-calendar"></i></button></div></div></td>';
-	html += '  <td class="text-left"><div class="input-group date"><input type="text" name="product_discount[' + discount_row + '][date_end]" value="" placeholder="{{ entry_date_end }}" data-date-format="YYYY-MM-DD" class="form-control" /><div class="input-group-append"><button type="button" class="btn btn-light"><i class="fa fa-calendar"></i></button></div></div></td>';
-	html += '  <td class="text-left"><button type="button" onclick="$(\'#discount-row' + discount_row + '\').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
-	html += '</tr>';
-
-	$('#discount tbody').append(html);
-
-	$('.date').datetimepicker();
-
-	discount_row++;
-}
-
-//--></script>
-<script type="text/javascript"><!--
-var special_row = {{ special_row }};
-
-function addSpecial() {
-	html = '<tr id="special-row' + special_row + '">';
-	html += '  <td class="text-left"><select name="product_special[' + special_row + '][customer_group_id]" class="form-control">';
-  {% for customer_group in customer_groups %}
-	html += '      <option value="{{ customer_group.customer_group_id }}">{{ customer_group.name|escape('js') }}</option>';
-  {% endfor %}
-	html += '  </select></td>';
-	html += '  <td class="text-right"><input type="text" name="product_special[' + special_row + '][priority]" value="" placeholder="{{ entry_priority }}" class="form-control" /></td>';
-	html += '  <td class="text-right"><input type="text" name="product_special[' + special_row + '][price]" value="" placeholder="{{ entry_price }}" class="form-control" /></td>';
-	html += '  <td class="text-left"><div class="input-group date"><input type="text" name="product_special[' + special_row + '][date_start]" value="" placeholder="{{ entry_date_start }}" data-date-format="YYYY-MM-DD" class="form-control" /><div class="input-group-append"><button type="button" class="btn btn-light"><i class="fa fa-calendar"></i></button></div></div></td>';
-	html += '  <td class="text-left"><div class="input-group date"><input type="text" name="product_special[' + special_row + '][date_end]" value="" placeholder="{{ entry_date_end }}" data-date-format="YYYY-MM-DD" class="form-control" /><div class="input-group-append"><button type="button" class="btn btn-light"><i class="fa fa-calendar"></i></button></div></div></td>';
-	html += '  <td class="text-left"><button type="button" onclick="$(\'#special-row' + special_row + '\').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
-	html += '</tr>';
-
-	$('#special tbody').append(html);
-
-	$('.date').datetimepicker();
-
-	special_row++;
-}
-
-//--></script>
-<script type="text/javascript"><!--
 var image_row = {{ image_row }};
 
 function addImage() {
@@ -1080,32 +1050,6 @@ function addImage() {
 	$('#images tbody').append(html);
 
 	image_row++;
-}
-
-//--></script>
-<script type="text/javascript"><!--
-var recurring_row = {{ recurring_row }};
-
-function addRecurring() {
-	html = '<tr id="recurring-row' + recurring_row + '">';
-	html += '  <td class="text-left"><select name="product_recurring[' + recurring_row + '][recurring_id]" class="form-control">';
-  {% for recurring in recurrings %}
-	html += '      <option value="{{ recurring.recurring_id }}">{{ recurring.name|escape('js') }}</option>';
-  {% endfor %}
-	html += '    </select></td>';
-	html += '  <td class="text-left">';
-	html += '    <select name="product_recurring[' + recurring_row + '][customer_group_id]" class="form-control">>';
-  {% for customer_group in customer_groups %}
-	html += '      <option value="{{ customer_group.customer_group_id }}">{{ customer_group.name|escape('js') }}</option>';
-  {% endfor %}
-	html += '    <select>';
-	html += '  </td>';
-	html += '  <td class="text-left"><button type="button" onclick="$(\'#recurring-row' + recurring_row + '\').remove()" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
-	html += '</tr>';
-
-	$('#tab-recurring table tbody').append(html);
-
-	recurring_row++;
 }
 
 //--></script>

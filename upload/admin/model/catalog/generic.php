@@ -88,7 +88,18 @@ class ModelCatalogGeneric extends Model {
 
 		return $query->rows;
 	}
+	public function getAllProductGenerics($data = array()) {
+		if(!empty($data)){
+		 $ids = implode(",",$data);
+		 $sql = "SELECT * FROM " . DB_PREFIX . "generic ag WHERE 1=1 AND id not in (".$ids.")";	
+		}else{
+		 $sql = "SELECT * FROM " . DB_PREFIX . "generic ag WHERE 1=1";	
+		}
+		$query = $this->db->query($sql);
 
+		return $query->rows;
+	}
+	
 	public function getAllGenericName() {
 		$generic_data = array();
 
