@@ -18,7 +18,6 @@ class ControllerCatalogProduct extends Controller {
 		$this->document->setTitle($this->language->get('heading_title'));
 
 		$this->load->model('catalog/product');
-
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
 			$this->model_catalog_product->addProduct($this->request->post);
 
@@ -84,9 +83,9 @@ class ControllerCatalogProduct extends Controller {
 		$this->load->model('catalog/product');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
-			//echo "<pre>"; print_r($this->request->post); die;	
+			
 			$this->model_catalog_product->editProduct($this->request->get['product_id'], $this->request->post);
-
+			
 			$this->session->data['success'] = $this->language->get('text_success');
 
 			$url = '';
@@ -1024,10 +1023,9 @@ class ControllerCatalogProduct extends Controller {
 
 		foreach ($generic_attribute as $generic_attribu) {
 			$generic_attribute_info = $this->model_catalog_generic->getGenericsAttributes($generic_attribu['id']);
-
 			if ($generic_attribute_info) {
 				$data['generic_attributes'][] = array(
-					'id' => $generic_attribute_info['id'],
+					'id' => $generic_attribute_info['generic_attribute_id'],
 					'value'        => $generic_attribute_info['value'],
 					'title'        => $generic_attribute_info['title'],
 				);

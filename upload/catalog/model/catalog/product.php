@@ -773,11 +773,11 @@ class ModelCatalogProduct extends Model {
 	public function getProductGenerics($product_id) {
 		$product_generic_data = array();
 
-		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "generic_product WHERE product_id = '" . (int)$product_id . "'");
-
-		foreach ($query->rows as $result) {
-			$product_generic_data[$result['generic_id']] =$result['generic_weight'] ;
-		}
+		$query = $this->db->query("SELECT gp.*,g.generic_name FROM " . DB_PREFIX . "generic_product as gp inner join ".DB_PREFIX."generic as g on gp.generic_id = g.id WHERE product_id = '" . (int)$product_id . "'");
+        $product_generic_data = $query->rows;
+		// foreach ($query->rows as $result) {
+			// $product_generic_data[$result['generic_id']] =$result['generic_weight'] ;
+		// }
 
 		return $product_generic_data;
 	}

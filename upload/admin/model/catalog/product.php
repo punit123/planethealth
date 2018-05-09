@@ -13,11 +13,49 @@ class ModelCatalogProduct extends Model {
 		if (isset($data['image'])) {
 			$this->db->query("UPDATE " . DB_PREFIX . "product SET image = '" . $this->db->escape((string)$data['image']) . "' WHERE product_id = '" . (int)$product_id . "'");
 		}
-
+		if (isset($data['product_generic'])) {
+			$this->db->query("DELETE FROM " . DB_PREFIX . "generic_product WHERE product_id = '" . (int)$product_id . "' AND attribute_id = '" . (int)$product_attribute['attribute_id'] . "'");			
+			foreach ($data['product_generic'] as $product_generic) {
+				$this->db->query("INSERT INTO " . DB_PREFIX . "generic_product SET product_id = '" . (int)$product_id . "', generic_id = '" . (int)$product_generic['generic_id'] . "', generic_weight = '" . $product_generic['generic_weight'] . "'");
+			}
+		}
+		
 		foreach ($data['product_description'] as $language_id => $value) {
 			$this->db->query("INSERT INTO " . DB_PREFIX . "product_description SET product_id = '" . (int)$product_id . "', language_id = '" . (int)$language_id . "', name = '" . $this->db->escape($value['name']) . "', description = '" . $this->db->escape($value['description']) . "', tag = '" . $this->db->escape($value['tag']) . "', meta_title = '" . $this->db->escape($value['meta_title']) . "', meta_description = '" . $this->db->escape($value['meta_description']) . "', meta_keyword = '" . $this->db->escape($value['meta_keyword']) . "'");
 		}
 
+
+		if (isset($data['product_generic'])) {
+			$this->db->query("DELETE FROM " . DB_PREFIX . "generic_product WHERE product_id = '" . (int)$product_id . "'");			
+			foreach ($data['product_generic'] as $product_generic) {
+				$this->db->query("INSERT INTO " . DB_PREFIX . "generic_product SET product_id = '" . (int)$product_id . "', generic_id = '" . (int)$product_generic['generic_id'] . "', generic_weight = '" . $product_generic['generic_weight'] . "'");
+			}
+		}
+		
+		if (isset($data['generic_attribute'])) {
+			$this->db->query("DELETE FROM " . DB_PREFIX . "generic_product_attributes WHERE product_id = '" . (int)$product_id . "'");			
+			foreach ($data['generic_attribute'] as $product_genericattr) {
+				$this->db->query("INSERT INTO " . DB_PREFIX . "generic_product_attributes SET product_id = '" . (int)$product_id . "', generic_attribute_id = '" . (int)$product_genericattr['id'] . "', value = '" . $product_genericattr['value'] . "'");
+			}
+		}
+		
+		if (isset($data['product_disease'])) {
+			$this->db->query("DELETE FROM " . DB_PREFIX . "product_disease WHERE product_id = '" . (int)$product_id . "'");			
+			foreach ($data['product_disease'] as $product_disease) {
+				$this->db->query("INSERT INTO " . DB_PREFIX . "product_disease SET product_id = '" . (int)$product_id . "', disease = '" . $product_disease['disease'] . "'");
+			}
+		}
+		if (isset($data['product_warning'])) {
+			$this->db->query("DELETE FROM " . DB_PREFIX . "product_warning WHERE product_id = '" . (int)$product_id . "'");			
+			foreach ($data['product_warning'] as $product_warning) {
+				$flag = 0;
+				if(isset($product_warning['falg'])){
+					$flag = 1;
+				}
+				$this->db->query("INSERT INTO " . DB_PREFIX . "product_warning SET product_id = '" . (int)$product_id . "', title = '" . $product_warning['title'] . "',flag = '" .$flag . "'");
+			}
+		}		
+		
 		if (isset($data['product_store'])) {
 			foreach ($data['product_store'] as $store_id) {
 				$this->db->query("INSERT INTO " . DB_PREFIX . "product_to_store SET product_id = '" . (int)$product_id . "', store_id = '" . (int)$store_id . "'");
@@ -140,6 +178,37 @@ class ModelCatalogProduct extends Model {
 			$this->db->query("INSERT INTO " . DB_PREFIX . "product_description SET product_id = '" . (int)$product_id . "', language_id = '" . (int)$language_id . "', name = '" . $this->db->escape($value['name']) . "', description = '" . $this->db->escape($value['description']) . "', tag = '" . $this->db->escape($value['tag']) . "', meta_title = '" . $this->db->escape($value['meta_title']) . "', meta_description = '" . $this->db->escape($value['meta_description']) . "', meta_keyword = '" . $this->db->escape($value['meta_keyword']) . "'");
 		}
 
+		if (isset($data['product_generic'])) {
+			$this->db->query("DELETE FROM " . DB_PREFIX . "generic_product WHERE product_id = '" . (int)$product_id . "'");			
+			foreach ($data['product_generic'] as $product_generic) {
+				$this->db->query("INSERT INTO " . DB_PREFIX . "generic_product SET product_id = '" . (int)$product_id . "', generic_id = '" . (int)$product_generic['generic_id'] . "', generic_weight = '" . $product_generic['generic_weight'] . "'");
+			}
+		}
+		
+		if (isset($data['generic_attribute'])) {
+			$this->db->query("DELETE FROM " . DB_PREFIX . "generic_product_attributes WHERE product_id = '" . (int)$product_id . "'");			
+			foreach ($data['generic_attribute'] as $product_genericattr) {
+				$this->db->query("INSERT INTO " . DB_PREFIX . "generic_product_attributes SET product_id = '" . (int)$product_id . "', generic_attribute_id = '" . (int)$product_genericattr['id'] . "', value = '" . $product_genericattr['value'] . "'");
+			}
+		}
+		
+		if (isset($data['product_disease'])) {
+			$this->db->query("DELETE FROM " . DB_PREFIX . "product_disease WHERE product_id = '" . (int)$product_id . "'");			
+			foreach ($data['product_disease'] as $product_disease) {
+				$this->db->query("INSERT INTO " . DB_PREFIX . "product_disease SET product_id = '" . (int)$product_id . "', disease = '" . $product_disease['disease'] . "'");
+			}
+		}
+		if (isset($data['product_warning'])) {
+			$this->db->query("DELETE FROM " . DB_PREFIX . "product_warning WHERE product_id = '" . (int)$product_id . "'");			
+			foreach ($data['product_warning'] as $product_warning) {
+				$flag = 0;
+				if(isset($product_warning['falg'])){
+					$flag = 1;
+				}
+				$this->db->query("INSERT INTO " . DB_PREFIX . "product_warning SET product_id = '" . (int)$product_id . "', title = '" . $product_warning['title'] . "',flag = '" .$flag . "'");
+			}
+		}
+		
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_to_store WHERE product_id = '" . (int)$product_id . "'");
 
 		if (isset($data['product_store'])) {

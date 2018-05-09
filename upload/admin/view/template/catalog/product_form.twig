@@ -384,10 +384,10 @@
 							</tr>
 						  </thead>
 						 <tbody>
-						 {% set generic__row = 0 %}
+						 {% set generic_row = 0 %}
                          {% for product_generic in product_generics %}
 						  <tr id="generic-row{{ generic_row }}">
-							<td class="text-left">{{ product_generic.name }}<input type="hidden" name="product_generic[{{ generic_row }}][generic_id]" value="{{ product_generic.generic_id }}"/></td>
+							<td class="text-left">{{ product_generic.name }}<input type="hidden" name="product_generic[{{ generic_row }}][generic_id]" value="{{ product_generic.generic_id }}" class="product-generic-hidden"/></td>
 							<td class="text-left">
 								<div class="input-group mb-12">
 								  <input type="text" name="product_generic[{{ generic_row }}][generic_weight]" value="{{ product_generic.generic_weight }}" class="form-control" />
@@ -395,7 +395,7 @@
 							</td>
 							<td class="text-left"><button type="button" onclick="$('#generic-row{{ generic_row }}').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>
 						  </tr>
-						  {% set generic_attribute_row = generic_attribute_row + 1 %}
+						  {% set generic_row = generic_row + 1 %}
 						{% endfor %}
                          </tbody>
 						 </table>
@@ -446,7 +446,7 @@
 							<tr>
 							  <td class="text-left">{{ tab_warning }}</td>
 							  <td class="text-left">Flag</td>
-							  <td></td>
+							  <td><button type="button" onclick="addWarnings();" data-toggle="tooltip" title="" class="btn btn-primary" data-original-title="Add Attribute"><i class="fa fa-plus-circle"></i></button></td>
 							</tr>
 						  </thead>
 						  <tbody>
@@ -457,9 +457,9 @@
 								<td class="text-left">
 									<div class="input-group mb-4">
 									{% if product_warning.flag == 1 %}
-										<input type="checkbox" name="generic_attribute[{{ product_warnings_row }}][falg]" value="1" checked="checked" />
+										<input type="checkbox" name="product_warning[{{ product_warnings_row }}][falg]" value="1" checked="checked" />
 								    {% else %}
-										<input type="checkbox" name="generic_attribute[{{ product_warnings_row }}][falg]" value="1" />
+										<input type="checkbox" name="product_warning[{{ product_warnings_row }}][falg]" value="1" />
 								    {% endif %}
 									</div>
 								</td>
@@ -479,7 +479,7 @@
 						  <thead>
 							<tr>
 							  <td class="text-left">{{ tab_disease }}</td>
-							  <td></td>
+							  <td><button type="button" onclick="addDisease();" data-toggle="tooltip" title="" class="btn btn-primary" data-original-title="Add Attribute"><i class="fa fa-plus-circle"></i></button></td>
 							</tr>
 						  </thead>
 						  <tbody>
@@ -668,7 +668,6 @@
 					<input type="hidden" name="image" value="{{ image }}" id="input-image" class="input-image-cls"/>								  
 					<button type="button" data-toggle="tooltip" title="{{ button_upload }}" id="button-upload-image" class="btn btn-primary button-upload"><i class="fa fa-upload"></i> Upload</button>
 				  </div>
-
               <div class="table-responsive">
                 <table id="images" class="table table-striped table-bordered table-hover">
                   <thead>
@@ -973,14 +972,44 @@ $('#product-related').delegate('.fa-minus-circle', 'click', function() {
 	$(this).parent().remove();
 });
 $('#input-generic').on('change',function(){
+var inputsgen = $(".product-generic-hidden");
 var value = $(this).val();
+var textvalue = $("#input-generic option:selected").text();
+var totalgen = value;
+for(var i = 0; i < inputsgen.length; i++){
+    totalgen = totalgen+','+$(inputsgen[i]).val();
+}
 		$.ajax({
 			url: 'index.php?route=catalog/product/getgenericattribute&user_token={{ user_token }}',
 			dataType: 'json',
 			method:'post',
-			data:{generic_id:value},
+			data:{generic_id:totalgen},
 			success: function(json) {
-				console.log(json);
+				var attrData = json.data;
+				var generic_attribute_row = {{ generic_attribute_row }};
+				var genattrhtml = '';
+				for(var j = 0; j < attrData.length; j++){				
+					genattrhtml += '<tr id="genattribute-row'+j+'">';
+					genattrhtml += '<td class="text-left">'+attrData[j].title+'<input type="hidden" name="generic_attribute['+j+'][id]" value="'+attrData[j].id+'"></td>';
+					genattrhtml += '<td class="text-left">';
+					genattrhtml += '<div class="input-group mb-12">';
+					genattrhtml += '<textarea name="generic_attribute['+j+'][value]" rows="5" placeholder="Text" class="form-control">'+attrData[j].default_value+'</textarea>';
+					genattrhtml += '</div></td>';
+					genattrhtml += '<td class="text-left"><button type="button" onclick="$(\'#genattribute-row'+j+'\').remove();" data-toggle="tooltip" title="" class="btn btn-danger" data-original-title="Remove"><i class="fa fa-minus-circle"></i></button></td>';
+					genattrhtml += '</tr>';
+				}
+				$("#generic_attributes tbody").html(genattrhtml);
+					var generic_row = {{ generic_row }};				
+					var genric ='<tr id="generic-row'+generic_row+'">';
+						genric +='<td class="text-left">'+textvalue+'<input type="hidden" name="product_generic['+generic_row+'][generic_id]" value="'+value+'" class="product-generic-hidden"></td>';
+						genric +='<td class="text-left">';
+						genric +='<div class="input-group mb-12">';
+						genric +='<input type="text" name="product_generic['+generic_row+'][generic_weight]" value="" class="form-control">';
+						genric +='</div>';
+						genric +='</td>';
+						genric +='<td class="text-left"><button type="button" onclick="$(\'#generic-row'+generic_row+'\').remove();" data-toggle="tooltip" title="" class="btn btn-danger" data-original-title="Remove"><i class="fa fa-minus-circle"></i></button></td>';
+						genric +='</tr>';
+				$("#generics tbody").append(genric);
 			}
 		});
 });
@@ -1051,7 +1080,30 @@ function addImage() {
 
 	image_row++;
 }
+var product_warnings_row = {{product_warnings_row}};
+function addWarnings() {
+	html = '<tr id="warning-row'+product_warnings_row+'">';
+	html += '<td class="text-left"><input type="text" name="product_warning['+product_warnings_row+'][title]" value="" placeholder="Warning" class="form-control"><input type="hidden" name="product_warning['+product_warnings_row+'][product_warning_id]" value=""></td>';
+	html += '<td class="text-left">';
+	html += '<div class="input-group mb-4">';
+	html += '<input type="checkbox" name="product_warning['+product_warnings_row+'][falg]" value="1" checked="checked">';
+	html += '</div>';
+	html += '</td>';
+	html += '<td class="text-left"><button type="button" onclick="$(\'#warning-row'+product_warnings_row+'\').remove();" data-toggle="tooltip" title="" class="btn btn-danger" data-original-title="Remove"><i class="fa fa-minus-circle"></i></button></td>';
+	html += '</tr>';
+	$('#product_warnings tbody').append(html);
 
+	product_warnings_row++;	
+}
+var product_diseases_row = {{product_diseases_row}};
+function addDisease() {
+html = '<tr id="disease-row0">';
+html += '<td class="text-left"><input type="text" name="product_disease['+product_diseases_row+'][disease]" value="" placeholder="disease" class="form-control"> <input type="hidden" name="product_disease[0][product_disease_id]" value=""></td>';
+html += '<td class="text-left"><button type="button" onclick="$(\'#disease-row'+product_diseases_row+'\').remove();" data-toggle="tooltip" title="" class="btn btn-danger" data-original-title="Remove"><i class="fa fa-minus-circle"></i></button></td>';
+html += '</tr>';	
+$('#product_disease tbody').append(html);
+	product_diseases_row++;	
+}
 //--></script>
 <script type="text/javascript"><!--
 $('.date').datetimepicker();

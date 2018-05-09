@@ -34,9 +34,9 @@ class ModelCatalogGenericAttribute extends Model {
 		return $query->row;
 	}
 	public function getAttributebyGeneric($generic_id) {
-		$query = $this->db->query("SELECT a.*,GROUP_CONCAT(a.default_value) as default_values	 FROM " . DB_PREFIX . "generic_attribute a LEFT JOIN " . DB_PREFIX . "generic ad ON (a.generic_id = ad.id) WHERE a.generic_id = '" . (int)$generic_id . "'");
+		$query = $this->db->query("SELECT a.*,IF(gpa.product_id IS NULL,GROUP_CONCAT(a.default_value),GROUP_CONCAT(gpa.value)) as default_value FROM " . DB_PREFIX . "generic_attribute a LEFT JOIN " . DB_PREFIX . "generic ad ON (a.generic_id = ad.id) LEFT JOIN " . DB_PREFIX . "generic_product_attributes gpa ON (a.generic_id = gpa.generic_attribute_id) WHERE a.generic_id in (" .$generic_id. ") GROUP BY a.title");
 
-		return $query->row;
+		return $query->rows;
 	}
 	public function getAttributes($data = array()) {
 		$sql = "SELECT a.*, ad.generic_name FROM " . DB_PREFIX . "generic_attribute a LEFT JOIN " . DB_PREFIX . "generic ad ON (a.generic_id = ad.id) WHERE 1=1";
