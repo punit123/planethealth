@@ -1,20 +1,12 @@
-.htaccess
-/config.php
-admin/config.php
+# IDE Files
+#-------------------------
+/nbproject/
+.idea/*
 
-!index.html
+## Sublime Text cache files
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+*.sublime-workspace
+*.sublime-project
 
-download/
-image/data/
-image/cache/
-system/cache/
-system/logs/
-
-system/storage/
-
-# vQmod log files
-vqmod/logs/*
-# vQmod cache files
-vqmod/vqcache/*
-vqmod/checked.cache
-vqmod/mods.cache
